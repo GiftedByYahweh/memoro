@@ -40,10 +40,7 @@ export default tseslint.config(
       // Decomposed, low-complexity code — starting thresholds (tunable).
       complexity: ['error', 10],
       'max-depth': ['error', 3],
-      'max-lines-per-function': [
-        'error',
-        { max: 60, skipBlankLines: true, skipComments: true },
-      ],
+      'max-lines-per-function': ['error', { max: 60, skipBlankLines: true, skipComments: true }],
       'max-params': ['error', 4],
       'max-nested-callbacks': ['error', 3],
       'max-statements': ['error', 15],

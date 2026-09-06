@@ -3,12 +3,12 @@
 **Working Title:** Memoro `❓` (verify domain, app store availability, trademarks)  
 **Status:** Draft, concept stage  
 **Version:** 0.3  
-**Companion Document:** `memoro-tech.md` — Technical Requirements  
+**Companion Document:** `memoro-tech.md` — Technical Requirements
 
 **Legend:**  
 `✅` — Included in MVP  
 `⬜` — Post-MVP, planned for future  
-`❓` — Unresolved  
+`❓` — Unresolved
 
 ---
 
@@ -64,10 +64,12 @@ A collection is a folder of grouped media. It can represent a trip ("Rome"), a t
 The application **never creates collections automatically without consent**. It recognizes the location from media coordinates and suggests a ready-made name.
 
 During upload, the user sees a choice:
+
 - **Create new collection** — prefilled with the location name ("Barcelona");
 - **Add to existing** — selected from a list of existing collections.
 
 **Requirements:**
+
 - The suggested name is immediately editable before creation. Reverse geocoding will yield "Barcelona" or "Kyiv" — suitable for trips, but for home photos the user will almost always rename it.
 - Suggestions are non-intrusive: the existing collection list is displayed alongside, and suggestions can be ignored.
 
@@ -107,10 +109,12 @@ Media added without selecting a collection enters the "unsorted" state.
 **File contains geolocation** → Use it directly. No user action required.
 
 **File lacks geolocation** → Present choices:
+
 - **Set manually** — map pin or search by location name;
 - **My current geolocation** — offered as a suggestion, with an adjustable pin.
 
 **Requirements:**
+
 - Location is never applied silently. The user reviews and confirms.
 - Rationale: a user organizing an archive at home would otherwise have all vacation photos mapped to their backyard.
 - Searching location by name is standard workflow for legacy archives, not an edge case.
@@ -129,6 +133,7 @@ The most frequent scenario involves dozens of files from a single location, part
 Date is the second primary axis of navigation alongside location. In an archive spanning years, "show 2019" is as natural a query as "show Rome".
 
 **Requirements:**
+
 - Preserve capture date from metadata when available.
 - Store **local capture date**, not just an absolute timestamp in UTC. A photo taken in Tokyo at 23:00 belongs to the next day in Kyiv time — without timezone offset awareness, trips split across day boundaries.
 - `❓` Verify capture date metadata retention on iOS on a real device. If stripped, fallback to upload date with manual editing capability.
@@ -138,6 +143,7 @@ Date is the second primary axis of navigation alongside location. In an archive 
 Primary navigation consists of two equal modes.
 
 ### Map
+
 - Clustering: points group together at distant zoom levels and disperse upon zooming in.
 - **Cluster center** — mathematical mean of actual media coordinates, not country/city geographic center. Otherwise, tapping a pin points to places the user never visited.
 - **Tapping a cluster** smoothly zooms to fit all contained points within the viewport.
@@ -147,10 +153,12 @@ Primary navigation consists of two equal modes.
 - `❓` Mixed clusters: "Rome 2025" and "Rome 2026" will geographically merge into a single pin. What to display on tap — list of collections, separate clusters, or a "by places / by collections" toggle.
 
 ### Feed Panel
+
 - Media cards with filters. Date filter is mandatory.
 - Dedicated view/screen, not an overlay on top of the map.
 
 ### Synchronized Filters
+
 Filters apply to both modes simultaneously. Setting a specific year yields the identical dataset both on the map and in the feed. Otherwise, users will be confused by discrepancies between views.
 
 ## 4.12 Collection Screen ✅

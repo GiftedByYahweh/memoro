@@ -4,9 +4,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import type { TxContext } from './txContext.js';
 
 type DBClient = ReturnType<typeof drizzle>;
-export type DBExecutor =
-  | DBClient
-  | Parameters<Parameters<DBClient['transaction']>[0]>[0];
+export type DBExecutor = DBClient | Parameters<Parameters<DBClient['transaction']>[0]>[0];
 
 export class DBProvider {
   private db: DBClient;

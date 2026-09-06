@@ -89,9 +89,7 @@ function registerRoutes(server: FastifyInstance) {
   }));
 }
 
-export const createServer = async (
-  options: CreateServerOptions,
-): Promise<FastifyInstance> => {
+export const createServer = async (options: CreateServerOptions): Promise<FastifyInstance> => {
   const { config, logger } = options;
   const server = fastify({
     trustProxy: true,

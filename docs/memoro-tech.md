@@ -2,12 +2,12 @@
 
 **Status:** Draft  
 **Version:** 0.1  
-**Companion Document:** `memoro-spec.md` — Functional Specification  
+**Companion Document:** `memoro-spec.md` — Functional Specification
 
 **Legend:**  
 `✅` — Decided  
 `❓` — Unresolved  
-`⚠️` — Recommendation, requires confirmation  
+`⚠️` — Recommendation, requires confirmation
 
 ---
 
@@ -21,17 +21,17 @@ This is the primary context for all technical decisions below: server-side clust
 
 ## 2. Technology Stack
 
-| Layer | Solution | Status |
-|---|---|---|
-| Backend | Node.js + Fastify | `✅` |
-| Frontend | Vue | `✅` |
-| Database | PostgreSQL | `✅` |
-| ORM | Drizzle | `✅` |
-| Media Storage | Cloudflare R2 | `✅` |
-| Hosting | Oracle Cloud Free Tier | `⚠️` |
-| Map | MapLibre GL JS | `⚠️` |
-| Map Tiles | OpenFreeMap | `⚠️` |
-| Repository | Monorepo, npm workspaces | `✅` |
+| Layer         | Solution                 | Status |
+| ------------- | ------------------------ | ------ |
+| Backend       | Node.js + Fastify        | `✅`   |
+| Frontend      | Vue                      | `✅`   |
+| Database      | PostgreSQL               | `✅`   |
+| ORM           | Drizzle                  | `✅`   |
+| Media Storage | Cloudflare R2            | `✅`   |
+| Hosting       | Oracle Cloud Free Tier   | `⚠️`   |
+| Map           | MapLibre GL JS           | `⚠️`   |
+| Map Tiles     | OpenFreeMap              | `⚠️`   |
+| Repository    | Monorepo, npm workspaces | `✅`   |
 
 ### 2.1 Frontend ✅
 
@@ -66,6 +66,7 @@ Oracle Cloud Free Tier has been provisionally selected. Risks to consider:
 - Quotas may change without notice: in June 2026, ARM quotas were reduced from 4 OCPUs / 24 GB to 2 OCPUs / 12 GB.
 
 **Mitigations — Mandatory:**
+
 1. Database is hosted outside the instance (managed Postgres via Neon, Supabase, or equivalent).
 2. Automated database dumps to R2 on a schedule, active from day one.
 
