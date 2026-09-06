@@ -1,3 +1,5 @@
+import type { DomainErrorCode } from '@memoro/shared';
+
 export const ErrorCode = {
   NOT_ENOUGH_PERMISSIONS: 'NOT_ENOUGH_PERMISSIONS',
   INVALID_CREDENTIALS: 'INVALID_CREDENTIALS',
@@ -13,12 +15,12 @@ export type AppErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
 
 export class AppError extends Error {
   public code: AppErrorCode;
-  public details?: unknown;
+  public errorCode: DomainErrorCode | null;
 
-  constructor(code: AppErrorCode, message: string, details?: unknown) {
+  constructor(code: AppErrorCode, message: string, errorCode: DomainErrorCode | null = null) {
     super(message);
     this.name = 'AppError';
     this.code = code;
-    this.details = details;
+    this.errorCode = errorCode;
   }
 }

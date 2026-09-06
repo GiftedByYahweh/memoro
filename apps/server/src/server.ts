@@ -49,10 +49,11 @@ function registerErrorHandlers(server: FastifyInstance, logger: Logger) {
   server.setErrorHandler((error, request, reply) => {
     if (error instanceof ZodError) {
       reply.status(400).send({
-        ok: false,
+        success: false,
         code: ErrorCode.VALIDATION_ERROR,
-        message: 'Validation failed',
-        details: error.issues,
+        errorCode: null,
+        message: error.issues[0]?.message ?? 'Validation failed',
+        data: null,
         timestamp: Date.now(),
       });
       return;
@@ -61,10 +62,11 @@ function registerErrorHandlers(server: FastifyInstance, logger: Logger) {
     if (error instanceof AppError) {
       const statusCode = HTTP_STATUS_BY_ERROR_CODE[error.code];
       reply.status(statusCode).send({
-        ok: false,
+        success: false,
         code: error.code,
+        errorCode: error.errorCode,
         message: error.message,
-        details: error.details,
+        data: null,
         timestamp: Date.now(),
       });
       return;
@@ -73,9 +75,11 @@ function registerErrorHandlers(server: FastifyInstance, logger: Logger) {
     logger.error('API', `Unknown error at ${request.method} ${request.url}: ${String(error)}`);
 
     reply.status(500).send({
-      ok: false,
+      success: false,
       code: ErrorCode.INTERNAL_SERVER_ERROR,
+      errorCode: null,
       message: 'Internal server error',
+      data: null,
       timestamp: Date.now(),
     });
   });
@@ -83,8 +87,10 @@ function registerErrorHandlers(server: FastifyInstance, logger: Logger) {
 
 function registerRoutes(server: FastifyInstance) {
   server.get('/health', () => ({
-    ok: true,
-    uptime: process.uptime(),
+    success: true,
+    data: {
+      uptime: process.uptime(),
+    },
     timestamp: Date.now(),
   }));
 }
