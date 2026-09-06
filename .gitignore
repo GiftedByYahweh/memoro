@@ -42,7 +42,6 @@ tmp/
 scratch/
 
 # AI & Agents
-AGENTS.md
 AGENT.md
 CLAUDE.md
 .cursor/
