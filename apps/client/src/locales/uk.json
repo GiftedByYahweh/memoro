@@ -1,0 +1,29 @@
+{
+  "common": {
+    "search": "Швидкий пошук...",
+    "clear": "Очистити поле",
+    "close": "Закрити",
+    "cancel": "Скасувати",
+    "save": "Зберегти",
+    "loading": "Завантаження...",
+    "confirm": "Підтвердити"
+  },
+  "auth": {
+    "title": "Memoro",
+    "subtitle": "Довічне сховище медіа, прив'язане до місця та часу",
+    "email": "Email",
+    "password": "Пароль",
+    "emailPlaceholder": "archive@memoro.app",
+    "passwordPlaceholder": "••••••••",
+    "showPassword": "Показати пароль",
+    "hidePassword": "Приховати пароль",
+    "login": "Увійти в архів",
+    "register": "Створити акаунт"
+  },
+  "nav": {
+    "map": "Мапа",
+    "timeline": "Хронологія",
+    "collections": "Колекції",
+    "profile": "Профіль"
+  }
+}
