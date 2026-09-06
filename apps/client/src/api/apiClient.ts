@@ -6,4 +6,4 @@ const authApi = (transport: HttpTransport) => ({
   session: <T = unknown>() => transport.get<T>('/auth/session'),
 });
 
-export { authApi }
+export { authApi };
