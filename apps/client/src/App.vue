@@ -1,16 +1,7 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { RouterView } from 'vue-router';
+</script>
 
 <template>
-  <main>
-    <h1>Memoro Client</h1>
-  </main>
+  <RouterView />
 </template>
-
-<style scoped>
-main {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
-</style>

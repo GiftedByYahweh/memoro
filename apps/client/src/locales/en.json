@@ -1,0 +1,29 @@
+{
+  "common": {
+    "search": "Quick search...",
+    "clear": "Clear field",
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "loading": "Loading...",
+    "confirm": "Confirm"
+  },
+  "auth": {
+    "title": "Memoro",
+    "subtitle": "Lifetime media storage anchored to location and time",
+    "email": "Email",
+    "password": "Password",
+    "emailPlaceholder": "archive@memoro.app",
+    "passwordPlaceholder": "••••••••",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "login": "Enter archive",
+    "register": "Create account"
+  },
+  "nav": {
+    "map": "Map",
+    "timeline": "Timeline",
+    "collections": "Collections",
+    "profile": "Profile"
+  }
+}

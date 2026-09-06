@@ -29,6 +29,12 @@ export default tseslint.config(
     },
   },
   {
+    files: ['**/AppIcon.vue'],
+    rules: {
+      'vue/no-v-html': 'off',
+    },
+  },
+  {
     languageOptions: {
       parserOptions: {
         projectService: true,
@@ -37,7 +43,7 @@ export default tseslint.config(
       },
     },
     rules: {
-      // Decomposed, low-complexity code — starting thresholds (tunable).
+      'no-undef': 'off',
       complexity: ['error', 10],
       'max-depth': ['error', 3],
       'max-lines-per-function': ['error', { max: 60, skipBlankLines: true, skipComments: true }],
