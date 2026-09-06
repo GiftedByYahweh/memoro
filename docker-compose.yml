@@ -1,0 +1,68 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: memoro-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: memoro
+      POSTGRES_PASSWORD: memoro_dev_password
+      POSTGRES_DB: memoro
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U memoro -d memoro"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: server-dev
+    container_name: memoro-server
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      HOST: 0.0.0.0
+      NODE_ENV: development
+      DB_CONNECTION_URL: postgres://memoro:memoro_dev_password@postgres:5432/memoro
+      SESSION_SECRET: dev-session-secret-key-at-least-32-chars-long
+      CORS_ORIGIN: http://localhost:5174,http://localhost:5173
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/packages/shared/node_modules
+      - /app/apps/server/node_modules
+      - /app/apps/client/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: client-dev
+    container_name: memoro-client
+    restart: unless-stopped
+    ports:
+      - "5174:5173"
+    environment:
+      NODE_ENV: development
+      VITE_API_TARGET: http://server:3000
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/packages/shared/node_modules
+      - /app/apps/server/node_modules
+      - /app/apps/client/node_modules
+    depends_on:
+      - server
+
+volumes:
+  postgres_data:

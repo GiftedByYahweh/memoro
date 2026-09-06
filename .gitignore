@@ -1,0 +1,56 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Build outputs
+dist/
+build/
+.output/
+*.tsbuildinfo
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# IDE / Editor
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+
+# Test coverage
+coverage/
+*.lcov
+
+# Temporary files
+tmp/
+scratch/
+
+# AI & Agents
+AGENTS.md
+AGENT.md
+CLAUDE.md
+.cursor/
+.cursorrules
+.claude/
+.gemini/
+.copilot/
+.windsurf/
+.cline/
+.roo/
+.aider*

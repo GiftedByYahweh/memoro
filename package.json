@@ -1,0 +1,45 @@
+{
+  "name": "memoro",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:server": "npm run dev --workspace=@memoro/server",
+    "dev:client": "npm run dev --workspace=@memoro/client",
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "format": "prettier --write \"**/*.{ts,vue,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,vue,json,md}\"",
+    "docker:build": "docker compose build",
+    "docker:up": "docker compose up",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "db:generate": "npm run db:generate --workspace=@memoro/server",
+    "db:migrate": "npm run db:migrate --workspace=@memoro/server",
+    "db:push": "npm run db:push --workspace=@memoro/server",
+    "db:studio": "npm run db:studio --workspace=@memoro/server",
+    "lint": "npm run lint:js && npm run lint:style",
+    "lint:fix": "npm run lint:js:fix && npm run lint:style:fix",
+    "lint:js": "eslint .",
+    "lint:js:fix": "eslint . --fix",
+    "lint:style": "stylelint \"**/*.{css,vue}\"",
+    "lint:style:fix": "stylelint \"**/*.{css,vue}\" --fix"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.6.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-vue": "^10.11.0",
+    "jiti": "^2.7.0",
+    "prettier": "^3.5.2",
+    "stylelint": "^17.15.0",
+    "stylelint-config-recommended-vue": "^2.0.0",
+    "stylelint-config-standard": "^40.0.0",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.63.0"
+  }
+}
