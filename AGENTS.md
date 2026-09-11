@@ -90,8 +90,22 @@
 ### 3.6 Domain Errors & Validation
 
 - Two-level validation: Zod on incoming request shapes, business logic rules in use cases.
-- **`AppError`**: Pure domain error class in `src/common/error/appError.ts`. It has NO HTTP status codes.
-- HTTP status mapping is defined strictly in `src/common/error/httpStatusMap.ts` and utilized by the Fastify error handler in `src/server.ts`.
+- **`AppError`**: Pure domain error class in `src/common/error/app.error.ts`. It has NO HTTP status codes.
+- HTTP status mapping is defined strictly in `src/common/error/http-status.map.ts` and utilized by the Fastify error handler in `src/server.ts`.
+
+### 3.7 File Naming Conventions
+
+- **STRICTLY FORBIDDEN: camelCase file names** across the backend (e.g. `cryptoService.ts`, `appError.ts`).
+- All files in `apps/server` MUST use kebab-case with dot-separated role suffixes:
+  - Services: `<name>.service.ts` or `<feature>-<name>.service.ts` (e.g. `crypto.service.ts`, `node-crypto.service.ts`, `auth.service.ts`)
+  - Use cases: `<name>.use-case.ts` (e.g. `register.use-case.ts`, `login.use-case.ts`)
+  - Repositories: `<name>.repository.ts` (e.g. `user.repository.ts`, `drizzle-user.repository.ts`)
+  - Controllers: `<name>.controller.ts`
+  - Route schemas: `<name>.schema.ts`
+  - Guards: `<name>.guard.ts`
+  - Routes: `<name>.routes.ts`
+  - Infrastructure / DB / Utilities: `<name>.provider.ts`, `<name>.logger.ts`, `<name>.error.ts`, `<name>.map.ts`, `<name>.context.ts`, `<name>.ts`
+
 
 ---
 

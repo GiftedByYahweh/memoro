@@ -1,1 +1,1 @@
-export * from './consoleLogger.js';
+export * from './console.logger.js';
