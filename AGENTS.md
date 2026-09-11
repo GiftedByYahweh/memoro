@@ -106,7 +106,6 @@
   - Routes: `<name>.routes.ts`
   - Infrastructure / DB / Utilities: `<name>.provider.ts`, `<name>.logger.ts`, `<name>.error.ts`, `<name>.map.ts`, `<name>.context.ts`, `<name>.ts`
 
-
 ---
 
 ## 4. Frontend Architecture (`apps/client`)

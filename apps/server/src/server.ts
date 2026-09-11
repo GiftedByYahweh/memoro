@@ -11,7 +11,6 @@ import type { Logger } from './logger/index.js';
 import { AppError, ErrorCode } from './common/error/app.error.js';
 import { HTTP_STATUS_BY_ERROR_CODE } from './common/error/http-status.map.js';
 
-
 interface CreateServerOptions {
   container: AppContainer;
   config: AppConfig;
