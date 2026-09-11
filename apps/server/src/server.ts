@@ -5,11 +5,11 @@ import fastifyCookie from '@fastify/cookie';
 import fastifyCors from '@fastify/cors';
 import fastifyRateLimit from '@fastify/rate-limit';
 import { ZodError } from 'zod';
-import type { AppContainer } from './container.js';
-import type { AppConfig } from './config.js';
-import type { Logger } from './logger/index.js';
-import { AppError, ErrorCode } from './common/error/app.error.js';
-import { HTTP_STATUS_BY_ERROR_CODE } from './common/error/http-status.map.js';
+import type { AppContainer } from './container';
+import type { AppConfig } from './config';
+import type { Logger } from './logger/index';
+import { AppError, ErrorCode } from './common/error/app.error';
+import { HTTP_STATUS_BY_ERROR_CODE } from './common/error/http-status.map';
 
 interface CreateServerOptions {
   container: AppContainer;

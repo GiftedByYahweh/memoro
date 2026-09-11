@@ -1,7 +1,7 @@
-import type { AppConfig } from './config.js';
-import { createTxContext } from './db/tx-context.js';
-import { DBProvider } from './db/db.provider.js';
-import { unitOfWork } from './db/unit-of-work.js';
+import type { AppConfig } from './config';
+import { createTxContext } from './db/tx-context';
+import { DBProvider } from './db/db.provider';
+import { unitOfWork } from './db/unit-of-work';
 
 export const createAppContainer = (config: AppConfig) => {
   const txContext = createTxContext();

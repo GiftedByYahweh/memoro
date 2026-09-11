@@ -1,4 +1,4 @@
-import type { DomainErrorCode } from './errors.js';
+import type { DomainErrorCode } from './errors';
 
 export interface ApiSuccessResponse<T = unknown> {
   readonly success: true;

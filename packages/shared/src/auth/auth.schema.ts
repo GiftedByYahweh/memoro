@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { AUTH_CONSTRAINTS } from './auth.constants.js';
-import type { RegisterDto, LoginDto } from './auth.types.js';
+import { AUTH_CONSTRAINTS } from './auth.constants';
+import type { RegisterDto, LoginDto } from './auth.types';
 
 export const registerSchema: z.ZodType<RegisterDto> = z.object({
   email: z

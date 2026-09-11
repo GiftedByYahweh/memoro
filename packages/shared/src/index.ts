@@ -1,3 +1,4 @@
-export * from './coordinates.js';
-export * from './errors.js';
-export * from './api.js';
+export * from './coordinates';
+export * from './errors';
+export * from './api';
+export * from './auth/index';

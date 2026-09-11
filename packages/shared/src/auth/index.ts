@@ -1,3 +1,3 @@
-export * from './auth.constants.js';
-export * from './auth.types.js';
-export * from './auth.schema.js';
+export * from './auth.constants';
+export * from './auth.types';
+export * from './auth.schema';

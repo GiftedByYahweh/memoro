@@ -1,7 +1,7 @@
 import { Pool } from 'pg';
-import type { AppConfig } from '../config.js';
+import type { AppConfig } from '../config';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import type { TxContext } from './tx-context.js';
+import type { TxContext } from './tx-context';
 
 type DBClient = ReturnType<typeof drizzle>;
 export type DBExecutor = DBClient | Parameters<Parameters<DBClient['transaction']>[0]>[0];

@@ -1,4 +1,4 @@
-import type { DBProvider } from './db.provider.js';
+import type { DBProvider } from './db.provider';
 
 export interface UnitOfWork {
   run<T>(fn: () => Promise<T>): Promise<T>;
