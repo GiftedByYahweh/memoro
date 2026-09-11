@@ -63,10 +63,11 @@
 
 ### 3.2 Use Case Contract & Rules
 
-- **Common Interface**: Every use case MUST implement the common interface `UseCase<TInput, TOutput>` (`src/common/useCase.ts`).
-- **Single Public Method**: A use case MUST have **only ONE public method: `execute()`**. Any internal helper methods must be private.
+- **Common Functional Type**: Every use case MUST implement the functional type `UseCase<TInput, TOutput>` (`src/common/use-case.ts`).
+- **Factory Functions**: Use cases are created via factory functions `create<Action>UseCase(deps)`. Dependencies are captured via closure, eliminating `this.` and class boilerplate.
+- **Direct Function Invocation**: Use cases are invoked directly as functions `await actionUseCase(input)`. No artificial `.execute()` method ceremony.
 - **Size Constraint**: The code in any single use case MUST NOT exceed **350 lines of code**. Decompose complex operations into smaller services or domain helpers.
-- **Dependency Injection**: All dependencies (repositories, unit of work, domain services, infrastructure providers) MUST be injected via constructor parameters.
+- **Dependency Injection**: All dependencies (repositories, unit of work, domain services) MUST be injected via factory function parameters.
 
 ### 3.3 Pure Domain Logic (`<feature>-service.ts`)
 
