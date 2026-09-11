@@ -1,4 +1,4 @@
-import { ErrorCode, type AppErrorCode } from './appError.js';
+import { ErrorCode, type AppErrorCode } from './app.error.js';
 
 export const HTTP_STATUS_BY_ERROR_CODE: Record<AppErrorCode, number> = {
   [ErrorCode.NOT_ENOUGH_PERMISSIONS]: 403,
