@@ -45,7 +45,6 @@
 
 ---
 
-
 ## 2. Monorepo Architecture
 
 - **npm workspaces**: `packages/shared`, `apps/server`, `apps/client`.
@@ -152,4 +151,3 @@ Before completing any task, the agent MUST run and verify:
 5. **No inline SVGs in templates or components.**
 6. **No TypeScript `enum` anywhere in the codebase (use `const ... as const` + union types).**
 7. **No magic numbers or magic strings (all constants extracted into typed dictionaries or shared constants).**
-
