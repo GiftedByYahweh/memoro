@@ -37,7 +37,14 @@
 
 - **STRICTLY FORBIDDEN: using TypeScript `enum`.** Never declare or use `enum`. Always use `const ... as const` object dictionaries with union types derived via `(typeof Obj)[keyof typeof Obj]`, or string literal unions.
 
+### 1.7 Prohibition of Magic Numbers and Magic Strings
+
+- **STRICTLY FORBIDDEN: using magic numbers or magic strings** across both frontend and backend (`apps/server`, `apps/client`, `packages/shared`).
+- All numeric limits, boundary values, timeouts, max lengths, status codes, route paths, cookie names, and domain constants MUST be extracted into explicitly named constants (`const ... as const` or `const SCREAMING_SNAKE_CASE`).
+- Validation limits (e.g. min/max password length, max email length, max upload size) must live in shared constants in `@memoro/shared` so they can be reused identically across Zod schemas, OpenAPI/Swagger contracts, database definitions, and UI components.
+
 ---
+
 
 ## 2. Monorepo Architecture
 
@@ -144,3 +151,5 @@ Before completing any task, the agent MUST run and verify:
 4. **No comments anywhere in the codebase** (`//`, `/* */`, `<!-- -->`).
 5. **No inline SVGs in templates or components.**
 6. **No TypeScript `enum` anywhere in the codebase (use `const ... as const` + union types).**
+7. **No magic numbers or magic strings (all constants extracted into typed dictionaries or shared constants).**
+
