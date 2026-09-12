@@ -15,8 +15,8 @@ export function drizzleSessionRepository(dbProvider: DBProvider): SessionReposit
           userId: data.userId,
           tokenHash: data.tokenHash,
           expiresAt: data.expiresAt,
-          userAgent: data.userAgent ?? null,
-          ipAddress: data.ipAddress ?? null,
+          userAgent: data.userAgent,
+          ipAddress: data.ipAddress,
         })
         .returning();
 

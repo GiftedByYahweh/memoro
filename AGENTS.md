@@ -101,7 +101,7 @@ src/core/<feature>/
 
 - All API responses adhere to a single standardized contract in `@memoro/shared`:
   - `ApiSuccessResponse<T>`: `{ success: true, data: T, message?: string, timestamp: number }`.
-  - `ApiErrorResponse`: `{ success: false, code: string, errorCode: DomainErrorCode | null, message: string, timestamp: number }`.
+  - `ApiErrorResponse`: `{ success: false, code: string, errorCode: DomainErrorCode | null, timestamp: number }`.
 - **Zero `data: null` in Errors**: Error responses MUST NEVER include `data: null`.
 - **Mandatory `timestamp` and `code`**: `timestamp` and `code` are always guaranteed numbers and strings (no optional `?`).
 - **Automated Envelope via Fastify Hook**:

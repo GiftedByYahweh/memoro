@@ -116,6 +116,7 @@ function togglePasswordVisibility(): void {
         :maxlength="maxlength"
         class="native-input"
         @input="handleInput"
+        @change="handleInput"
         @focus="emit('focus', $event)"
         @blur="emit('blur', $event)"
       />
@@ -193,12 +194,12 @@ function togglePasswordVisibility(): void {
 }
 
 .input-wrapper:hover {
-  border-color: rgb(255 255 255 / 16%);
+  border-color: var(--border-hover);
 }
 
 .input-wrapper:focus-within {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgb(224 104 75 / 18%);
+  box-shadow: 0 0 0 3px var(--border-focus-primary);
 }
 
 .size-sm {
@@ -255,7 +256,7 @@ function togglePasswordVisibility(): void {
 
 .has-error .input-wrapper:focus-within {
   border-color: var(--color-error);
-  box-shadow: 0 0 0 3px rgb(255 69 58 / 18%);
+  box-shadow: 0 0 0 3px var(--border-focus-error);
 }
 
 .is-disabled {
@@ -314,7 +315,7 @@ function togglePasswordVisibility(): void {
 
 .action-btn:hover {
   color: var(--color-text-primary);
-  background-color: rgb(255 255 255 / 8%);
+  background-color: var(--color-surface-hover);
 }
 
 .validation-message {

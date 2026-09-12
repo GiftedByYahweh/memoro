@@ -11,7 +11,6 @@ export interface ApiErrorResponse {
   success: false;
   code: string;
   errorCode: DomainErrorCode | null;
-  message: string;
   timestamp: number;
 }
 

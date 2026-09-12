@@ -1,4 +1,4 @@
-const SESSION_COOKIE_MAX_AGE = 1000 * 60 * 60 * 24 * 30;
+import { SESSION_MAX_AGE_MS } from '@memoro/shared';
 
 function loadR2Config(env: NodeJS.ProcessEnv) {
   return {
@@ -32,7 +32,7 @@ export const loadAppConfig = () => {
     },
     session: {
       secret: env['SESSION_SECRET'] ?? 'dev-session-secret-key-at-least-32-chars-long',
-      maxAge: SESSION_COOKIE_MAX_AGE,
+      maxAge: SESSION_MAX_AGE_MS,
     },
     db: {
       url: env['DB_CONNECTION_URL'] ?? '',

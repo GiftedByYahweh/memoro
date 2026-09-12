@@ -1,11 +1,13 @@
-import { ApiRoutes } from '@memoro/shared';
+import { ApiRoutes, type AuthUserDto, type LoginDto, type RegisterDto } from '@memoro/shared';
 import type { HttpTransport } from './httpTransport';
 
 const authApi = (transport: HttpTransport) => ({
-  login: <T = unknown>(data: unknown) =>
-    transport.post<T>(`${ApiRoutes.auth.prefix}${ApiRoutes.auth.login}`, data),
-  logout: <T = unknown>() => transport.post<T>(`${ApiRoutes.auth.prefix}${ApiRoutes.auth.logout}`),
-  session: <T = unknown>() => transport.get<T>(`${ApiRoutes.auth.prefix}${ApiRoutes.auth.session}`),
+  register: (data: RegisterDto) =>
+    transport.post<AuthUserDto>(`${ApiRoutes.auth.prefix}${ApiRoutes.auth.register}`, data),
+  login: (data: LoginDto) =>
+    transport.post<AuthUserDto>(`${ApiRoutes.auth.prefix}${ApiRoutes.auth.login}`, data),
+  logout: () => transport.post<null>(`${ApiRoutes.auth.prefix}${ApiRoutes.auth.logout}`),
+  session: () => transport.get<AuthUserDto>(`${ApiRoutes.auth.prefix}${ApiRoutes.auth.session}`),
 });
 
 export { authApi };

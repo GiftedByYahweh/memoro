@@ -3,7 +3,6 @@ import type { ErrorCode } from '@/common/error/app.error';
 
 interface ErrorResponseOptions {
   code: ErrorCode;
-  message: string;
   errorCode?: DomainErrorCode | null;
 }
 
@@ -20,7 +19,6 @@ const errorResponse = (options: ErrorResponseOptions): ApiErrorResponse => {
     success: false,
     code: options.code,
     errorCode: options.errorCode ?? null,
-    message: options.message,
     timestamp: Date.now(),
   };
 };

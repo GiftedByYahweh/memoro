@@ -4,8 +4,8 @@ export interface CreateSessionData {
   userId: string;
   tokenHash: string;
   expiresAt: Date;
-  userAgent: string | undefined;
-  ipAddress: string | undefined;
+  userAgent: string | null;
+  ipAddress: string | null;
 }
 
 export interface SessionRepository {

@@ -17,8 +17,8 @@ export class AppError extends Error {
   public code: ErrorCode;
   public errorCode: DomainErrorCode | null;
 
-  constructor(code: ErrorCode, message: string, errorCode: DomainErrorCode | null = null) {
-    super(message);
+  constructor(code: ErrorCode, errorCode: DomainErrorCode | null = null) {
+    super(code);
     this.name = 'AppError';
     this.code = code;
     this.errorCode = errorCode;

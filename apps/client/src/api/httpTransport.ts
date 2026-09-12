@@ -1,4 +1,3 @@
-import { ERROR_MESSAGES } from '@/utils/error-messages';
 import { type DomainErrorCode, type ApiResponse, type ApiErrorResponse } from '@memoro/shared';
 
 export interface RequestOptions extends Omit<RequestInit, 'body' | 'method' | 'headers'> {
@@ -27,14 +26,12 @@ const CLIENT_ERROR_CODE = 'CLIENT_ERROR';
 
 function toErrorResponse(
   errorCode: DomainErrorCode | null = null,
-  message?: string,
   code: string = CLIENT_ERROR_CODE,
 ): ApiErrorResponse {
   return {
     success: false,
     code,
     errorCode,
-    message: message ?? ERROR_MESSAGES.SOMETHING_WENT_WRONG,
     timestamp: Date.now(),
   };
 }
