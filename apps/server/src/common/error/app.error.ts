@@ -11,13 +11,13 @@ export const ErrorCode = {
   VALIDATION_ERROR: 'VALIDATION_ERROR',
 } as const;
 
-export type AppErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
+export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
 
 export class AppError extends Error {
-  public code: AppErrorCode;
+  public code: ErrorCode;
   public errorCode: DomainErrorCode | null;
 
-  constructor(code: AppErrorCode, message: string, errorCode: DomainErrorCode | null = null) {
+  constructor(code: ErrorCode, message: string, errorCode: DomainErrorCode | null = null) {
     super(message);
     this.name = 'AppError';
     this.code = code;
