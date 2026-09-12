@@ -1,0 +1,11 @@
+{
+  "buildCommand": "npm run build --workspace=@memoro/client",
+  "outputDirectory": "apps/client/dist",
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
