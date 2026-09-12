@@ -77,6 +77,7 @@ const { mutate: handleLogin, isPending } = useMutation({
 });
 
 function onSubmit(): void {
+  if (isPending.value) return;
   if (!validateForm()) return;
   handleLogin();
 }
@@ -135,6 +136,7 @@ function onSubmit(): void {
       block
       :loading="isPending"
       class="submit-btn"
+      @click="onSubmit"
     >
       {{ t('auth.enterArchive') }}
     </AppButton>

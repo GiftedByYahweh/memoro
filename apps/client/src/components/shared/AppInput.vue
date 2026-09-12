@@ -116,6 +116,7 @@ function togglePasswordVisibility(): void {
         :maxlength="maxlength"
         class="native-input"
         @input="handleInput"
+        @change="handleInput"
         @focus="emit('focus', $event)"
         @blur="emit('blur', $event)"
       />

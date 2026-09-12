@@ -78,6 +78,7 @@ const { mutate: handleRegister, isPending } = useMutation({
 });
 
 function onSubmit(): void {
+  if (isPending.value) return;
   if (!validateForm()) return;
   handleRegister();
 }
@@ -132,6 +133,7 @@ function onSubmit(): void {
       block
       :loading="isPending"
       class="submit-btn"
+      @click="onSubmit"
     >
       {{ t('auth.createAccount') }}
     </AppButton>
