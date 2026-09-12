@@ -32,5 +32,12 @@
     "tooShort": "Must be at least {min} characters",
     "tooLong": "Must be at most {max} characters",
     "invalid": "Invalid value"
+  },
+  "errors": {
+    "userAlreadyExists": "User with this email already exists",
+    "invalidCredentials": "Invalid email or password",
+    "sessionExpired": "Session expired",
+    "unauthorized": "Unauthorized access",
+    "unknown": "An unexpected error occurred"
   }
 }

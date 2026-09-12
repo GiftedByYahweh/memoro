@@ -32,5 +32,12 @@
     "tooShort": "Мінімум {min} символів",
     "tooLong": "Максимум {max} символів",
     "invalid": "Некоректне значення"
+  },
+  "errors": {
+    "userAlreadyExists": "Користувач із таким email вже існує",
+    "invalidCredentials": "Невірний email або пароль",
+    "sessionExpired": "Час сесії минув",
+    "unauthorized": "Необхідно увійти в систему",
+    "unknown": "Сталася неочікувана помилка"
   }
 }
