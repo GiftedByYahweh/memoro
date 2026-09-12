@@ -3,36 +3,14 @@ import { AUTH_CONSTRAINTS } from './auth.constants';
 import type { RegisterDto, LoginDto } from './auth.types';
 
 export const registerSchema: z.ZodType<RegisterDto> = z.object({
-  email: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .email('Invalid email address')
-    .max(
-      AUTH_CONSTRAINTS.EMAIL_MAX_LENGTH,
-      `Email must not exceed ${String(AUTH_CONSTRAINTS.EMAIL_MAX_LENGTH)} characters`,
-    ),
+  email: z.string().trim().toLowerCase().email().max(AUTH_CONSTRAINTS.EMAIL_MAX_LENGTH),
   password: z
     .string()
-    .min(
-      AUTH_CONSTRAINTS.PASSWORD_MIN_LENGTH,
-      `Password must be at least ${String(AUTH_CONSTRAINTS.PASSWORD_MIN_LENGTH)} characters long`,
-    )
-    .max(
-      AUTH_CONSTRAINTS.PASSWORD_MAX_LENGTH,
-      `Password must not exceed ${String(AUTH_CONSTRAINTS.PASSWORD_MAX_LENGTH)} characters`,
-    ),
+    .min(AUTH_CONSTRAINTS.PASSWORD_MIN_LENGTH)
+    .max(AUTH_CONSTRAINTS.PASSWORD_MAX_LENGTH),
 });
 
 export const loginSchema: z.ZodType<LoginDto> = z.object({
-  email: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .email('Invalid email address')
-    .max(
-      AUTH_CONSTRAINTS.EMAIL_MAX_LENGTH,
-      `Email must not exceed ${String(AUTH_CONSTRAINTS.EMAIL_MAX_LENGTH)} characters`,
-    ),
-  password: z.string().min(1, 'Password is required'),
+  email: z.string().trim().toLowerCase().email().max(AUTH_CONSTRAINTS.EMAIL_MAX_LENGTH),
+  password: z.string().min(1),
 });

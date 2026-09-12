@@ -4,3 +4,4 @@ export * from './api';
 export * from './auth';
 export * from './profile';
 export * from './routes';
+export * from './validation';

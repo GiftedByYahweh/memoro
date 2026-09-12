@@ -25,5 +25,12 @@
     "timeline": "Хронологія",
     "collections": "Колекції",
     "profile": "Профіль"
+  },
+  "validation": {
+    "required": "Обов'язкове поле",
+    "invalidEmail": "Некоректний email",
+    "tooShort": "Мінімум {min} символів",
+    "tooLong": "Максимум {max} символів",
+    "invalid": "Некоректне значення"
   }
 }
