@@ -10,30 +10,3 @@ export const ApiRoutes = {
     session: '/session',
   },
 } as const;
-
-export const RoutePaths = {
-  auth: {
-    name: 'auth',
-    path: '/auth',
-  },
-  map: {
-    name: 'map',
-    path: '/map',
-    auth: true,
-  },
-  feed: {
-    name: 'feed',
-    path: '/feed',
-    auth: true,
-  },
-  albums: {
-    name: 'albums',
-    path: '/albums',
-    auth: true,
-  },
-  profile: {
-    name: 'profile',
-    path: '/profile',
-    auth: true,
-  },
-} as const;
