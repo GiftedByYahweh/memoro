@@ -16,6 +16,7 @@ import logo from './logo.svg?raw';
 import mail from './mail.svg?raw';
 import moreVertical from './more-vertical.svg?raw';
 import navigation from './navigation.svg?raw';
+import north from './north.svg?raw';
 import photos from './photos.svg?raw';
 import plus from './plus.svg?raw';
 import search from './search.svg?raw';
@@ -45,6 +46,7 @@ export const icons = {
   mail,
   moreVertical,
   navigation,
+  north,
   photos,
   plus,
   search,

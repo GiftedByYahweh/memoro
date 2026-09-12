@@ -21,4 +21,19 @@ export const RoutePaths = {
     path: '/map',
     auth: true,
   },
+  feed: {
+    name: 'feed',
+    path: '/feed',
+    auth: true,
+  },
+  albums: {
+    name: 'albums',
+    path: '/albums',
+    auth: true,
+  },
+  profile: {
+    name: 'profile',
+    path: '/profile',
+    auth: true,
+  },
 } as const;

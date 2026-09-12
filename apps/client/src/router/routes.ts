@@ -26,6 +26,24 @@ export const routes: RouteRecordRaw[] = [
     meta: { layout: appLayouts.main, requiresAuth: RoutePaths.map.auth },
   },
   {
+    path: RoutePaths.feed.path,
+    name: RoutePaths.feed.name,
+    component: () => import('../pages/FeedPage.vue'),
+    meta: { layout: appLayouts.main, requiresAuth: RoutePaths.feed.auth },
+  },
+  {
+    path: RoutePaths.albums.path,
+    name: RoutePaths.albums.name,
+    component: () => import('../pages/AlbumsPage.vue'),
+    meta: { layout: appLayouts.main, requiresAuth: RoutePaths.albums.auth },
+  },
+  {
+    path: RoutePaths.profile.path,
+    name: RoutePaths.profile.name,
+    component: () => import('../pages/ProfilePage.vue'),
+    meta: { layout: appLayouts.main, requiresAuth: RoutePaths.profile.auth },
+  },
+  {
     path: '/:pathMatch(.*)*',
     redirect: RoutePaths.map.path,
   },
