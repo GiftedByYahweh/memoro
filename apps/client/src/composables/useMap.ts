@@ -173,11 +173,20 @@ function useCameraMetrics(map: ShallowRef<Map | null>) {
   return { bearing, pitch, updateCamera };
 }
 
+interface UserCoordinates {
+  lng: number;
+  lat: number;
+}
+
 function useUserMarker(map: ShallowRef<Map | null>) {
   let marker: Marker | null = null;
+  let pendingCoords: UserCoordinates | null = null;
 
-  function show(lng: number, lat: number) {
-    if (!map.value) return;
+  function show(lng: number, lat: number): void {
+    if (!map.value) {
+      pendingCoords = { lng, lat };
+      return;
+    }
     map.value.flyTo({
       center: [lng, lat],
       zoom: USER_LOCATION_ZOOM,
@@ -186,12 +195,21 @@ function useUserMarker(map: ShallowRef<Map | null>) {
     marker = renderUserMarker(map.value, marker, lng, lat);
   }
 
-  function destroy() {
-    marker?.remove();
-    marker = null;
+  function applyPending(): void {
+    if (pendingCoords && map.value) {
+      const target = pendingCoords;
+      pendingCoords = null;
+      show(target.lng, target.lat);
+    }
   }
 
-  return { show, destroy };
+  function destroy(): void {
+    marker?.remove();
+    marker = null;
+    pendingCoords = null;
+  }
+
+  return { show, applyPending, destroy };
 }
 
 function extractErrorMessage(event: unknown): string {
@@ -219,6 +237,7 @@ export function useMap(targetContainer?: Ref<HTMLElement | null>) {
         onLoad: () => {
           isLoaded.value = true;
           map.value?.resize();
+          userMarker.applyPending();
         },
         onCamera: updateCamera,
         onError: (e) => {

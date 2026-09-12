@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MapControls from '@/components/features/map/MapControls.vue';
 import { type GeoError, useGeolocation } from '@/composables/useGeolocation';
@@ -58,6 +58,19 @@ async function handleLocate(): Promise<void> {
     toast.showError(message, GEOLOCATION_ERROR_TOAST_DURATION_MS);
   }
 }
+
+async function autoLocateOnMount(): Promise<void> {
+  try {
+    const coords = await getCurrentPosition();
+    showUserLocation(coords.lng, coords.lat);
+  } catch {
+    return;
+  }
+}
+
+onMounted(() => {
+  void autoLocateOnMount();
+});
 </script>
 
 <template>
