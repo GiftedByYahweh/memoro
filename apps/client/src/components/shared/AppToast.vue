@@ -181,19 +181,11 @@ function handlePointerCancel(event: PointerEvent, id: string): void {
 .toast-content {
   flex: 1;
   min-width: 0;
-  max-height: 280px;
-  overflow-y: auto;
 }
 
 .toast-message {
   white-space: pre-wrap;
   overflow-wrap: break-word;
-}
-
-.type-error .toast-message {
-  font-family: var(--font-mono, monospace);
-  font-size: 11px;
-  line-height: 1.4;
 }
 
 .toast-close {
