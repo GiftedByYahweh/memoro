@@ -47,5 +47,13 @@
     "invalidLoginCredentials": "Invalid email or password",
     "sessionExpired": "Session expired",
     "unknown": "An unexpected error occurred"
+  },
+  "map": {
+    "locate": "My location",
+    "locating": "Locating...",
+    "layers": "Map layers",
+    "view3D": "3D view",
+    "resetNorth": "Orient to north",
+    "locationError": "Failed to determine your location"
   }
 }
