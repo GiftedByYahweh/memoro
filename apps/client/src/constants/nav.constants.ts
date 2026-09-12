@@ -1,4 +1,4 @@
-import { RoutePaths } from '@memoro/shared';
+import { RoutePaths } from '@/router/routes';
 import type { IconName } from '@/assets/icons';
 
 export interface NavItemConfig {

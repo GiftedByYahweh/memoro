@@ -4,6 +4,7 @@ import camera from './camera.svg?raw';
 import check from './check.svg?raw';
 import close from './close.svg?raw';
 import compass from './compass.svg?raw';
+import download from './download.svg?raw';
 import edit from './edit.svg?raw';
 import eyeOff from './eye-off.svg?raw';
 import eye from './eye.svg?raw';
@@ -21,6 +22,7 @@ import photos from './photos.svg?raw';
 import plus from './plus.svg?raw';
 import search from './search.svg?raw';
 import settings from './settings.svg?raw';
+import share from './share.svg?raw';
 import shield from './shield.svg?raw';
 import sun from './sun.svg?raw';
 import target from './target.svg?raw';
@@ -34,6 +36,7 @@ export const icons = {
   check,
   close,
   compass,
+  download,
   edit,
   eye,
   eyeOff,
@@ -51,6 +54,7 @@ export const icons = {
   plus,
   search,
   settings,
+  share,
   shield,
   sun,
   target,

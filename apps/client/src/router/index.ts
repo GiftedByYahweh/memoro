@@ -1,10 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { RoutePaths } from '@memoro/shared';
 import { useAuth } from '@/composables/useAuth';
-import { routes } from './routes';
+import { RoutePaths, routes } from './routes';
 
 export const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
 

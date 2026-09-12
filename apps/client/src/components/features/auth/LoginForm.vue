@@ -11,7 +11,7 @@ import { useAuth } from '@/composables/useAuth';
 import { useDomainError } from '@/composables/useDomainError';
 import { useToast } from '@/composables/useToast';
 import { useValidation } from '@/composables/useValidation';
-import { RoutePaths } from '@memoro/shared';
+import { RoutePaths } from '@/router/routes';
 
 const ICON_SIZE_FIELD = 18;
 const EMAIL_FIELD = 'email';
