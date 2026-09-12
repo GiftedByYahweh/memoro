@@ -2,7 +2,12 @@ import type { AppConfig } from './config';
 import { createTxContext } from '@/db/tx-context';
 import { DBProvider } from '@/db/db.provider';
 import { unitOfWork } from '@/db/unit-of-work';
-import { drizzleUserRepository } from '@/core/auth/repositories/drizzle-user.repository';
+import {
+  drizzleUserRepository,
+  createUserUseCase,
+  findUserByEmailUseCase,
+  findUserByIdUseCase,
+} from '@/core/user';
 import { drizzleProfileRepository, createProfileUseCase } from '@/core/profile';
 import { drizzleSessionRepository } from '@/core/auth/repositories/drizzle-session.repository';
 import { registerUseCase } from '@/core/auth/use-cases/register.use-case';
@@ -12,64 +17,94 @@ import { createSessionUseCase } from '@/core/auth/use-cases/create-session.use-c
 import { validateSessionUseCase } from '@/core/auth/use-cases/validate-session.use-case';
 import { authRoutes } from '@/core/auth/routes/auth.routes';
 
-export const createAppContainer = (config: AppConfig) => {
+interface InfrastructureDeps {
+  dbProvider: DBProvider;
+  txContext: ReturnType<typeof createTxContext>;
+  uow: ReturnType<typeof unitOfWork>;
+  userRepository: ReturnType<typeof drizzleUserRepository>;
+  profileRepository: ReturnType<typeof drizzleProfileRepository>;
+  sessionRepository: ReturnType<typeof drizzleSessionRepository>;
+}
+
+function initInfrastructure(config: AppConfig): InfrastructureDeps {
   const txContext = createTxContext();
   const dbProvider = new DBProvider(config, txContext);
   const uow = unitOfWork(dbProvider);
 
-  const userRepository = drizzleUserRepository(dbProvider);
-  const profileRepository = drizzleProfileRepository(dbProvider);
-  const sessionRepository = drizzleSessionRepository(dbProvider);
+  return {
+    txContext,
+    dbProvider,
+    uow,
+    userRepository: drizzleUserRepository(dbProvider),
+    profileRepository: drizzleProfileRepository(dbProvider),
+    sessionRepository: drizzleSessionRepository(dbProvider),
+  };
+}
 
-  const createProfile = createProfileUseCase({ profileRepository });
+function initUseCases(infra: InfrastructureDeps, sessionMaxAgeMs: number) {
+  const createUser = createUserUseCase({ userRepository: infra.userRepository });
+  const findUserByEmail = findUserByEmailUseCase({ userRepository: infra.userRepository });
+  const findUserById = findUserByIdUseCase({ userRepository: infra.userRepository });
+  const createProfile = createProfileUseCase({ profileRepository: infra.profileRepository });
 
   const createSession = createSessionUseCase({
-    sessionRepository,
-    sessionMaxAgeMs: config.session.maxAge,
+    sessionRepository: infra.sessionRepository,
+    sessionMaxAgeMs,
   });
 
   const register = registerUseCase({
-    userRepository,
+    findUserByEmailUseCase: findUserByEmail,
+    createUserUseCase: createUser,
     createProfileUseCase: createProfile,
-    unitOfWork: uow,
+    unitOfWork: infra.uow,
   });
 
   const login = loginUseCase({
-    userRepository,
+    findUserByEmailUseCase: findUserByEmail,
     createSessionUseCase: createSession,
   });
 
   const logout = logoutUseCase({
-    sessionRepository,
+    sessionRepository: infra.sessionRepository,
   });
 
   const validateSession = validateSessionUseCase({
-    userRepository,
-    sessionRepository,
+    findUserByIdUseCase: findUserById,
+    sessionRepository: infra.sessionRepository,
   });
 
-  const authRoutePlugin = authRoutes({
+  return {
+    createUserUseCase: createUser,
+    findUserByEmailUseCase: findUserByEmail,
+    findUserByIdUseCase: findUserById,
+    createProfileUseCase: createProfile,
+    createSessionUseCase: createSession,
     registerUseCase: register,
     loginUseCase: login,
     logoutUseCase: logout,
     validateSessionUseCase: validateSession,
+  };
+}
+
+export const createAppContainer = (config: AppConfig) => {
+  const infra = initInfrastructure(config);
+  const useCases = initUseCases(infra, config.session.maxAge);
+
+  const authRoutePlugin = authRoutes({
+    registerUseCase: useCases.registerUseCase,
+    loginUseCase: useCases.loginUseCase,
+    logoutUseCase: useCases.logoutUseCase,
+    validateSessionUseCase: useCases.validateSessionUseCase,
     isProduction: config.isProduction,
   });
 
   return {
     infrastructure: {
-      dbProvider,
-      txContext,
-      uow,
+      dbProvider: infra.dbProvider,
+      txContext: infra.txContext,
+      uow: infra.uow,
     },
-    useCases: {
-      registerUseCase: register,
-      loginUseCase: login,
-      logoutUseCase: logout,
-      createSessionUseCase: createSession,
-      validateSessionUseCase: validateSession,
-      createProfileUseCase: createProfile,
-    },
+    useCases,
     routes: {
       authRoutes: authRoutePlugin,
     },
