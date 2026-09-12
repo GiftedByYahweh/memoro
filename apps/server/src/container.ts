@@ -6,6 +6,8 @@ import { drizzleUserRepository } from '@/core/auth/repositories/drizzle-user.rep
 import { drizzleProfileRepository, createProfileUseCase } from '@/core/profile';
 import { drizzleSessionRepository } from '@/core/auth/repositories/drizzle-session.repository';
 import { registerUseCase } from '@/core/auth/use-cases/register.use-case';
+import { loginUseCase } from '@/core/auth/use-cases/login.use-case';
+import { logoutUseCase } from '@/core/auth/use-cases/logout.use-case';
 import { createSessionUseCase } from '@/core/auth/use-cases/create-session.use-case';
 import { authRoutes } from '@/core/auth/routes/auth.routes';
 
@@ -28,12 +30,22 @@ export const createAppContainer = (config: AppConfig) => {
   const register = registerUseCase({
     userRepository,
     createProfileUseCase: createProfile,
-    createSessionUseCase: createSession,
     unitOfWork: uow,
+  });
+
+  const login = loginUseCase({
+    userRepository,
+    createSessionUseCase: createSession,
+  });
+
+  const logout = logoutUseCase({
+    sessionRepository,
   });
 
   const authRoutePlugin = authRoutes({
     registerUseCase: register,
+    loginUseCase: login,
+    logoutUseCase: logout,
     isProduction: config.isProduction,
   });
 
@@ -45,6 +57,8 @@ export const createAppContainer = (config: AppConfig) => {
     },
     useCases: {
       registerUseCase: register,
+      loginUseCase: login,
+      logoutUseCase: logout,
       createSessionUseCase: createSession,
       createProfileUseCase: createProfile,
     },

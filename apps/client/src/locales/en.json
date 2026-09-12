@@ -35,9 +35,8 @@
   },
   "errors": {
     "userAlreadyExists": "User with this email already exists",
-    "invalidCredentials": "Invalid email or password",
+    "invalidLoginCredentials": "Invalid email or password",
     "sessionExpired": "Session expired",
-    "unauthorized": "Unauthorized access",
     "unknown": "An unexpected error occurred"
   }
 }

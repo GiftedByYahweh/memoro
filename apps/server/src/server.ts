@@ -19,6 +19,8 @@ import { HTTP_STATUS_BY_ERROR_CODE } from '@/common/error/http-status.map';
 import { ApiRoutes } from '@memoro/shared';
 import { errorResponse, successResponse } from '@/common/utils/api-response';
 
+const DOCS_ROUTE_PREFIX = '/docs';
+
 interface CreateServerOptions {
   container: AppContainer;
   config: AppConfig;
@@ -36,12 +38,10 @@ async function registerPlugins(server: FastifyInstance, config: AppConfig) {
     max: 100,
     timeWindow: '1 minute',
     errorResponseBuilder: () => {
-      throw new AppError(ErrorCode.TOO_MANY_REQUESTS, 'Too many requests, please try again later');
+      throw new AppError(ErrorCode.TOO_MANY_REQUESTS);
     },
   });
 }
-
-const DOCS_ROUTE_PREFIX = '/docs';
 
 async function registerDocs(server: FastifyInstance, config: AppConfig) {
   if (config.isProduction) return;
@@ -62,16 +62,12 @@ async function registerDocs(server: FastifyInstance, config: AppConfig) {
 }
 
 function registerErrorHandlers(server: FastifyInstance, logger: Logger) {
-  server.setNotFoundHandler((req) => {
-    throw new AppError(ErrorCode.NOT_FOUND, `Requested URL (${req.method} ${req.url}) not found`);
+  server.setNotFoundHandler(() => {
+    throw new AppError(ErrorCode.NOT_FOUND);
   });
 
-  server.setSchemaErrorFormatter((errors) => {
-    const error = errors[0];
-    const fieldName = error?.instancePath.substring(1);
-    const field = fieldName ?? 'Field';
-    const reason = error?.message ?? 'is invalid';
-    return new AppError(ErrorCode.VALIDATION_ERROR, `${field}: ${reason}`);
+  server.setSchemaErrorFormatter(() => {
+    return new AppError(ErrorCode.VALIDATION_ERROR);
   });
 
   server.setErrorHandler((error, request, reply) => {
@@ -81,7 +77,6 @@ function registerErrorHandlers(server: FastifyInstance, logger: Logger) {
         errorResponse({
           code: error.code,
           errorCode: error.errorCode,
-          message: error.message,
         }),
       );
       return;
@@ -92,7 +87,6 @@ function registerErrorHandlers(server: FastifyInstance, logger: Logger) {
     reply.status(500).send(
       errorResponse({
         code: ErrorCode.INTERNAL_SERVER_ERROR,
-        message: 'Internal server error',
       }),
     );
   });

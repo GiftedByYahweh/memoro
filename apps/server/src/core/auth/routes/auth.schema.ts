@@ -1,7 +1,11 @@
-import { registerSchema } from '@memoro/shared';
+import { loginSchema, registerSchema } from '@memoro/shared';
 
 const registerRouteSchema = {
   body: registerSchema,
 };
 
-export { registerRouteSchema };
+const loginRouteSchema = {
+  body: loginSchema,
+};
+
+export { registerRouteSchema, loginRouteSchema };

@@ -1,7 +1,9 @@
+const API_PREFIX = '/api';
+
 export const ApiRoutes = {
-  health: '/health',
+  health: `${API_PREFIX}/health`,
   auth: {
-    prefix: '/auth',
+    prefix: `${API_PREFIX}/auth`,
     register: '/register',
     login: '/login',
     logout: '/logout',
