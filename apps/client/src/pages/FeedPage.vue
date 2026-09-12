@@ -24,7 +24,8 @@ import AppIcon from '@/components/shared/AppIcon.vue';
   min-height: 100vh;
   width: 100%;
   background-color: var(--color-oled-black);
-  padding: var(--space-xl) var(--space-md) calc(var(--bottom-nav-height) + var(--safe-bottom) + var(--space-xl));
+  padding: var(--space-xl) var(--space-md)
+    calc(var(--bottom-nav-height) + var(--safe-bottom) + var(--space-xl));
   box-sizing: border-box;
 }
 

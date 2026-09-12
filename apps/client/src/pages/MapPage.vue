@@ -10,8 +10,7 @@ import { DEFAULT_MAP_STYLE_KEY, type MapStyleKey } from '@/constants/map.constan
 const { t } = useI18n();
 const toast = useToast();
 const { isLocating, getCurrentPosition } = useGeolocation();
-const { container, bearing, pitch, setStyle, showUserLocation, togglePitch, resetNorth } =
-  useMap();
+const { container, bearing, pitch, setStyle, showUserLocation, togglePitch, resetNorth } = useMap();
 const activeStyle = ref<MapStyleKey>(DEFAULT_MAP_STYLE_KEY);
 
 function handleStyleChange(styleKey: MapStyleKey): void {

@@ -29,12 +29,7 @@ function handleCreate(): void {
       </div>
 
       <div class="fab-wrap">
-        <button
-          type="button"
-          class="fab-btn"
-          aria-label="Add memory"
-          @click="handleCreate"
-        >
+        <button type="button" class="fab-btn" aria-label="Add memory" @click="handleCreate">
           <AppIcon name="plus" :size="24" color="inherit" />
         </button>
       </div>

@@ -2,11 +2,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import AppIcon from '@/components/shared/AppIcon.vue';
-import {
-  MAP_CONTROL_ICON_SIZE,
-  MAP_STYLES,
-  type MapStyleKey,
-} from '@/constants/map.constants';
+import { MAP_CONTROL_ICON_SIZE, MAP_STYLES, type MapStyleKey } from '@/constants/map.constants';
 
 interface Props {
   activeStyle: MapStyleKey;

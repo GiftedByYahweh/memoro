@@ -29,13 +29,7 @@ async function handleLogout(): Promise<void> {
       </div>
     </div>
     <div class="profile-actions">
-      <AppButton
-        variant="danger"
-        size="md"
-        :loading="isLoading"
-        block
-        @click="handleLogout"
-      >
+      <AppButton variant="danger" size="md" :loading="isLoading" block @click="handleLogout">
         Sign Out
       </AppButton>
     </div>
@@ -49,7 +43,8 @@ async function handleLogout(): Promise<void> {
   min-height: 100vh;
   width: 100%;
   background-color: var(--color-oled-black);
-  padding: var(--space-xl) var(--space-md) calc(var(--bottom-nav-height) + var(--safe-bottom) + var(--space-xl));
+  padding: var(--space-xl) var(--space-md)
+    calc(var(--bottom-nav-height) + var(--safe-bottom) + var(--space-xl));
   box-sizing: border-box;
 }
 
