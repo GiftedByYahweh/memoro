@@ -60,57 +60,109 @@
 
 ## 3. Backend Architecture (`apps/server`)
 
-### 3.1 Infrastructure & Presentation Isolation
+### 3.1 Feature Module Structure (`src/core/<feature>/`)
 
-- **Fastify is isolated to the presentation/delivery layer**: Only `src/server.ts` and `index.ts` import Fastify.
-- **Controllers / Route Handlers**: Handle ONLY transport work — parse/validate incoming requests via `FastifyRequest`, call the appropriate use case `execute()` method, and return the result using `FastifyReply`. Fastify objects (`FastifyRequest`, `FastifyReply`) must NEVER be passed down into use cases, domain services, or repositories.
-- **Swagger Contracts in Separate Files**: Route schemas and Swagger/OpenAPI documentation MUST be written in separate files (e.g. `*.schema.ts` or `*.swagger.ts`) and attached to the route configuration. **STRICTLY FORBIDDEN: inlining Swagger contracts directly inside controller / route handler files.**
-- **Manual Dependency Injection (Composition Root)**: All dependencies are wired explicitly in `src/container.ts` (`createAppContainer`). No magic DI frameworks.
+Every business module under `src/core/<feature>/` MUST follow a strictly flat, 1-level directory architecture:
 
-### 3.2 Use Case Contract & Rules
+```
+src/core/<feature>/
+├── entities/
+│   └── <name>.entity.ts            # Pure domain models (clean interfaces)
+├── repositories/
+│   ├── <name>.repository.ts        # Repository port interface
+│   └── drizzle-<name>.repository.ts # Drizzle ORM implementation (isolated from HTTP/Fastify)
+├── mappers/
+│   └── <name>.mapper.ts            # Pure conversion functions: DB records <-> Domain entities
+├── use-cases/
+│   └── <action>.use-case.ts        # Business operations implementing UseCase<TInput, TOutput>
+├── routes/
+│   ├── <feature>.routes.ts         # Fastify route plugin (presentation/transport layer only)
+│   └── <feature>.schema.ts         # Route validation schemas & Swagger/OpenAPI contracts
+└── index.ts                        # Public barrel export for the module
+```
+
+- **No Controller Class/File**: Controllers are eliminated. Route handlers in `<feature>.routes.ts` directly handle request parsing, cookie management, calling the use case, and returning domain data.
+
+### 3.2 Single Use Case per Route & Atomic Transactions
+
+- **A route handler MUST call ONLY ONE use case**. Never orchestrate multiple use cases inside a route handler.
+- **Atomic Operations in Use Cases**: Multi-step workflows (e.g. creating User + Profile + Session during registration) MUST be orchestrated inside a single use case and executed atomically inside `unitOfWork.run(async () => { ... })`.
+- Route handlers do zero arithmetic and zero business logic (e.g. TTL calculations belong in use cases or entities, not routes).
+
+### 3.3 Prohibition of `create` Prefix on Factories and Functions
+
+- **STRICTLY FORBIDDEN: using `create` prefix on factories, repositories, and utilities** (avoids `createCreate...` stuttering and boilerplate):
+  - Repositories: `drizzleUserRepository`, `drizzleSessionRepository`, `drizzleProfileRepository` (NOT `createDrizzleUserRepository`).
+  - Use case factories: `registerUseCase`, `createSessionUseCase` (acceptable only when domain action is creation of entity), `loginUseCase`, `logoutUseCase`.
+  - Route plugins: `authRoutes` (NOT `createAuthRoutes`).
+  - Response helpers: `successResponse`, `errorResponse` (NOT `createSuccessResponse`).
+
+### 3.4 Global Response Envelope & Serialization
+
+- All API responses adhere to a single standardized contract in `@memoro/shared`:
+  - `ApiSuccessResponse<T>`: `{ success: true, data: T, message?: string, timestamp: number }`.
+  - `ApiErrorResponse`: `{ success: false, code: string, errorCode: DomainErrorCode | null, message: string, timestamp: number }`.
+- **Zero `data: null` in Errors**: Error responses MUST NEVER include `data: null`.
+- **Mandatory `timestamp` and `code`**: `timestamp` and `code` are always guaranteed numbers and strings (no optional `?`).
+- **Automated Envelope via Fastify Hook**:
+  - `server.ts` registers a global `preSerialization` hook that wraps successful responses in `successResponse(payload)`.
+  - If `reply.statusCode >= 400`, the payload is an error and is passed through untouched.
+  - Route handlers simply return domain entities directly (`return user;`), avoiding repetitive envelope boilerplate.
+  - Native return defaults to HTTP 200 OK. Never write artificial `reply.status(201)`.
+
+### 3.5 Centralized Application Routes (`ApiRoutes`)
+
+- **Single Source of Truth**: ALL route paths across the entire monorepo MUST be declared in `@memoro/shared` in `packages/shared/src/routes.ts` (`ApiRoutes`).
+- Shared identically between Fastify (`server.ts`, route plugins) and the frontend transport (`apiClient.ts`).
+- **STRICTLY FORBIDDEN: defining module-local route path constants or inline route strings**.
+- Route registration uses `ApiRoutes.<module>.prefix` for plugin mounting and subpaths inside route plugins.
+
+### 3.6 Infrastructure & Presentation Isolation
+
+- **Fastify is isolated to the presentation layer**: Only `src/server.ts`, `index.ts`, and `<feature>.routes.ts` touch Fastify.
+- Fastify objects (`FastifyRequest`, `FastifyReply`) must NEVER be passed into use cases, domain services, or repositories.
+- **Route schemas in separate files**: Route validation schemas and Swagger specs MUST live in `*.schema.ts` files and be attached via `{ schema: ... }`. Never inline schema definitions in route handlers.
+- **Manual Dependency Injection (Composition Root)**: All dependencies are wired explicitly in `src/container.ts` (`createAppContainer`).
+
+### 3.7 Use Case Contract & Rules
 
 - **Common Functional Type**: Every use case MUST implement the functional type `UseCase<TInput, TOutput>` (`src/common/use-case.ts`).
-- **Factory Functions**: Use cases are created via factory functions `create<Action>UseCase(deps)`. Dependencies are captured via closure, eliminating `this.` and class boilerplate.
-- **Direct Function Invocation**: Use cases are invoked directly as functions `await actionUseCase(input)`. No artificial `.execute()` method ceremony.
-- **Size Constraint**: The code in any single use case MUST NOT exceed **350 lines of code**. Decompose complex operations into smaller services or domain helpers.
+- **Direct Function Invocation**: Use cases are factory functions capturing dependencies in closure and invoked directly as `await actionUseCase(input)`. No artificial `.execute()` methods.
+- **Size Constraint**: The code in any single use case MUST NOT exceed **350 lines of code**.
 - **Dependency Injection**: All dependencies (repositories, unit of work, domain services) MUST be injected via factory function parameters.
 
-### 3.3 Pure Domain Logic (`<feature>-service.ts`)
+### 3.8 Pure Domain Logic (`<feature>-service.ts`)
 
-- If a feature has pure domain business logic (calculations, state transitions, validation rules, domain algorithms), it MUST be placed in `<feature>-service.ts` (e.g. `media-service.ts`, `auth-service.ts`).
-- These service files MUST contain **pure TypeScript code** — zero imports of Fastify, database connections, or HTTP frameworks.
+- Pure business calculations, domain algorithms, or state transition validations belong in `<feature>-service.ts`.
+- These files MUST be 100% pure TypeScript — zero imports of Fastify, database connections, or HTTP frameworks.
 
-### 3.4 Common & Utilities
-
-- Cross-cutting backend logic shared across multiple feature modules belongs in `src/common/`.
-- General utility functions belong in `src/common/utils/`.
-
-### 3.5 Database & Drizzle ORM
+### 3.9 Database & Drizzle ORM
 
 - Drizzle ORM and `pg` are isolated strictly within `src/db/` and repository implementations.
 - Schema definitions live in `src/db/schema/*.ts` and are re-exported via `src/db/schema/index.ts`.
 - Migrations live in `src/db/migrations/` and are managed via `drizzle-kit`.
-- **No `BaseRepository`**: Generic base repositories are discarded. Each domain module implements its own specialized repository port.
-- Repositories encapsulate Drizzle queries and MUST return mapped domain models, not raw Drizzle table schema types.
-- **Transactions & UnitOfWork**: Atomic business transactions are managed via `UnitOfWork` using `AsyncLocalStorage` (`TxContext`). Domain use cases do not know about SQL or database connections.
+- **No `BaseRepository`**: Each domain module implements its own specialized repository port.
+- Repositories encapsulate Drizzle queries and MUST return mapped domain models via mappers, never raw Drizzle table schema types.
+- **Transactions & UnitOfWork**: Atomic business transactions are managed via `UnitOfWork` using `AsyncLocalStorage` (`TxContext`).
 
-### 3.6 Domain Errors & Validation
+### 3.10 Domain Errors & Validation
 
 - Two-level validation: Zod on incoming request shapes, business logic rules in use cases.
 - **`AppError`**: Pure domain error class in `src/common/error/app.error.ts`. It has NO HTTP status codes.
 - HTTP status mapping is defined strictly in `src/common/error/http-status.map.ts` and utilized by the Fastify error handler in `src/server.ts`.
 
-### 3.7 File Naming Conventions
+### 3.11 File Naming Conventions
 
-- **STRICTLY FORBIDDEN: camelCase file names** across the backend (e.g. `cryptoService.ts`, `appError.ts`).
+- **STRICTLY FORBIDDEN: camelCase file names** across the backend.
 - All files in `apps/server` MUST use kebab-case with dot-separated role suffixes:
-  - Services: `<name>.service.ts` or `<feature>-<name>.service.ts` (e.g. `crypto.service.ts`, `node-crypto.service.ts`, `auth.service.ts`)
-  - Use cases: `<name>.use-case.ts` (e.g. `register.use-case.ts`, `login.use-case.ts`)
-  - Repositories: `<name>.repository.ts` (e.g. `user.repository.ts`, `drizzle-user.repository.ts`)
-  - Controllers: `<name>.controller.ts`
+  - Services: `<name>.service.ts` or `<feature>-<name>.service.ts`
+  - Use cases: `<name>.use-case.ts`
+  - Repositories: `<name>.repository.ts` or `drizzle-<name>.repository.ts`
   - Route schemas: `<name>.schema.ts`
   - Guards: `<name>.guard.ts`
   - Routes: `<name>.routes.ts`
+  - Mappers: `<name>.mapper.ts`
+  - Entities: `<name>.entity.ts`
   - Infrastructure / DB / Utilities: `<name>.provider.ts`, `<name>.logger.ts`, `<name>.error.ts`, `<name>.map.ts`, `<name>.context.ts`, `<name>.ts`
 
 ---
@@ -164,3 +216,7 @@ Before completing any task, the agent MUST run and verify:
 5. **No inline SVGs in templates or components.**
 6. **No TypeScript `enum` anywhere in the codebase (use `const ... as const` + union types).**
 7. **No magic numbers or magic strings (all constants extracted into typed dictionaries or shared constants).**
+8. **No `create` prefix on function/factory names (use `drizzleUserRepository`, `registerUseCase`, `authRoutes`, `successResponse`).**
+9. **Single use case per route (atomic workflows encapsulated inside use case via `unitOfWork.run`).**
+10. **Centralized route paths in `ApiRoutes` (`@memoro/shared`) — no local route paths or magic route strings.**
+11. **Standardized `ApiResponse` (no `data: null` in error responses, mandatory `code` and `timestamp`).**
