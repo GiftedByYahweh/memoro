@@ -53,4 +53,16 @@ export default tseslint.config(
     },
   },
   prettier,
+  {
+    rules: {
+      'object-curly-spacing': ['error', 'always'],
+    },
+  },
+  {
+    files: ['*.vue', '**/*.vue'],
+    rules: {
+      'vue/object-curly-spacing': ['error', 'always'],
+      'vue/mustache-interpolation-spacing': ['error', 'always'],
+    },
+  },
 );

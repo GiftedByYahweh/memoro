@@ -1,5 +1,5 @@
 import { defineConfig } from 'drizzle-kit';
-import { loadAppConfig } from './src/config.js';
+import { loadAppConfig } from './src/config';
 
 const appConfig = loadAppConfig();
 

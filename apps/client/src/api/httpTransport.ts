@@ -23,23 +23,28 @@ interface SendPayload {
   readonly options?: RequestOptions;
 }
 
+const CLIENT_ERROR_CODE = 'CLIENT_ERROR';
+
 function toErrorResponse(
   errorCode: DomainErrorCode | null = null,
   message?: string,
+  code: string = CLIENT_ERROR_CODE,
 ): ApiErrorResponse {
   return {
     success: false,
+    code,
     errorCode,
     message: message ?? ERROR_MESSAGES.SOMETHING_WENT_WRONG,
-    data: null,
     timestamp: Date.now(),
   };
 }
 
 async function handleFetchResponse<T>(response: Response): Promise<ApiResponse<T>> {
-  if (response.status === 204) return { success: true, data: null as T };
+  if (response.status === 204) {
+    return { success: true, data: null as T, timestamp: Date.now() };
+  }
   const result = (await response.json()) as ApiResponse<T>;
-  if (!result.success) return toErrorResponse(result.errorCode, result.message);
+  if (!result.success) return result;
   return result;
 }
 

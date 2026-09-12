@@ -1,9 +1,9 @@
 import type { FastifyInstance } from 'fastify';
-import { createAppContainer } from './src/container.js';
-import type { AppConfig } from './src/config.js';
-import { loadAppConfig } from './src/config.js';
-import { createServer } from './src/server.js';
-import { ConsoleLogger } from './src/logger/index.js';
+import { createAppContainer } from './src/container';
+import type { AppConfig } from './src/config';
+import { loadAppConfig } from './src/config';
+import { createServer } from './src/server';
+import { ConsoleLogger } from './src/logger/index';
 
 export const app = async (config: AppConfig): Promise<FastifyInstance> => {
   const logger = new ConsoleLogger();

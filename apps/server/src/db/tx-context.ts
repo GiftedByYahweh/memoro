@@ -1,5 +1,5 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
-import type { DBExecutor } from './db.provider.js';
+import type { DBExecutor } from './db.provider';
 
 export interface TxContext {
   run<T>(executor: DBExecutor, fn: () => Promise<T>): Promise<T>;

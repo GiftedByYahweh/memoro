@@ -1,3 +1,1 @@
-export interface UseCase<Input = void, Output = void> {
-  execute(input: Input): Promise<Output>;
-}
+export type UseCase<TInput = void, TOutput = void> = (input: TInput) => Promise<TOutput>;

@@ -1,18 +1,18 @@
-import type { DomainErrorCode } from './errors.js';
+import type { DomainErrorCode } from './errors';
 
 export interface ApiSuccessResponse<T = unknown> {
-  readonly success: true;
-  readonly data: T;
-  readonly message?: string;
-  readonly timestamp?: number;
+  success: true;
+  data: T;
+  message?: string;
+  timestamp: number;
 }
 
 export interface ApiErrorResponse {
-  readonly success: false;
-  readonly errorCode: DomainErrorCode | null;
-  readonly message: string;
-  readonly data: null;
-  readonly timestamp?: number;
+  success: false;
+  code: string;
+  errorCode: DomainErrorCode | null;
+  message: string;
+  timestamp: number;
 }
 
 export type ApiResponse<T = unknown> = ApiSuccessResponse<T> | ApiErrorResponse;
