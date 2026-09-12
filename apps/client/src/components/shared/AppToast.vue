@@ -106,7 +106,7 @@ function handlePointerCancel(event: PointerEvent, id: string): void {
       >
         <div class="toast-indicator" />
         <div class="toast-content">
-          <AppText variant="body-sm" color="primary" weight="medium">
+          <AppText variant="body-sm" color="primary" weight="medium" class="toast-message">
             {{ toast.message }}
           </AppText>
         </div>
@@ -143,7 +143,7 @@ function handlePointerCancel(event: PointerEvent, id: string): void {
 .toast-item {
   pointer-events: auto;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-sm);
   width: 100%;
   padding: var(--space-sm) var(--space-md);
@@ -153,7 +153,7 @@ function handlePointerCancel(event: PointerEvent, id: string): void {
   box-shadow: var(--shadow-elevated);
   backdrop-filter: blur(16px);
   touch-action: none;
-  user-select: none;
+  user-select: text;
   cursor: grab;
 }
 
@@ -168,6 +168,7 @@ function handlePointerCancel(event: PointerEvent, id: string): void {
 .toast-indicator {
   width: 3px;
   height: 18px;
+  margin-top: 2px;
   border-radius: var(--radius-full);
   background-color: var(--color-primary);
   flex-shrink: 0;
@@ -182,10 +183,16 @@ function handlePointerCancel(event: PointerEvent, id: string): void {
   min-width: 0;
 }
 
+.toast-message {
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
 .toast-close {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: -2px;
   padding: var(--space-2xs);
   background: transparent;
   border: none;

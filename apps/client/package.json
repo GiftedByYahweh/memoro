@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
+    "prebuild": "node -e \"const fs=require('fs');fs.copyFileSync(require.resolve('maplibre-gl/dist/maplibre-gl-worker.mjs'),'public/maplibre-gl-worker.mjs');fs.copyFileSync(require.resolve('maplibre-gl/dist/maplibre-gl-shared.mjs'),'public/maplibre-gl-shared.mjs');\"",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit"

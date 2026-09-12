@@ -54,7 +54,10 @@
     "layers": "Map layers",
     "view3D": "3D view",
     "resetNorth": "Orient to north",
-    "locationError": "Failed to determine your location"
+    "locationError": "Failed to determine your location",
+    "locationPermissionDenied": "Location access is blocked. Please enable location permissions in browser or device settings.",
+    "locationUnavailable": "Device location services are turned off. Please turn on location services in device settings.",
+    "locationTimeout": "Location request timed out. Please try again."
   },
   "landing": {
     "badge": "Next-Gen PWA Experience",
