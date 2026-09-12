@@ -9,8 +9,8 @@ import { toAuthUserDto } from '../mappers/user.mapper';
 interface LoginInput {
   email: string;
   password: string;
-  userAgent?: string | undefined;
-  ipAddress?: string | undefined;
+  userAgent: string | null;
+  ipAddress: string | null;
 }
 
 interface LoginOutput {

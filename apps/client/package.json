@@ -12,6 +12,7 @@
   "dependencies": {
     "@internationalized/date": "^3.12.4",
     "@memoro/shared": "*",
+    "@tanstack/vue-query": "^5.102.8",
     "reka-ui": "^2.10.4",
     "vue": "^3.5.13",
     "vue-i18n": "^11.4.10",

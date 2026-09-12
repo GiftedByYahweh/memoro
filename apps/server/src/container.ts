@@ -9,6 +9,7 @@ import { registerUseCase } from '@/core/auth/use-cases/register.use-case';
 import { loginUseCase } from '@/core/auth/use-cases/login.use-case';
 import { logoutUseCase } from '@/core/auth/use-cases/logout.use-case';
 import { createSessionUseCase } from '@/core/auth/use-cases/create-session.use-case';
+import { validateSessionUseCase } from '@/core/auth/use-cases/validate-session.use-case';
 import { authRoutes } from '@/core/auth/routes/auth.routes';
 
 export const createAppContainer = (config: AppConfig) => {
@@ -42,10 +43,16 @@ export const createAppContainer = (config: AppConfig) => {
     sessionRepository,
   });
 
+  const validateSession = validateSessionUseCase({
+    userRepository,
+    sessionRepository,
+  });
+
   const authRoutePlugin = authRoutes({
     registerUseCase: register,
     loginUseCase: login,
     logoutUseCase: logout,
+    validateSessionUseCase: validateSession,
     isProduction: config.isProduction,
   });
 
@@ -60,6 +67,7 @@ export const createAppContainer = (config: AppConfig) => {
       loginUseCase: login,
       logoutUseCase: logout,
       createSessionUseCase: createSession,
+      validateSessionUseCase: validateSession,
       createProfileUseCase: createProfile,
     },
     routes: {

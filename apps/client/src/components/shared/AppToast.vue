@@ -3,7 +3,93 @@ import AppIcon from '@/components/shared/AppIcon.vue';
 import AppText from '@/components/shared/AppText.vue';
 import { useToast } from '@/composables/useToast';
 
+const SWIPE_THRESHOLD_Y = 35;
+const SWIPE_THRESHOLD_X = 75;
+const RESISTANCE_FACTOR = 0.25;
+const MIN_DRAG_OPACITY = 0.2;
+const OPACITY_DIVISOR_Y = 100;
+const OPACITY_DIVISOR_X = 200;
+const CLOSE_ICON_SIZE = 16;
+
 const { toasts, dismissToast } = useToast();
+
+interface DragState {
+  startX: number;
+  startY: number;
+  deltaX: number;
+  deltaY: number;
+  target: HTMLElement;
+}
+
+const activeDrags = new Map<string, DragState>();
+
+function handlePointerDown(event: PointerEvent, id: string): void {
+  const target = event.currentTarget as HTMLElement | null;
+  if (!target) {
+    return;
+  }
+  target.setPointerCapture(event.pointerId);
+  activeDrags.set(id, {
+    startX: event.clientX,
+    startY: event.clientY,
+    deltaX: 0,
+    deltaY: 0,
+    target,
+  });
+}
+
+function handlePointerMove(event: PointerEvent, id: string): void {
+  const state = activeDrags.get(id);
+  if (!state) {
+    return;
+  }
+
+  const rawDeltaX = event.clientX - state.startX;
+  const rawDeltaY = event.clientY - state.startY;
+
+  state.deltaX = rawDeltaX;
+  state.deltaY = rawDeltaY > 0 ? rawDeltaY * RESISTANCE_FACTOR : rawDeltaY;
+
+  const opacityRatio =
+    1 -
+    Math.abs(state.deltaY) / OPACITY_DIVISOR_Y -
+    Math.abs(state.deltaX) / OPACITY_DIVISOR_X;
+  const clampedOpacity = Math.max(MIN_DRAG_OPACITY, opacityRatio);
+
+  state.target.style.transition = 'none';
+  state.target.style.transform = `translate3d(${String(state.deltaX)}px, ${String(state.deltaY)}px, 0)`;
+  state.target.style.opacity = String(clampedOpacity);
+}
+
+function handlePointerUp(event: PointerEvent, id: string): void {
+  const state = activeDrags.get(id);
+  if (!state) {
+    return;
+  }
+
+  if (state.target.hasPointerCapture(event.pointerId)) {
+    state.target.releasePointerCapture(event.pointerId);
+  }
+
+  const shouldDismiss =
+    state.deltaY < -SWIPE_THRESHOLD_Y || Math.abs(state.deltaX) > SWIPE_THRESHOLD_X;
+
+  if (shouldDismiss) {
+    activeDrags.delete(id);
+    dismissToast(id);
+    return;
+  }
+
+  state.target.style.transition =
+    'transform var(--transition-fast), opacity var(--transition-fast)';
+  state.target.style.transform = '';
+  state.target.style.opacity = '';
+  activeDrags.delete(id);
+}
+
+function handlePointerCancel(event: PointerEvent, id: string): void {
+  handlePointerUp(event, id);
+}
 </script>
 
 <template>
@@ -15,6 +101,10 @@ const { toasts, dismissToast } = useToast();
         class="toast-item"
         :class="`type-${toast.type}`"
         role="alert"
+        @pointerdown="handlePointerDown($event, toast.id)"
+        @pointermove="handlePointerMove($event, toast.id)"
+        @pointerup="handlePointerUp($event, toast.id)"
+        @pointercancel="handlePointerCancel($event, toast.id)"
       >
         <div class="toast-indicator" />
         <div class="toast-content">
@@ -26,9 +116,10 @@ const { toasts, dismissToast } = useToast();
           type="button"
           class="toast-close"
           aria-label="Close"
-          @click="dismissToast(toast.id)"
+          @pointerdown.stop
+          @click.stop="dismissToast(toast.id)"
         >
-          <AppIcon name="close" :size="16" color="secondary" />
+          <AppIcon name="close" :size="CLOSE_ICON_SIZE" color="secondary" />
         </button>
       </div>
     </TransitionGroup>
@@ -63,10 +154,17 @@ const { toasts, dismissToast } = useToast();
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-elevated);
   backdrop-filter: blur(16px);
+  touch-action: none;
+  user-select: none;
+  cursor: grab;
+}
+
+.toast-item:active {
+  cursor: grabbing;
 }
 
 .type-error {
-  border-color: rgb(255 69 58 / 30%);
+  border-color: var(--border-danger);
 }
 
 .toast-indicator {
@@ -95,7 +193,7 @@ const { toasts, dismissToast } = useToast();
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  transition: opacity var(--transition-fast);
 }
 
 .toast-close:hover {

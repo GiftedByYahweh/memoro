@@ -141,14 +141,12 @@ function handleClick(event: MouseEvent): void {
 
 .btn-primary {
   background-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-text-inverse);
   border: 1px solid transparent;
-  box-shadow: 0 4px 16px rgb(224 104 75 / 30%);
 }
 
 .btn-primary:hover:not(:disabled) {
   background-color: var(--color-primary-hover);
-  box-shadow: 0 6px 20px rgb(224 104 75 / 45%);
 }
 
 .btn-secondary {
@@ -159,7 +157,7 @@ function handleClick(event: MouseEvent): void {
 
 .btn-secondary:hover:not(:disabled) {
   background-color: var(--color-surface-floating);
-  border-color: rgb(255 255 255 / 15%);
+  border-color: var(--border-subtle-hover);
 }
 
 .btn-ghost {
@@ -174,20 +172,20 @@ function handleClick(event: MouseEvent): void {
 }
 
 .btn-danger {
-  background-color: rgb(255 69 58 / 15%);
+  background-color: var(--color-danger-subtle);
   color: var(--color-error);
-  border: 1px solid rgb(255 69 58 / 30%);
+  border: 1px solid var(--border-danger);
 }
 
 .btn-danger:hover:not(:disabled) {
-  background-color: rgb(255 69 58 / 25%);
+  background-color: var(--color-danger-subtle-hover);
 }
 
 .spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid rgb(255 255 255 / 30%);
-  border-top-color: #fff;
+  border: 2px solid var(--spinner-track);
+  border-top-color: var(--color-white);
   border-radius: var(--radius-full);
   animation: spin 0.75s linear infinite;
 }

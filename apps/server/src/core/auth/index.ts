@@ -11,5 +11,6 @@ export * from './use-cases/register.use-case';
 export * from './use-cases/login.use-case';
 export * from './use-cases/logout.use-case';
 export * from './use-cases/create-session.use-case';
+export * from './use-cases/validate-session.use-case';
 export * from './routes/auth.schema';
 export * from './routes/auth.routes';

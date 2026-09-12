@@ -5,8 +5,8 @@ import type { SessionRepository } from '../repositories/session.repository';
 
 interface CreateSessionInput {
   userId: string;
-  userAgent: string | undefined;
-  ipAddress: string | undefined;
+  userAgent: string | null;
+  ipAddress: string | null;
 }
 
 interface CreateSessionOutput {

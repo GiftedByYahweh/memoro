@@ -10,3 +10,16 @@ export const ApiRoutes = {
     session: '/session',
   },
 } as const;
+
+export const RoutePaths = {
+  auth: {
+    name: 'auth',
+    path: '/auth',
+  },
+  map: {
+    name: 'map',
+    path: '/map',
+    auth: true,
+  },
+} as const;
+

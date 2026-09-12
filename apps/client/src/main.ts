@@ -1,4 +1,5 @@
 import { createApp } from 'vue';
+import { VueQueryPlugin } from '@tanstack/vue-query';
 
 import App from './App.vue';
 import './css/main.css';
@@ -7,6 +8,7 @@ import router from './router';
 
 const app = createApp(App);
 
+app.use(VueQueryPlugin);
 app.use(i18n);
 app.use(router);
 app.mount('#app');
