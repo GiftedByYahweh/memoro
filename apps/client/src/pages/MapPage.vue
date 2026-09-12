@@ -5,7 +5,11 @@ import MapControls from '@/components/features/map/MapControls.vue';
 import { useGeolocation } from '@/composables/useGeolocation';
 import { useMap } from '@/composables/useMap';
 import { useToast } from '@/composables/useToast';
-import { DEFAULT_MAP_STYLE_KEY, type MapStyleKey } from '@/constants/map.constants';
+import {
+  DEFAULT_MAP_STYLE_KEY,
+  GEOLOCATION_ERROR_TOAST_DURATION_MS,
+  type MapStyleKey,
+} from '@/constants/map.constants';
 
 const { t } = useI18n();
 const toast = useToast();
@@ -22,18 +26,27 @@ const {
   resetNorth,
 } = useMap();
 const activeStyle = ref<MapStyleKey>(DEFAULT_MAP_STYLE_KEY);
+const geoErrorText = ref<string | null>(null);
 
 function handleStyleChange(styleKey: MapStyleKey): void {
   activeStyle.value = styleKey;
   setStyle(styleKey);
 }
 
+function dismissGeoError(): void {
+  geoErrorText.value = null;
+}
+
 async function handleLocate(): Promise<void> {
   try {
+    geoErrorText.value = null;
     const coords = await getCurrentPosition();
     showUserLocation(coords.lng, coords.lat);
-  } catch {
-    toast.showError(t('map.locationError'));
+  } catch (err: unknown) {
+    const errorTrace = err instanceof Error ? (err.stack ?? err.message) : String(err);
+    const fullMessage = `${t('map.locationError')}\n\n${errorTrace}`;
+    geoErrorText.value = fullMessage;
+    toast.showError(fullMessage, GEOLOCATION_ERROR_TOAST_DURATION_MS);
   }
 }
 </script>
@@ -48,6 +61,15 @@ async function handleLocate(): Promise<void> {
     </Transition>
     <div v-if="mapError" class="map-error-overlay">
       <p class="map-error-text">{{ mapError }}</p>
+    </div>
+    <div v-if="geoErrorText" class="geo-error-overlay">
+      <div class="geo-error-header">
+        <span class="geo-error-title">Geolocation Error</span>
+        <button type="button" class="geo-error-close" aria-label="Close" @click="dismissGeoError">
+          ✕
+        </button>
+      </div>
+      <pre class="geo-error-content">{{ geoErrorText }}</pre>
     </div>
     <MapControls
       :active-style="activeStyle"
@@ -118,6 +140,73 @@ async function handleLocate(): Promise<void> {
   font-family: var(--font-sans);
   font-size: 13px;
   text-align: center;
+}
+
+.geo-error-overlay {
+  position: absolute;
+  top: max(var(--space-md), var(--safe-top));
+  left: var(--space-md);
+  right: var(--space-md);
+  max-height: 50vh;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-surface-floating);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-elevated);
+  backdrop-filter: blur(16px);
+}
+
+.geo-error-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--space-2xs);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.geo-error-title {
+  color: var(--color-error);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.geo-error-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.geo-error-close:hover {
+  color: var(--color-text-primary);
+}
+
+.geo-error-content {
+  margin: var(--space-xs) 0 0;
+  padding: 0;
+  overflow-y: auto;
+  color: var(--color-text-primary);
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  user-select: text;
 }
 
 .fade-leave-active {
