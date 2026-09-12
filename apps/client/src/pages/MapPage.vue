@@ -47,19 +47,19 @@ async function handleLocate(): Promise<void> {
 <style scoped>
 .map-page {
   position: relative;
-  display: flex;
   width: 100%;
-  height: 100vh;
-  min-height: 100vh;
+  height: 100dvh;
+  min-height: 100dvh;
   overflow: hidden;
   background-color: var(--color-oled-black);
 }
 
 .map-container {
-  position: relative;
-  flex: 1;
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
+  z-index: 0;
 }
 
 :deep(.user-location-puck) {

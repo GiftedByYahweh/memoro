@@ -21,6 +21,7 @@ const DEFAULT_MAP_CONFIG: Omit<MapOptions, 'container'> = {
   zoom: DEFAULT_MAP_ZOOM,
   minZoom: MIN_MAP_ZOOM,
   maxZoom: MAX_MAP_ZOOM,
+  trackResize: true,
 };
 
 function handleMapError(event: unknown) {
@@ -169,6 +170,10 @@ export function useMap(targetContainer?: Ref<HTMLElement | null>) {
     map.value?.resize();
   }
 
+  function triggerResize(): void {
+    map.value?.resize();
+  }
+
   function initMap(options?: Partial<MapOptions>) {
     if (!container.value || map.value) return;
     const instance = buildMap(container.value, options);
@@ -178,9 +183,19 @@ export function useMap(targetContainer?: Ref<HTMLElement | null>) {
     instance.on('error', handleMapError);
     map.value = instance;
     resizeObserver = setupObserver(container.value, map);
+
+    requestAnimationFrame(triggerResize);
+    setTimeout(triggerResize, 150);
+    setTimeout(triggerResize, 350);
+    setTimeout(triggerResize, 700);
+
+    window.addEventListener('resize', triggerResize);
+    window.addEventListener('orientationchange', triggerResize);
   }
 
   function destroyMap() {
+    window.removeEventListener('resize', triggerResize);
+    window.removeEventListener('orientationchange', triggerResize);
     userMarker.destroy();
     if (!map.value) return;
     teardownMap(map.value, resizeObserver, handleMapLoad, handleCameraChange);

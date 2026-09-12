@@ -14,6 +14,9 @@ export default defineConfig({
         short_name: 'Memoro',
         description: 'Lifetime media storage anchored to location and time',
         display: 'standalone',
+        start_url: '/map',
+        theme_color: '#000000',
+        background_color: '#000000',
         icons: [
           {
             src: 'pwa-192x192.png',
