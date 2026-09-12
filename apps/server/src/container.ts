@@ -3,7 +3,7 @@ import { createTxContext } from '@/db/tx-context';
 import { DBProvider } from '@/db/db.provider';
 import { unitOfWork } from '@/db/unit-of-work';
 import { drizzleUserRepository } from '@/core/auth/repositories/drizzle-user.repository';
-import { drizzleProfileRepository } from '@/core/profile/repositories/drizzle-profile.repository';
+import { drizzleProfileRepository, createProfileUseCase } from '@/core/profile';
 import { drizzleSessionRepository } from '@/core/auth/repositories/drizzle-session.repository';
 import { registerUseCase } from '@/core/auth/use-cases/register.use-case';
 import { createSessionUseCase } from '@/core/auth/use-cases/create-session.use-case';
@@ -18,6 +18,8 @@ export const createAppContainer = (config: AppConfig) => {
   const profileRepository = drizzleProfileRepository(dbProvider);
   const sessionRepository = drizzleSessionRepository(dbProvider);
 
+  const createProfile = createProfileUseCase({ profileRepository });
+
   const createSession = createSessionUseCase({
     sessionRepository,
     sessionMaxAgeMs: config.session.maxAge,
@@ -25,7 +27,7 @@ export const createAppContainer = (config: AppConfig) => {
 
   const register = registerUseCase({
     userRepository,
-    profileRepository,
+    createProfileUseCase: createProfile,
     createSessionUseCase: createSession,
     unitOfWork: uow,
   });
@@ -41,21 +43,14 @@ export const createAppContainer = (config: AppConfig) => {
       txContext,
       uow,
     },
-    repositories: {
-      userRepository,
-      profileRepository,
-      sessionRepository,
-    },
     useCases: {
       registerUseCase: register,
       createSessionUseCase: createSession,
+      createProfileUseCase: createProfile,
     },
-    controllers: {},
     routes: {
       authRoutes: authRoutePlugin,
     },
-    services: {},
-    guards: {},
   };
 };
 

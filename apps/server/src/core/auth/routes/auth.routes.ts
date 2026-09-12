@@ -1,5 +1,5 @@
-import type { FastifyPluginCallback } from 'fastify';
-import { ApiRoutes, registerSchema } from '@memoro/shared';
+import type { FastifyPluginCallbackZod } from 'fastify-type-provider-zod';
+import { ApiRoutes } from '@memoro/shared';
 import { AUTH_COOKIE_NAME, AUTH_COOKIE_PATH, SAME_SITE } from '../auth.constants';
 import type { RegisterUseCase } from '../use-cases/register.use-case';
 import { registerRouteSchema } from './auth.schema';
@@ -9,7 +9,7 @@ export interface AuthRoutesDeps {
   isProduction: boolean;
 }
 
-export function authRoutes(deps: AuthRoutesDeps): FastifyPluginCallback {
+export function authRoutes(deps: AuthRoutesDeps): FastifyPluginCallbackZod {
   const { registerUseCase, isProduction } = deps;
 
   return (server, _options, done): void => {
@@ -17,7 +17,7 @@ export function authRoutes(deps: AuthRoutesDeps): FastifyPluginCallback {
       ApiRoutes.auth.register,
       { schema: registerRouteSchema },
       async (request, reply) => {
-        const body = registerSchema.parse(request.body);
+        const body = request.body;
         const userAgent = request.headers['user-agent'];
         const ipAddress = request.ip;
 

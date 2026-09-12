@@ -3,7 +3,7 @@ import type { AuthUserDto } from '@memoro/shared';
 import { hashPassword } from '@/common/crypto/crypto';
 import { AppError, ErrorCode } from '@/common/error/app.error';
 import type { UseCase } from '@/common/use-case';
-import type { ProfileRepository } from '@/core/profile/repositories/profile.repository';
+import type { CreateProfileUseCase } from '@/core/profile';
 import type { UserRepository } from '../repositories/user.repository';
 import type { CreateSessionUseCase } from './create-session.use-case';
 import type { UnitOfWork } from '@/db/unit-of-work';
@@ -24,7 +24,7 @@ interface RegisterOutput {
 
 interface RegisterUseCaseDeps {
   userRepository: UserRepository;
-  profileRepository: ProfileRepository;
+  createProfileUseCase: CreateProfileUseCase;
   createSessionUseCase: CreateSessionUseCase;
   unitOfWork: UnitOfWork;
 }
@@ -32,7 +32,7 @@ interface RegisterUseCaseDeps {
 export type RegisterUseCase = UseCase<RegisterInput, RegisterOutput>;
 
 export function registerUseCase(deps: RegisterUseCaseDeps): RegisterUseCase {
-  const { unitOfWork, userRepository, profileRepository, createSessionUseCase } = deps;
+  const { unitOfWork, userRepository, createProfileUseCase, createSessionUseCase } = deps;
 
   return async (input: RegisterInput): Promise<RegisterOutput> => {
     const existingUser = await userRepository.findByEmail(input.email);
@@ -52,7 +52,7 @@ export function registerUseCase(deps: RegisterUseCaseDeps): RegisterUseCase {
         passwordHash,
       });
 
-      await profileRepository.create({
+      await createProfileUseCase({
         userId: createdUser.id,
       });
 
