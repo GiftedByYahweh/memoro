@@ -11,6 +11,12 @@ export type MapStyleKey = keyof typeof MAP_STYLES;
 export const DEFAULT_MAP_STYLE_KEY: MapStyleKey = 'dark';
 export const DEFAULT_MAP_STYLE = MAP_STYLES[DEFAULT_MAP_STYLE_KEY];
 
+export const MAPLIBRE_WORKER_URL = `${import.meta.env.BASE_URL}maplibre-gl-worker.mjs`;
+
+export const RESIZE_DELAY_INITIAL_MS = 150;
+export const RESIZE_DELAY_SECONDARY_MS = 350;
+export const RESIZE_DELAY_FINAL_MS = 700;
+
 export const DEFAULT_MAP_CENTER = {
   lng: 30.5234,
   lat: 50.4501,
@@ -23,6 +29,24 @@ export const MAX_MAP_ZOOM = 19;
 
 export const FLY_TO_DURATION_MS = 1500;
 export const GEOLOCATION_TIMEOUT_MS = 10000;
+export const GEOLOCATION_HIGH_ACCURACY_TIMEOUT_MS = 6000;
+export const GEOLOCATION_LOW_ACCURACY_TIMEOUT_MS = 12000;
+export const GEOLOCATION_MAX_AGE_MS = 300000;
+export const GEOLOCATION_ERROR_TOAST_DURATION_MS = 6000;
+
+export const GEO_ERROR_CODE = {
+  PERMISSION_DENIED: 1,
+  POSITION_UNAVAILABLE: 2,
+  TIMEOUT: 3,
+} as const;
+
+export const DEFAULT_GEO_ERROR_NAME = 'UNKNOWN_ERROR';
+
+export const GEO_ERROR_ENTRIES = [
+  [GEO_ERROR_CODE.PERMISSION_DENIED, 'PERMISSION_DENIED'],
+  [GEO_ERROR_CODE.POSITION_UNAVAILABLE, 'POSITION_UNAVAILABLE'],
+  [GEO_ERROR_CODE.TIMEOUT, 'TIMEOUT'],
+] as const;
 export const PITCH_3D_DEGREES = 55;
 export const PITCH_2D_DEGREES = 0;
 export const BEARING_NORTH_DEGREES = 0;
