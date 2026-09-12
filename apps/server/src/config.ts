@@ -25,6 +25,7 @@ export const loadAppConfig = () => {
   return {
     port: Number.isNaN(port) ? 3000 : port,
     host: env['HOST'] ?? '0.0.0.0',
+    isProduction: env['NODE_ENV'] === 'production',
     logger: {
       level: env['LOG_LEVEL'] ?? 'info',
       pretty: env['NODE_ENV'] !== 'production',
