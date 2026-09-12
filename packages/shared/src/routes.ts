@@ -22,4 +22,3 @@ export const RoutePaths = {
     auth: true,
   },
 } as const;
-

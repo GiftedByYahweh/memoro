@@ -42,11 +42,7 @@ function handleTabSuccess(): void {
   <main class="auth-page">
     <div class="ambient-glow" aria-hidden="true" />
     <AuthHeader :is-register="isRegister" />
-    <AppTabs
-      v-model="activeTab"
-      :tabs="authTabs"
-      @tab-success="handleTabSuccess"
-    />
+    <AppTabs v-model="activeTab" :tabs="authTabs" @tab-success="handleTabSuccess" />
     <AuthFooter />
   </main>
 </template>

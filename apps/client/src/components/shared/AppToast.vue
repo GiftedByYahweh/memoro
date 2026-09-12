@@ -51,9 +51,7 @@ function handlePointerMove(event: PointerEvent, id: string): void {
   state.deltaY = rawDeltaY > 0 ? rawDeltaY * RESISTANCE_FACTOR : rawDeltaY;
 
   const opacityRatio =
-    1 -
-    Math.abs(state.deltaY) / OPACITY_DIVISOR_Y -
-    Math.abs(state.deltaX) / OPACITY_DIVISOR_X;
+    1 - Math.abs(state.deltaY) / OPACITY_DIVISOR_Y - Math.abs(state.deltaX) / OPACITY_DIVISOR_X;
   const clampedOpacity = Math.max(MIN_DRAG_OPACITY, opacityRatio);
 
   state.target.style.transition = 'none';

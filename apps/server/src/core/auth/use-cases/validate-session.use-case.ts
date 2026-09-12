@@ -22,37 +22,25 @@ export function validateSessionUseCase(deps: ValidateSessionUseCaseDeps): Valida
 
   return async (input: ValidateSessionInput): Promise<AuthUserDto> => {
     if (!input.sessionToken) {
-      throw new AppError(
-        ErrorCode.INVALID_CREDENTIALS,
-        DomainErrorCode.SESSION_EXPIRED,
-      );
+      throw new AppError(ErrorCode.INVALID_CREDENTIALS, DomainErrorCode.SESSION_EXPIRED);
     }
 
     const tokenHash = hashToken(input.sessionToken);
     const session = await sessionRepository.findByTokenHash(tokenHash);
 
     if (!session) {
-      throw new AppError(
-        ErrorCode.INVALID_CREDENTIALS,
-        DomainErrorCode.SESSION_EXPIRED,
-      );
+      throw new AppError(ErrorCode.INVALID_CREDENTIALS, DomainErrorCode.SESSION_EXPIRED);
     }
 
     if (session.expiresAt <= new Date()) {
       await sessionRepository.deleteByTokenHash(tokenHash);
-      throw new AppError(
-        ErrorCode.INVALID_CREDENTIALS,
-        DomainErrorCode.SESSION_EXPIRED,
-      );
+      throw new AppError(ErrorCode.INVALID_CREDENTIALS, DomainErrorCode.SESSION_EXPIRED);
     }
 
     const user = await findUserByIdUseCase({ id: session.userId });
     if (!user) {
       await sessionRepository.deleteByTokenHash(tokenHash);
-      throw new AppError(
-        ErrorCode.INVALID_CREDENTIALS,
-        DomainErrorCode.SESSION_EXPIRED,
-      );
+      throw new AppError(ErrorCode.INVALID_CREDENTIALS, DomainErrorCode.SESSION_EXPIRED);
     }
 
     return toAuthUserDto(user);

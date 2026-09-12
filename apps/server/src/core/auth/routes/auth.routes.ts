@@ -17,19 +17,15 @@ export interface AuthRoutesDeps {
 }
 
 function registerRoute(server: FastifyInstanceZod, registerUseCase: RegisterUseCase): void {
-  server.post(
-    ApiRoutes.auth.register,
-    { schema: registerRouteSchema },
-    async (request) => {
-      const body = request.body;
-      const { user } = await registerUseCase({
-        email: body.email,
-        password: body.password,
-      });
+  server.post(ApiRoutes.auth.register, { schema: registerRouteSchema }, async (request) => {
+    const body = request.body;
+    const { user } = await registerUseCase({
+      email: body.email,
+      password: body.password,
+    });
 
-      return user;
-    },
-  );
+    return user;
+  });
 }
 
 function loginRoute(
@@ -37,82 +33,67 @@ function loginRoute(
   loginUseCase: LoginUseCase,
   isProduction: boolean,
 ): void {
-  server.post(
-    ApiRoutes.auth.login,
-    { schema: loginRouteSchema },
-    async (request, reply) => {
-      const body = request.body;
-      const userAgent = request.headers['user-agent'] ?? null;
-      const ipAddress = request.ip;
+  server.post(ApiRoutes.auth.login, { schema: loginRouteSchema }, async (request, reply) => {
+    const body = request.body;
+    const userAgent = request.headers['user-agent'] ?? null;
+    const ipAddress = request.ip;
 
-      const { user, sessionToken, maxAgeSeconds } = await loginUseCase({
-        email: body.email,
-        password: body.password,
-        userAgent,
-        ipAddress,
-      });
+    const { user, sessionToken, maxAgeSeconds } = await loginUseCase({
+      email: body.email,
+      password: body.password,
+      userAgent,
+      ipAddress,
+    });
 
-      reply.setCookie(AUTH_COOKIE_NAME, sessionToken, {
-        path: AUTH_COOKIE_PATH,
-        httpOnly: true,
-        secure: isProduction,
-        sameSite: SAME_SITE.LAX,
-        signed: true,
-        maxAge: maxAgeSeconds,
-      });
+    reply.setCookie(AUTH_COOKIE_NAME, sessionToken, {
+      path: AUTH_COOKIE_PATH,
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: SAME_SITE.LAX,
+      signed: true,
+      maxAge: maxAgeSeconds,
+    });
 
-      return user;
-    },
-  );
+    return user;
+  });
 }
 
 function logoutRoute(server: FastifyInstanceZod, logoutUseCase: LogoutUseCase): void {
-  server.post(
-    ApiRoutes.auth.logout,
-    async (request, reply) => {
-      const rawCookie = request.cookies[AUTH_COOKIE_NAME];
-      const unsigned = rawCookie ? request.unsignCookie(rawCookie) : null;
-      const sessionToken = unsigned?.valid ? unsigned.value : undefined;
+  server.post(ApiRoutes.auth.logout, async (request, reply) => {
+    const rawCookie = request.cookies[AUTH_COOKIE_NAME];
+    const unsigned = rawCookie ? request.unsignCookie(rawCookie) : null;
+    const sessionToken = unsigned?.valid ? unsigned.value : undefined;
 
-      await logoutUseCase({
-        sessionToken,
-      });
+    await logoutUseCase({
+      sessionToken,
+    });
 
-      reply.clearCookie(AUTH_COOKIE_NAME, {
-        path: AUTH_COOKIE_PATH,
-      });
+    reply.clearCookie(AUTH_COOKIE_NAME, {
+      path: AUTH_COOKIE_PATH,
+    });
 
-      return null;
-    },
-  );
+    return null;
+  });
 }
 
 function sessionRoute(
   server: FastifyInstanceZod,
   validateSessionUseCase: ValidateSessionUseCase,
 ): void {
-  server.get(
-    ApiRoutes.auth.session,
-    async (request) => {
-      const rawCookie = request.cookies[AUTH_COOKIE_NAME];
-      const unsigned = rawCookie ? request.unsignCookie(rawCookie) : null;
-      const sessionToken = unsigned?.valid ? unsigned.value : undefined;
+  server.get(ApiRoutes.auth.session, async (request) => {
+    const rawCookie = request.cookies[AUTH_COOKIE_NAME];
+    const unsigned = rawCookie ? request.unsignCookie(rawCookie) : null;
+    const sessionToken = unsigned?.valid ? unsigned.value : undefined;
 
-      return await validateSessionUseCase({
-        sessionToken,
-      });
-    },
-  );
+    return await validateSessionUseCase({
+      sessionToken,
+    });
+  });
 }
 
 export function authRoutes(deps: AuthRoutesDeps): FastifyPluginCallbackZod {
-  const {
-    registerUseCase,
-    loginUseCase,
-    logoutUseCase,
-    validateSessionUseCase,
-    isProduction,
-  } = deps;
+  const { registerUseCase, loginUseCase, logoutUseCase, validateSessionUseCase, isProduction } =
+    deps;
 
   return (server, _options, done): void => {
     registerRoute(server, registerUseCase);

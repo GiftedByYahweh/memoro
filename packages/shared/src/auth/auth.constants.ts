@@ -10,4 +10,3 @@ export const AUTH_CONSTRAINTS = {
   TOKEN_HASH_LENGTH: 64,
   IP_ADDRESS_MAX_LENGTH: 45,
 } as const;
-

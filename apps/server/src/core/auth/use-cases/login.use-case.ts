@@ -32,18 +32,12 @@ export function loginUseCase(deps: LoginUseCaseDeps): LoginUseCase {
   return async (input: LoginInput): Promise<LoginOutput> => {
     const user = await findUserByEmailUseCase({ email: input.email });
     if (!user) {
-      throw new AppError(
-        ErrorCode.INVALID_CREDENTIALS,
-        DomainErrorCode.INVALID_LOGIN_CREDENTIALS,
-      );
+      throw new AppError(ErrorCode.INVALID_CREDENTIALS, DomainErrorCode.INVALID_LOGIN_CREDENTIALS);
     }
 
     const isPasswordValid = await verifyPassword(input.password, user.passwordHash);
     if (!isPasswordValid) {
-      throw new AppError(
-        ErrorCode.INVALID_CREDENTIALS,
-        DomainErrorCode.INVALID_LOGIN_CREDENTIALS,
-      );
+      throw new AppError(ErrorCode.INVALID_CREDENTIALS, DomainErrorCode.INVALID_LOGIN_CREDENTIALS);
     }
 
     const { rawToken, maxAgeSeconds } = await createSessionUseCase({

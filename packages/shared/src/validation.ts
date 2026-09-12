@@ -33,7 +33,7 @@ export function toValidationIssues(issues: ZodIssue[]): ValidationIssue[] {
     return {
       path: issue.path.join('.'),
       code: issue.code,
-      params
+      params,
     };
   });
 }
