@@ -1,5 +1,5 @@
-import { onMounted, onUnmounted, ref, shallowRef, type Ref, type ShallowRef } from 'vue';
-import { Map, Marker, type MapOptions } from 'maplibre-gl';
+import { nextTick, onMounted, onUnmounted, ref, shallowRef, type Ref, type ShallowRef } from 'vue';
+import { Map, Marker, setWorkerUrl, type MapOptions } from 'maplibre-gl';
 import {
   BEARING_NORTH_DEGREES,
   DEFAULT_MAP_CENTER,
@@ -7,13 +7,19 @@ import {
   DEFAULT_MAP_ZOOM,
   FLY_TO_DURATION_MS,
   MAP_STYLES,
+  MAPLIBRE_WORKER_URL,
   MAX_MAP_ZOOM,
   MIN_MAP_ZOOM,
   PITCH_2D_DEGREES,
   PITCH_3D_DEGREES,
+  RESIZE_DELAY_FINAL_MS,
+  RESIZE_DELAY_INITIAL_MS,
+  RESIZE_DELAY_SECONDARY_MS,
   USER_LOCATION_ZOOM,
   type MapStyleKey,
 } from '@/constants/map.constants';
+
+setWorkerUrl(MAPLIBRE_WORKER_URL);
 
 const DEFAULT_MAP_CONFIG: Omit<MapOptions, 'container'> = {
   style: DEFAULT_MAP_STYLE,
@@ -24,10 +30,6 @@ const DEFAULT_MAP_CONFIG: Omit<MapOptions, 'container'> = {
   trackResize: true,
 };
 
-function handleMapError(event: unknown) {
-  console.error('MapLibre error', event);
-}
-
 function buildMap(container: HTMLElement, options?: Partial<MapOptions>): Map {
   return new Map({
     ...DEFAULT_MAP_CONFIG,
@@ -36,25 +38,62 @@ function buildMap(container: HTMLElement, options?: Partial<MapOptions>): Map {
   });
 }
 
-function setupObserver(target: HTMLElement, map: ShallowRef<Map | null>): ResizeObserver {
-  const observer = new ResizeObserver(() => {
-    map.value?.resize();
-  });
-  observer.observe(target);
-  return observer;
+function scheduleResizeSequence(onResize: () => void): void {
+  requestAnimationFrame(onResize);
+  setTimeout(onResize, RESIZE_DELAY_INITIAL_MS);
+  setTimeout(onResize, RESIZE_DELAY_SECONDARY_MS);
+  setTimeout(onResize, RESIZE_DELAY_FINAL_MS);
 }
 
-function teardownMap(
-  instance: Map,
-  observer: ResizeObserver | null,
-  onLoad: () => void,
-  onCamera: () => void,
-) {
+function attachWindowResize(handler: () => void): () => void {
+  window.addEventListener('resize', handler);
+  window.addEventListener('orientationchange', handler);
+  return () => {
+    window.removeEventListener('resize', handler);
+    window.removeEventListener('orientationchange', handler);
+  };
+}
+
+interface MapEventHandlers {
+  onLoad: () => void;
+  onCamera: () => void;
+  onError: (event: unknown) => void;
+}
+
+interface MapLifecycleBindings {
+  resizeObserver: ResizeObserver | null;
+  detachResize: (() => void) | null;
+}
+
+function attachMapEvents(instance: Map, handlers: MapEventHandlers): void {
+  instance.on('load', handlers.onLoad);
+  instance.on('rotate', handlers.onCamera);
+  instance.on('pitch', handlers.onCamera);
+  instance.on('error', handlers.onError);
+}
+
+function bindMapInstance(
+  container: HTMLElement,
+  options: Partial<MapOptions> | undefined,
+  handlers: MapEventHandlers,
+): { instance: Map; bindings: MapLifecycleBindings } {
+  const instance = buildMap(container, options);
+  attachMapEvents(instance, handlers);
+  const resizeObserver = new ResizeObserver(() => {
+    instance.resize();
+  });
+  resizeObserver.observe(container);
+  const detachResize = attachWindowResize(() => {
+    instance.resize();
+  });
+  scheduleResizeSequence(() => {
+    instance.resize();
+  });
+  return { instance, bindings: { resizeObserver, detachResize } };
+}
+
+function teardownMap(instance: Map, observer: ResizeObserver | null): void {
   observer?.disconnect();
-  instance.off('load', onLoad);
-  instance.off('rotate', onCamera);
-  instance.off('pitch', onCamera);
-  instance.off('error', handleMapError);
   instance.remove();
 }
 
@@ -123,10 +162,15 @@ function buildCameraActions(map: ShallowRef<Map | null>) {
   };
 }
 
-function useCameraMetrics() {
+function useCameraMetrics(map: ShallowRef<Map | null>) {
   const bearing = ref(0);
   const pitch = ref(0);
-  return { bearing, pitch };
+  function updateCamera(): void {
+    if (!map.value) return;
+    bearing.value = Math.round(map.value.getBearing());
+    pitch.value = Math.round(map.value.getPitch());
+  }
+  return { bearing, pitch, updateCamera };
 }
 
 function useUserMarker(map: ShallowRef<Map | null>) {
@@ -150,67 +194,65 @@ function useUserMarker(map: ShallowRef<Map | null>) {
   return { show, destroy };
 }
 
+function extractErrorMessage(event: unknown): string {
+  if (event && typeof event === 'object' && 'error' in event && event.error instanceof Error) {
+    return event.error.message;
+  }
+  return 'Map error';
+}
+
 export function useMap(targetContainer?: Ref<HTMLElement | null>) {
   const container = targetContainer ?? ref<HTMLElement | null>(null);
   const map = shallowRef<Map | null>(null);
   const isLoaded = ref(false);
-  const { bearing, pitch } = useCameraMetrics();
+  const mapError = ref<string | null>(null);
+  const { bearing, pitch, updateCamera } = useCameraMetrics(map);
   const userMarker = useUserMarker(map);
   const actions = buildCameraActions(map);
-  let resizeObserver: ResizeObserver | null = null;
+  let bindings: MapLifecycleBindings = { resizeObserver: null, detachResize: null };
 
-  function handleCameraChange() {
-    if (!map.value) return;
-    bearing.value = Math.round(map.value.getBearing());
-    pitch.value = Math.round(map.value.getPitch());
-  }
-
-  function handleMapLoad() {
-    isLoaded.value = true;
-    map.value?.resize();
-  }
-
-  function triggerResize(): void {
-    map.value?.resize();
-  }
-
-  function initMap(options?: Partial<MapOptions>) {
+  async function initMap(options?: Partial<MapOptions>) {
+    await nextTick();
     if (!container.value || map.value) return;
-    const instance = buildMap(container.value, options);
-    instance.on('load', handleMapLoad);
-    instance.on('rotate', handleCameraChange);
-    instance.on('pitch', handleCameraChange);
-    instance.on('error', handleMapError);
-    map.value = instance;
-    resizeObserver = setupObserver(container.value, map);
-
-    requestAnimationFrame(triggerResize);
-    setTimeout(triggerResize, 150);
-    setTimeout(triggerResize, 350);
-    setTimeout(triggerResize, 700);
-
-    window.addEventListener('resize', triggerResize);
-    window.addEventListener('orientationchange', triggerResize);
+    try {
+      const bound = bindMapInstance(container.value, options, {
+        onLoad: () => {
+          isLoaded.value = true;
+          map.value?.resize();
+        },
+        onCamera: updateCamera,
+        onError: (e) => {
+          mapError.value = extractErrorMessage(e);
+        },
+      });
+      map.value = bound.instance;
+      bindings = bound.bindings;
+    } catch (error) {
+      console.error('Failed to initialize map', error);
+      mapError.value = error instanceof Error ? error.message : 'Map initialization failed';
+    }
   }
 
   function destroyMap() {
-    window.removeEventListener('resize', triggerResize);
-    window.removeEventListener('orientationchange', triggerResize);
+    bindings.detachResize?.();
     userMarker.destroy();
     if (!map.value) return;
-    teardownMap(map.value, resizeObserver, handleMapLoad, handleCameraChange);
-    resizeObserver = null;
+    teardownMap(map.value, bindings.resizeObserver);
+    bindings = { resizeObserver: null, detachResize: null };
     map.value = null;
     isLoaded.value = false;
   }
 
-  onMounted(initMap);
+  onMounted(() => {
+    void initMap();
+  });
   onUnmounted(destroyMap);
 
   return {
     container,
     map,
     isLoaded,
+    mapError,
     bearing,
     pitch,
     initMap,

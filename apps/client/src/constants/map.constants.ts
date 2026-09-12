@@ -11,6 +11,12 @@ export type MapStyleKey = keyof typeof MAP_STYLES;
 export const DEFAULT_MAP_STYLE_KEY: MapStyleKey = 'dark';
 export const DEFAULT_MAP_STYLE = MAP_STYLES[DEFAULT_MAP_STYLE_KEY];
 
+export const MAPLIBRE_WORKER_URL = `${import.meta.env.BASE_URL}maplibre-gl-worker.mjs`;
+
+export const RESIZE_DELAY_INITIAL_MS = 150;
+export const RESIZE_DELAY_SECONDARY_MS = 350;
+export const RESIZE_DELAY_FINAL_MS = 700;
+
 export const DEFAULT_MAP_CENTER = {
   lng: 30.5234,
   lat: 50.4501,

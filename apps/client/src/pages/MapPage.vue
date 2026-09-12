@@ -10,7 +10,17 @@ import { DEFAULT_MAP_STYLE_KEY, type MapStyleKey } from '@/constants/map.constan
 const { t } = useI18n();
 const toast = useToast();
 const { isLocating, getCurrentPosition } = useGeolocation();
-const { container, bearing, pitch, setStyle, showUserLocation, togglePitch, resetNorth } = useMap();
+const {
+  container,
+  isLoaded,
+  mapError,
+  bearing,
+  pitch,
+  setStyle,
+  showUserLocation,
+  togglePitch,
+  resetNorth,
+} = useMap();
 const activeStyle = ref<MapStyleKey>(DEFAULT_MAP_STYLE_KEY);
 
 function handleStyleChange(styleKey: MapStyleKey): void {
@@ -31,6 +41,14 @@ async function handleLocate(): Promise<void> {
 <template>
   <main class="map-page">
     <div ref="container" class="map-container" />
+    <Transition name="fade">
+      <div v-if="!isLoaded && !mapError" class="map-loading-overlay">
+        <div class="map-spinner" />
+      </div>
+    </Transition>
+    <div v-if="mapError" class="map-error-overlay">
+      <p class="map-error-text">{{ mapError }}</p>
+    </div>
     <MapControls
       :active-style="activeStyle"
       :bearing="bearing"
@@ -60,6 +78,60 @@ async function handleLocate(): Promise<void> {
   width: 100%;
   height: 100%;
   z-index: 0;
+}
+
+.map-loading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  background-color: var(--color-oled-black);
+  pointer-events: none;
+}
+
+.map-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border-subtle);
+  border-top-color: var(--color-primary);
+  border-radius: var(--radius-full);
+  animation: map-spin 0.8s linear infinite;
+}
+
+.map-error-overlay {
+  position: absolute;
+  top: var(--space-xl);
+  left: var(--space-md);
+  right: var(--space-md);
+  z-index: 20;
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-md);
+  background-color: var(--scrim-overlay);
+  backdrop-filter: blur(12px);
+}
+
+.map-error-text {
+  color: var(--color-error);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  text-align: center;
+}
+
+.fade-leave-active {
+  transition: opacity var(--transition-normal);
+}
+
+.fade-leave-to {
+  opacity: 0;
+}
+
+@keyframes map-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 :deep(.user-location-puck) {
