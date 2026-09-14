@@ -1,21 +1,4 @@
-import { SESSION_MAX_AGE_MS } from '@memoro/shared';
-
-function loadR2Config(env: NodeJS.ProcessEnv) {
-  return {
-    accountId: env['R2_ACCOUNT_ID'] ?? '',
-    accessKeyId: env['R2_ACCESS_KEY_ID'] ?? '',
-    secretAccessKey: env['R2_SECRET_ACCESS_KEY'] ?? '',
-    bucketName: env['R2_BUCKET_NAME'] ?? '',
-    publicUrl: env['R2_PUBLIC_URL'] ?? '',
-  };
-}
-
-function loadCorsOrigin(corsOrigin: string | undefined): string[] | boolean {
-  if (corsOrigin) {
-    return corsOrigin.split(',');
-  }
-  return true;
-}
+import { requireEnv } from '@memoro/shared';
 
 export const loadAppConfig = () => {
   const env = process.env;
@@ -24,22 +7,27 @@ export const loadAppConfig = () => {
 
   return {
     port: Number.isNaN(port) ? 3000 : port,
-    host: env['HOST'] ?? '0.0.0.0',
+    host: requireEnv(env, 'HOST'),
     isProduction: env['NODE_ENV'] === 'production',
     logger: {
       level: env['LOG_LEVEL'] ?? 'info',
       pretty: env['NODE_ENV'] !== 'production',
     },
     session: {
-      secret: env['SESSION_SECRET'] ?? 'dev-session-secret-key-at-least-32-chars-long',
-      maxAge: SESSION_MAX_AGE_MS,
+      secret: requireEnv(env, 'SESSION_SECRET'),
+      maxAge: requireEnv(env, 'SESSION_MAX_AGE_MS'),
     },
     db: {
-      url: env['DB_CONNECTION_URL'] ?? '',
+      url: requireEnv(env, 'DB_CONNECTION_URL'),
     },
-    r2: loadR2Config(env),
+    r2: {
+      accountId: requireEnv(env, 'R2_ACCOUNT_ID'),
+      accessKeyId: requireEnv(env, 'R2_ACCESS_KEY_ID'),
+      secretAccessKey: requireEnv(env, 'R2_SECRET_ACCESS_KEY'),
+      bucketName: requireEnv(env, 'R2_BUCKET_NAME'),
+    },
     cors: {
-      origin: loadCorsOrigin(env['CORS_ORIGIN']),
+      origin: requireEnv(env, 'CORS_ORIGIN').split(','),
     },
   };
 };

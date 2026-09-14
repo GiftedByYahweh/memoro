@@ -1,4 +1,5 @@
 export * from './coordinates';
+export * from './env';
 export * from './errors';
 export * from './api';
 export * from './auth';
