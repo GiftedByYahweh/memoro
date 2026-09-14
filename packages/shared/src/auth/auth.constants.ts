@@ -1,5 +1,3 @@
-
-
 export const AUTH_CONSTRAINTS = {
   EMAIL_MAX_LENGTH: 255,
   PASSWORD_MIN_LENGTH: 8,

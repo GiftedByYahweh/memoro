@@ -1,5 +1,10 @@
 import { randomUUID } from 'node:crypto';
-import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+  DeleteObjectCommand,
+} from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import type { AppConfig } from '../../config';
 import type { FileStorage, GenerateUploadUrlInput, UploadUrlOutput } from './file-storage';
@@ -8,7 +13,7 @@ export class R2FileStorageProvider implements FileStorage {
   private client: S3Client;
   private bucketName: string;
   private presignedUrlExpires = 3600;
-  private defaultExtension = 'jpg'
+  private defaultExtension = 'jpg';
 
   constructor(config: AppConfig['r2']) {
     this.client = new S3Client({
