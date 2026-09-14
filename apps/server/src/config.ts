@@ -15,7 +15,7 @@ export const loadAppConfig = () => {
     },
     session: {
       secret: requireEnv(env, 'SESSION_SECRET'),
-      maxAge: requireEnv(env, 'SESSION_MAX_AGE_MS'),
+      maxAge: Number(requireEnv(env, 'SESSION_MAX_AGE_MS')),
     },
     db: {
       url: requireEnv(env, 'DB_CONNECTION_URL'),
