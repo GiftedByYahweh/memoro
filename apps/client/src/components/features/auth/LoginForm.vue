@@ -33,9 +33,5 @@ const { mutate: handleLogin, isPending } = useMutation({
 </script>
 
 <template>
-  <AuthForm
-    mode="login"
-    :is-pending="isPending"
-    @submit="handleLogin"
-  />
+  <AuthForm mode="login" :is-pending="isPending" @submit="handleLogin" />
 </template>

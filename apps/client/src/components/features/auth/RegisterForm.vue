@@ -74,24 +74,21 @@ const { mutate: handleRegister, isPending } = useMutation({
 <template>
   <div class="register-flow">
     <Transition name="step-fade" mode="out-in">
-      <AuthProfileStep
-        v-if="currentStep === 'profile'"
-        @next="handleProfileNext"
-      />
-      
+      <AuthProfileStep v-if="currentStep === 'profile'" @next="handleProfileNext" />
+
       <AuthEmailStep
         v-else-if="currentStep === 'email'"
         @next="handleEmailNext"
         @back="currentStep = 'profile'"
       />
-      
+
       <AuthVerifyStep
         v-else-if="currentStep === 'verify'"
         :email="formData.email"
         @next="handleVerifyNext"
         @back="currentStep = 'email'"
       />
-      
+
       <SetPasswordForm
         v-else-if="currentStep === 'password'"
         :is-pending="isPending"
@@ -109,7 +106,9 @@ const { mutate: handleRegister, isPending } = useMutation({
 
 .step-fade-enter-active,
 .step-fade-leave-active {
-  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .step-fade-enter-from {

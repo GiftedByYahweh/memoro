@@ -75,7 +75,10 @@ function onNext(): void {
           :key="g.value"
           :variant="gender === g.value ? 'primary' : 'secondary'"
           size="sm"
-          @click="gender = g.value; genderError = undefined"
+          @click="
+            gender = g.value;
+            genderError = undefined;
+          "
         >
           {{ g.label }}
         </AppButton>
