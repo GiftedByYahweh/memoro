@@ -199,7 +199,10 @@ Clear boundaries must be maintained across layers (modeled after `kadr`):
 ### 4.3 Component & Styling Rules
 
 - **CSS in Vue SFCs**: All component styling MUST be written directly in `.vue` files using `<style scoped>`.
-- **Minimal Global CSS**: Global CSS is strictly limited to CSS custom properties (variables) and basic resets in `src/css/`.
+- **Minimal Global CSS**: Global CSS is strictly limited to CSS custom properties (variables), basic resets, and widely shared utility classes (e.g., page containers).
+- **DRY (Don't Repeat Yourself)**:
+  - Duplications of HTML/Template code MUST be extracted into a single reusable component.
+  - If ONLY CSS is duplicated across multiple components without HTML duplication, it MUST be extracted into a shared global class (e.g., in `main.css`).
 - **Shared Logic in Composables**: Reusable state and logic across components MUST be extracted into composables (`src/composables/`).
 - **Zero Inline SVGs**: NEVER place `<svg>` tags directly inside `.vue` files. Extract every SVG into its own `.svg` file (e.g. in `src/assets/icons/` or `icons/`) and import it.
 
@@ -220,3 +223,4 @@ Before completing any task, the agent MUST run and verify:
 9. **Single use case per route (atomic workflows encapsulated inside use case via `unitOfWork.run`).**
 10. **Centralized route paths in `ApiRoutes` (`@memoro/shared`) — no local route paths or magic route strings.**
 11. **Standardized `ApiResponse` (no `data: null` in error responses, mandatory `code` and `timestamp`).**
+12. **Strict DRY for frontend templates: duplicated HTML must be extracted into components, and duplicated CSS into global classes.**

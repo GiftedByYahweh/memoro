@@ -5,8 +5,8 @@
   "type": "module",
   "main": "index.ts",
   "scripts": {
-    "dev": "NODE_ENV=development tsx watch index.ts",
-    "start": "NODE_ENV=production tsx index.ts",
+    "dev": "NODE_ENV=development tsx watch --env-file=../../.env index.ts",
+    "start": "NODE_ENV=production tsx --env-file=../../.env index.ts",
     "build": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",

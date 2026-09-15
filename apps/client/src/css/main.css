@@ -1,2 +1,12 @@
 @import url('./variables.css');
 @import url('./reset.css');
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  width: 100%;
+  background-color: var(--color-oled-black);
+  padding: var(--space-xl) var(--space-md) calc(var(--bottom-nav-height) + var(--safe-bottom) + var(--space-xl));
+  box-sizing: border-box;
+}
