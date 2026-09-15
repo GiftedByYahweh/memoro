@@ -3,6 +3,7 @@ import { useRouter } from 'vue-router';
 import { RoutePaths } from '@/router/routes';
 import AppButton from '@/components/shared/AppButton.vue';
 import AppIcon from '@/components/shared/AppIcon.vue';
+import AppPageHeader from '@/components/shared/AppPageHeader.vue';
 import { useAuth } from '@/composables/useAuth';
 
 const router = useRouter();
@@ -15,10 +16,8 @@ async function handleLogout(): Promise<void> {
 </script>
 
 <template>
-  <main class="profile-page">
-    <header class="page-header">
-      <h1 class="page-title">Profile</h1>
-    </header>
+  <main class="page-container">
+    <AppPageHeader title="Profile" />
     <div class="profile-card">
       <div class="avatar-wrap">
         <AppIcon name="user" :size="36" color="primary" />
@@ -37,29 +36,6 @@ async function handleLogout(): Promise<void> {
 </template>
 
 <style scoped>
-.profile-page {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  width: 100%;
-  background-color: var(--color-oled-black);
-  padding: var(--space-xl) var(--space-md)
-    calc(var(--bottom-nav-height) + var(--safe-bottom) + var(--space-xl));
-  box-sizing: border-box;
-}
-
-.page-header {
-  margin-bottom: var(--space-xl);
-}
-
-.page-title {
-  font-family: var(--font-sans);
-  font-size: var(--space-xl);
-  font-weight: 700;
-  color: var(--color-text-primary);
-  margin: 0;
-}
-
 .profile-card {
   display: flex;
   align-items: center;
