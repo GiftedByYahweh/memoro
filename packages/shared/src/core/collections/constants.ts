@@ -1,4 +1,4 @@
-import type { MediaType } from "../media";
+import type { MediaType } from '../media';
 
 export const CollectionVisibilityStatus = {
   PUBLIC: 'public',

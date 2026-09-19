@@ -1,16 +1,36 @@
-import { pgTable, uuid, varchar, timestamp, integer, doublePrecision, bigint, pgEnum, boolean } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  uuid,
+  varchar,
+  timestamp,
+  integer,
+  doublePrecision,
+  bigint,
+  pgEnum,
+  boolean,
+} from 'drizzle-orm/pg-core';
 import { profilesTable } from './profiles';
 import { MEDIA_CONSTRAINTS, MediaStatus, MediaType } from '@memoro/shared';
 
-export const mediaStatusEnum = pgEnum('media_status', Object.values(MediaStatus) as [string, ...string[]]);
-export const mediaTypeEnum = pgEnum('media_type', Object.values(MediaType) as [string, ...string[]]);
+export const mediaStatusEnum = pgEnum(
+  'media_status',
+  Object.values(MediaStatus) as [string, ...string[]],
+);
+export const mediaTypeEnum = pgEnum(
+  'media_type',
+  Object.values(MediaType) as [string, ...string[]],
+);
 export const mediaTable = pgTable('media', {
   id: uuid('id').primaryKey().defaultRandom(),
   profileId: uuid('profile_id')
     .notNull()
     .references(() => profilesTable.id, { onDelete: 'cascade' }),
-  fileKey: varchar('file_key', { length: MEDIA_CONSTRAINTS.FILE_KEY_MAX_LENGTH }).notNull().unique(),
-  contentType: varchar('content_type', { length: MEDIA_CONSTRAINTS.CONTENT_TYPE_MAX_LENGTH }).notNull(),
+  fileKey: varchar('file_key', { length: MEDIA_CONSTRAINTS.FILE_KEY_MAX_LENGTH })
+    .notNull()
+    .unique(),
+  contentType: varchar('content_type', {
+    length: MEDIA_CONSTRAINTS.CONTENT_TYPE_MAX_LENGTH,
+  }).notNull(),
   status: mediaStatusEnum('status').notNull(),
   type: mediaTypeEnum('type').notNull(),
   captureTime: timestamp('capture_time', { withTimezone: true }),

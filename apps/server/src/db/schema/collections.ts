@@ -5,7 +5,7 @@ import { COLLECTION_CONSTRAINTS, CollectionVisibilityStatus } from '@memoro/shar
 
 export const collectionVisibilityEnum = pgEnum(
   'collection_visibility',
-  Object.values(CollectionVisibilityStatus) as [string, ...string[]]
+  Object.values(CollectionVisibilityStatus) as [string, ...string[]],
 );
 
 export const collectionsTable = pgTable('collections', {
@@ -16,7 +16,9 @@ export const collectionsTable = pgTable('collections', {
   title: varchar('title', { length: COLLECTION_CONSTRAINTS.TITLE_MAX_LENGTH }).notNull(),
   description: varchar('description', { length: COLLECTION_CONSTRAINTS.DESCRIPTION_MAX_LENGTH }),
   visibility: collectionVisibilityEnum('visibility').notNull().default('private'),
-  wallpaperMediaId: uuid('wallpaper_media_id').references(() => mediaTable.id, { onDelete: 'set null' }),
+  wallpaperMediaId: uuid('wallpaper_media_id').references(() => mediaTable.id, {
+    onDelete: 'set null',
+  }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
