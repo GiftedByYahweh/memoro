@@ -3,10 +3,10 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useMutation } from '@tanstack/vue-query';
 import { VerificationCodeType, type UserSex } from '@memoro/shared';
-import { authService } from '@/services';
 import { useAuth } from '@/composables/useAuth';
 import { useDomainError } from '@/composables/useDomainError';
 import { useToast } from '@/composables/useToast';
+import { useVerificationFlow } from '@/composables/useVerificationFlow';
 
 import AuthProfileStep from './AuthProfileStep.vue';
 import AuthEmailStep from './AuthEmailStep.vue';
@@ -25,19 +25,26 @@ const { translateApiError } = useDomainError();
 type Step = 'profile' | 'email' | 'verify' | 'password';
 const currentStep = ref<Step>('profile');
 
-const verifyApiError = ref<string | undefined>(undefined);
-
 const formData = ref<{
   username: string;
   gender: UserSex | '';
   email: string;
-  password: string;
 }>({
   username: '',
   gender: '',
   email: '',
-  password: '',
 });
+
+const { sendCode, isSendingCode, verifyCode, isVerifyingCode, verifyApiError } =
+  useVerificationFlow({
+    type: VerificationCodeType.REGISTRATION,
+    onSendSuccess: () => {
+      currentStep.value = 'verify';
+    },
+    onVerifySuccess: () => {
+      currentStep.value = 'password';
+    },
+  });
 
 function handleProfileNext(payload: { username: string; gender: UserSex }): void {
   formData.value.username = payload.username;
@@ -45,54 +52,13 @@ function handleProfileNext(payload: { username: string; gender: UserSex }): void
   currentStep.value = 'email';
 }
 
-const { mutate: handleSendCode, isPending: isSendingCode } = useMutation({
-  mutationFn: async (email: string) => {
-    return authService.sendCode({
-      email,
-      type: VerificationCodeType.REGISTRATION,
-    });
-  },
-  onSuccess: (response) => {
-    if (!response.success) {
-      const errorMsg = translateApiError(response);
-      showError(errorMsg);
-      return;
-    }
-    currentStep.value = 'verify';
-  },
-  onError: () => {
-    showError(t('errors.unknown'));
-  },
-});
-
 function handleEmailNext(email: string): void {
   formData.value.email = email;
-  handleSendCode(email);
+  sendCode(email);
 }
 
-const { mutate: handleVerifyCode, isPending: isVerifyingCode } = useMutation({
-  mutationFn: async (code: string) => {
-    verifyApiError.value = undefined;
-    return authService.verifyCode({
-      email: formData.value.email,
-      code,
-      type: VerificationCodeType.REGISTRATION,
-    });
-  },
-  onSuccess: (response) => {
-    if (!response.success) {
-      verifyApiError.value = translateApiError(response);
-      return;
-    }
-    currentStep.value = 'password';
-  },
-  onError: () => {
-    verifyApiError.value = t('errors.unknown');
-  },
-});
-
 function handleVerifyNext(code: string): void {
-  handleVerifyCode(code);
+  verifyCode({ email: formData.value.email, code });
 }
 
 const { mutate: handleRegister, isPending } = useMutation({
@@ -101,10 +67,9 @@ const { mutate: handleRegister, isPending } = useMutation({
       throw new Error('Gender is required');
     }
 
-    formData.value.password = password;
     return register({
       email: formData.value.email,
-      password: formData.value.password,
+      password,
       username: formData.value.username,
       gender: formData.value.gender,
     });
@@ -123,6 +88,10 @@ const { mutate: handleRegister, isPending } = useMutation({
     showError(t('errors.unknown'));
   },
 });
+
+function handlePasswordSubmit(password: string): void {
+  handleRegister(password);
+}
 </script>
 
 <template>
@@ -132,6 +101,7 @@ const { mutate: handleRegister, isPending } = useMutation({
 
       <AuthEmailStep
         v-else-if="currentStep === 'email'"
+        :initial-email="formData.email"
         :is-pending="isSendingCode"
         @next="handleEmailNext"
         @back="currentStep = 'profile'"
@@ -144,13 +114,13 @@ const { mutate: handleRegister, isPending } = useMutation({
         :api-error="verifyApiError"
         @next="handleVerifyNext"
         @back="currentStep = 'email'"
-        @resend="() => handleSendCode(formData.email)"
+        @resend="() => sendCode(formData.email)"
       />
 
       <SetPasswordForm
         v-else-if="currentStep === 'password'"
         :is-pending="isPending"
-        @submit="handleRegister"
+        @submit="handlePasswordSubmit"
         @back="currentStep = 'verify'"
       />
     </Transition>
