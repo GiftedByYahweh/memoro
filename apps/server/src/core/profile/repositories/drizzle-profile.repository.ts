@@ -17,12 +17,25 @@ export function drizzleProfileRepository(dbProvider: DBProvider): ProfileReposit
       return row ? toProfileEntity(row) : null;
     },
 
+    findByUsername: async (username: string): Promise<Profile | null> => {
+      const [row] = await dbProvider
+        .current()
+        .select()
+        .from(profilesTable)
+        .where(eq(profilesTable.username, username))
+        .limit(1);
+      return row ? toProfileEntity(row) : null;
+    },
+
     create: async (data: CreateProfileData): Promise<Profile> => {
       const [row] = await dbProvider
         .current()
         .insert(profilesTable)
         .values({
           userId: data.userId,
+          username: data.username,
+          sex: data.sex,
+          avatar: data.avatar,
         })
         .returning();
 

@@ -29,6 +29,10 @@ export const loadAppConfig = () => {
     cors: {
       origin: requireEnv(env, 'CORS_ORIGIN').split(','),
     },
+    resend: {
+      apiKey: requireEnv(env, 'RESEND_API_KEY'),
+      from: requireEnv(env, 'MAIL_FROM'),
+    },
   };
 };
 

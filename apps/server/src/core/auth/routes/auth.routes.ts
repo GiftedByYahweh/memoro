@@ -5,14 +5,26 @@ import type { RegisterUseCase } from '../use-cases/register.use-case';
 import type { LoginUseCase } from '../use-cases/login.use-case';
 import type { LogoutUseCase } from '../use-cases/logout.use-case';
 import type { ValidateSessionUseCase } from '../use-cases/validate-session.use-case';
+import type { SendVerificationCodeUseCase } from '../use-cases/send-verification-code.use-case';
+import type { VerifyCodeUseCase } from '../use-cases/verify-code.use-case';
+import type { ResetPasswordUseCase } from '../use-cases/reset-password.use-case';
 import type { FastifyInstanceZod } from '@/common/fastify.types';
-import { loginRouteSchema, registerRouteSchema } from './auth.schema';
+import {
+  loginRouteSchema,
+  registerRouteSchema,
+  resetPasswordRouteSchema,
+  sendVerificationCodeRouteSchema,
+  verifyCodeRouteSchema,
+} from './auth.schema';
 
 export interface AuthRoutesDeps {
   registerUseCase: RegisterUseCase;
   loginUseCase: LoginUseCase;
   logoutUseCase: LogoutUseCase;
   validateSessionUseCase: ValidateSessionUseCase;
+  sendVerificationCodeUseCase: SendVerificationCodeUseCase;
+  verifyCodeUseCase: VerifyCodeUseCase;
+  resetPasswordUseCase: ResetPasswordUseCase;
   isProduction: boolean;
 }
 
@@ -22,10 +34,57 @@ function registerRoute(server: FastifyInstanceZod, registerUseCase: RegisterUseC
     const { user } = await registerUseCase({
       email: body.email,
       password: body.password,
+      username: body.username,
+      gender: body.gender,
     });
 
     return user;
   });
+}
+
+function sendCodeRoute(
+  server: FastifyInstanceZod,
+  sendVerificationCodeUseCase: SendVerificationCodeUseCase,
+): void {
+  server.post(
+    ApiRoutes.auth.sendCode,
+    { schema: sendVerificationCodeRouteSchema },
+    async (request) => {
+      const body = request.body;
+      return sendVerificationCodeUseCase({
+        email: body.email,
+        type: body.type,
+      });
+    },
+  );
+}
+
+function verifyCodeRoute(server: FastifyInstanceZod, verifyCodeUseCase: VerifyCodeUseCase): void {
+  server.post(ApiRoutes.auth.verifyCode, { schema: verifyCodeRouteSchema }, async (request) => {
+    const body = request.body;
+    return verifyCodeUseCase({
+      email: body.email,
+      code: body.code,
+      type: body.type,
+    });
+  });
+}
+
+function resetPasswordRoute(
+  server: FastifyInstanceZod,
+  resetPasswordUseCase: ResetPasswordUseCase,
+): void {
+  server.post(
+    ApiRoutes.auth.resetPassword,
+    { schema: resetPasswordRouteSchema },
+    async (request) => {
+      const body = request.body;
+      return resetPasswordUseCase({
+        email: body.email,
+        password: body.password,
+      });
+    },
+  );
 }
 
 function loginRoute(
@@ -85,18 +144,29 @@ function sessionRoute(
     const unsigned = rawCookie ? request.unsignCookie(rawCookie) : null;
     const sessionToken = unsigned?.valid ? unsigned.value : undefined;
 
-    return await validateSessionUseCase({
+    return validateSessionUseCase({
       sessionToken,
     });
   });
 }
 
 export function authRoutes(deps: AuthRoutesDeps): FastifyPluginCallbackZod {
-  const { registerUseCase, loginUseCase, logoutUseCase, validateSessionUseCase, isProduction } =
-    deps;
+  const {
+    registerUseCase,
+    loginUseCase,
+    logoutUseCase,
+    validateSessionUseCase,
+    sendVerificationCodeUseCase,
+    verifyCodeUseCase,
+    resetPasswordUseCase,
+    isProduction,
+  } = deps;
 
   return (server, _options, done): void => {
     registerRoute(server, registerUseCase);
+    sendCodeRoute(server, sendVerificationCodeUseCase);
+    verifyCodeRoute(server, verifyCodeUseCase);
+    resetPasswordRoute(server, resetPasswordUseCase);
     loginRoute(server, loginUseCase, isProduction);
     logoutRoute(server, logoutUseCase);
     sessionRoute(server, validateSessionUseCase);

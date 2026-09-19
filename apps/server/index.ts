@@ -8,7 +8,7 @@ import { ConsoleLogger } from './src/logger/index';
 export const app = async (config: AppConfig): Promise<FastifyInstance> => {
   const logger = new ConsoleLogger();
 
-  const container = createAppContainer(config);
+  const container = createAppContainer(config, logger);
   logger.info('Server', 'App Container created');
 
   return createServer({ container, config, logger });
