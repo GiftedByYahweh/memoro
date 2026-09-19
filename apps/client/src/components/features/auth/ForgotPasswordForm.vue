@@ -56,7 +56,11 @@ function onSendCode(): void {
 
 const { mutate: handleVerifyCode, isPending: isVerifyingCode } = useMutation({
   mutationFn: async (inputCode: string) => {
-    return authService.verifyCode({ email: email.value, code: inputCode, type: VerificationCodeType.PASSWORD_RESET });
+    return authService.verifyCode({
+      email: email.value,
+      code: inputCode,
+      type: VerificationCodeType.PASSWORD_RESET,
+    });
   },
   onSuccess: (response) => {
     if (!response.success) {

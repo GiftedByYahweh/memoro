@@ -45,10 +45,7 @@ function onNext(): void {
 </script>
 
 <template>
-  <AuthStepLayout
-    :title="title ?? t('auth.stepEmail')"
-    @back="emit('back')"
-  >
+  <AuthStepLayout :title="title ?? t('auth.stepEmail')" @back="emit('back')">
     <AppInput
       id="reg-email"
       v-model="email"

@@ -56,10 +56,7 @@ function onSubmit(): void {
 </script>
 
 <template>
-  <AuthStepLayout
-    :title="title ?? t('auth.stepPassword')"
-    @back="emit('back')"
-  >
+  <AuthStepLayout :title="title ?? t('auth.stepPassword')" @back="emit('back')">
     <form class="password-form" novalidate @submit.prevent="onSubmit">
       <AppInput
         id="reg-pass"

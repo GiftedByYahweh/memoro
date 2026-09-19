@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import AppBackButton from '@/components/shared/AppBackButton.vue';
-import AppText from '@/components/shared/AppText.vue';
 
 interface Props {
   title: string;
