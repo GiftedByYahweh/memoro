@@ -6,7 +6,8 @@ const authApi = (transport: HttpTransport) => ({
     transport.post<AuthUserDto>(`${ApiRoutes.auth.prefix}${ApiRoutes.auth.register}`, data),
   login: (data: LoginDto) =>
     transport.post<AuthUserDto>(`${ApiRoutes.auth.prefix}${ApiRoutes.auth.login}`, data),
-  logout: () => transport.post<null>(`${ApiRoutes.auth.prefix}${ApiRoutes.auth.logout}`),
+  logout: () =>
+    transport.post<Record<string, never>>(`${ApiRoutes.auth.prefix}${ApiRoutes.auth.logout}`),
   session: () => transport.get<AuthUserDto>(`${ApiRoutes.auth.prefix}${ApiRoutes.auth.session}`),
 });
 

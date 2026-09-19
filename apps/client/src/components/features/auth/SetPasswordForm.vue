@@ -5,8 +5,7 @@ import { AUTH_CONSTRAINTS } from '@memoro/shared';
 import AppButton from '@/components/shared/AppButton.vue';
 import AppInput from '@/components/shared/AppInput.vue';
 import AppIcon from '@/components/shared/AppIcon.vue';
-import AppText from '@/components/shared/AppText.vue';
-import AppBackButton from '@/components/shared/AppBackButton.vue';
+import AuthStepLayout from './AuthStepLayout.vue';
 
 interface Props {
   isPending?: boolean;
@@ -49,13 +48,11 @@ function onSubmit(): void {
 </script>
 
 <template>
-  <div class="step-container">
-    <div class="step-header">
-      <AppBackButton @click="emit('back')" />
-      <AppText variant="h3" color="primary">{{ t('auth.stepPassword') }}</AppText>
-      <AppText variant="body-sm" color="secondary">{{ t('auth.stepPasswordDesc') }}</AppText>
-    </div>
-
+  <AuthStepLayout
+    :title="t('auth.stepPassword')"
+    :description="t('auth.stepPasswordDesc')"
+    @back="emit('back')"
+  >
     <form class="password-form" novalidate @submit.prevent="onSubmit">
       <AppInput
         id="reg-pass"
@@ -87,39 +84,17 @@ function onSubmit(): void {
         </template>
       </AppInput>
 
-      <div class="step-actions">
-        <AppButton type="submit" variant="primary" size="lg" block :loading="isPending">
-          {{ t('auth.finishRegister') }}
-        </AppButton>
-      </div>
+      <AppButton type="submit" variant="primary" size="lg" block :loading="isPending">
+        {{ t('auth.finishRegister') }}
+      </AppButton>
     </form>
-  </div>
+  </AuthStepLayout>
 </template>
 
 <style scoped>
-.step-container {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-  width: 100%;
-}
-
-.step-header {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2xs);
-  text-align: center;
-  margin-bottom: var(--space-xs);
-}
-
 .password-form {
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
-}
-
-.step-actions {
-  margin-top: var(--space-xs);
 }
 </style>

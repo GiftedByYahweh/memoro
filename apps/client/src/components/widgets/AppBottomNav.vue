@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import AppIcon from '@/components/shared/AppIcon.vue';
 import { NAV_ITEMS_LEFT, NAV_ITEMS_RIGHT } from '@/constants/nav.constants';
 
 const emit = defineEmits<{
   create: [];
 }>();
+
+const { t } = useI18n();
 
 function handleCreate(): void {
   emit('create');
@@ -24,12 +27,17 @@ function handleCreate(): void {
           exact-active-class="is-active"
         >
           <AppIcon :name="item.icon" :size="22" color="inherit" />
-          <span class="nav-label">{{ item.label }}</span>
+          <span class="nav-label">{{ t(item.labelKey) }}</span>
         </RouterLink>
       </div>
 
       <div class="fab-wrap">
-        <button type="button" class="fab-btn" aria-label="Add memory" @click="handleCreate">
+        <button
+          type="button"
+          class="fab-btn"
+          :aria-label="t('nav.addMemory')"
+          @click="handleCreate"
+        >
           <AppIcon name="plus" :size="24" color="inherit" />
         </button>
       </div>
@@ -43,7 +51,7 @@ function handleCreate(): void {
           exact-active-class="is-active"
         >
           <AppIcon :name="item.icon" :size="22" color="inherit" />
-          <span class="nav-label">{{ item.label }}</span>
+          <span class="nav-label">{{ t(item.labelKey) }}</span>
         </RouterLink>
       </div>
     </div>

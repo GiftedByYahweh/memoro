@@ -27,4 +27,8 @@ export class DBProvider {
   public transaction<T>(fn: () => Promise<T>): Promise<T> {
     return this.db.transaction((tx) => this.txContext.run(tx, fn));
   }
+
+  public async close(): Promise<void> {
+    await this.pool.end();
+  }
 }

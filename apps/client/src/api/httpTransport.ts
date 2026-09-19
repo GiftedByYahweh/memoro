@@ -1,4 +1,9 @@
-import { type DomainErrorCode, type ApiResponse, type ApiErrorResponse } from '@memoro/shared';
+import {
+  type AppErrorCode,
+  HttpStatusCode,
+  type ApiResponse,
+  type ApiErrorResponse,
+} from '@memoro/shared';
 
 export interface RequestOptions extends Omit<RequestInit, 'body' | 'method' | 'headers'> {
   readonly headers?: Record<string, string>;
@@ -22,16 +27,14 @@ interface SendPayload {
   readonly options?: RequestOptions;
 }
 
-const CLIENT_ERROR_CODE = 'CLIENT_ERROR';
-
 function toErrorResponse(
-  errorCode: DomainErrorCode | null = null,
-  code: string = CLIENT_ERROR_CODE,
+  message = '',
+  code: AppErrorCode = HttpStatusCode.INTERNAL_SERVER_ERROR,
 ): ApiErrorResponse {
   return {
     success: false,
     code,
-    errorCode,
+    message,
     timestamp: Date.now(),
   };
 }

@@ -53,9 +53,28 @@
   },
   "nav": {
     "map": "Map",
+    "feed": "Feed",
+    "albums": "Albums",
     "timeline": "Timeline",
     "collections": "Collections",
-    "profile": "Profile"
+    "profile": "Profile",
+    "addMemory": "Add memory"
+  },
+  "feed": {
+    "title": "Feed",
+    "emptyTitle": "No memories yet",
+    "emptyDescription": "Capture moments on the map to see your timeline here."
+  },
+  "albums": {
+    "title": "Albums",
+    "emptyTitle": "No collections created",
+    "emptyDescription": "Organize your trips and moments into dedicated photo albums."
+  },
+  "profile": {
+    "title": "Profile",
+    "freePlan": "Free Plan",
+    "signOut": "Sign Out",
+    "defaultUser": "User"
   },
   "validation": {
     "required": "This field is required",

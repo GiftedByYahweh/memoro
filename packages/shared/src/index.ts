@@ -1,6 +1,6 @@
 export * from './utils/coordinates';
 export * from './utils/env';
-export * from './consts/errors';
+export * from './errors';
 export * from './types/api';
 export * from './core';
 export * from './consts/routes';

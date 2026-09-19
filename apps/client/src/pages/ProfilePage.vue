@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { RoutePaths } from '@/router/routes';
 import AppButton from '@/components/shared/AppButton.vue';
 import AppIcon from '@/components/shared/AppIcon.vue';
@@ -7,6 +8,7 @@ import AppPageHeader from '@/components/shared/AppPageHeader.vue';
 import { useAuth } from '@/composables/useAuth';
 
 const router = useRouter();
+const { t } = useI18n();
 const { user, logout, isLoading } = useAuth();
 
 async function handleLogout(): Promise<void> {
@@ -17,19 +19,19 @@ async function handleLogout(): Promise<void> {
 
 <template>
   <main class="page-container">
-    <AppPageHeader title="Profile" />
+    <AppPageHeader :title="t('profile.title')" />
     <div class="profile-card">
       <div class="avatar-wrap">
         <AppIcon name="user" :size="36" color="primary" />
       </div>
       <div class="user-info">
-        <p class="user-email">{{ user?.email ?? 'User' }}</p>
-        <p class="user-role">Free Plan</p>
+        <p class="user-email">{{ user?.email ?? t('profile.defaultUser') }}</p>
+        <p class="user-role">{{ t('profile.freePlan') }}</p>
       </div>
     </div>
     <div class="profile-actions">
       <AppButton variant="danger" size="md" :loading="isLoading" block @click="handleLogout">
-        Sign Out
+        {{ t('profile.signOut') }}
       </AppButton>
     </div>
   </main>
