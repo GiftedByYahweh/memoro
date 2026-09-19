@@ -51,6 +51,8 @@
     "codeLabel": "Код підтвердження",
     "codePlaceholder": "000000",
     "verifyBtn": "Підтвердити",
+    "resendCodeIn": "Надіслати повторно через {seconds} с",
+    "resendCodeAction": "Надіслати код повторно",
     "stepPassword": "Придумайте пароль",
     "stepPasswordDesc": "Для захисту вашого акаунту",
     "passwordRepeatLabel": "Повторіть пароль",
@@ -59,6 +61,7 @@
     "continue": "Продовжити"
   },
   "nav": {
+    "back": "Назад",
     "map": "Мапа",
     "feed": "Стрічка",
     "albums": "Альбоми",

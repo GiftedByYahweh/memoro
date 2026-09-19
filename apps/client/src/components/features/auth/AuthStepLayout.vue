@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import AppBackButton from '@/components/shared/AppBackButton.vue';
+import { useI18n } from 'vue-i18n';
+import AppButton from '@/components/shared/AppButton.vue';
 
 interface Props {
-  title: string;
+  title?: string;
   description?: string;
   showBack?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
+  title: undefined,
   description: undefined,
   showBack: true,
 });
@@ -15,18 +17,22 @@ withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   back: [];
 }>();
+
+const { t } = useI18n();
 </script>
 
 <template>
   <div class="step-container">
-    <div class="step-header">
-      <AppBackButton v-if="showBack" @click="emit('back')" />
-    </div>
-
     <slot />
 
-    <div v-if="$slots.actions" class="step-actions">
+    <div v-if="$slots.actions || showBack" class="step-actions">
       <slot name="actions" />
+
+      <div v-if="showBack" class="back-action">
+        <AppButton variant="secondary" size="lg" block @click="emit('back')">
+          {{ t('nav.back', 'Назад') }}
+        </AppButton>
+      </div>
     </div>
   </div>
 </template>
@@ -39,17 +45,15 @@ const emit = defineEmits<{
   width: 100%;
 }
 
-.step-header {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2xs);
-  text-align: center;
-  margin-bottom: var(--space-xs);
-}
-
 .step-actions {
   margin-top: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.back-action {
+  width: 100%;
 }
 
 :deep(.highlight) {

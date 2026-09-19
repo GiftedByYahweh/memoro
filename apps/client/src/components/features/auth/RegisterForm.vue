@@ -25,6 +25,8 @@ const { translateApiError } = useDomainError();
 type Step = 'profile' | 'email' | 'verify' | 'password';
 const currentStep = ref<Step>('profile');
 
+const verifyApiError = ref<string | undefined>(undefined);
+
 const formData = ref<{
   username: string;
   gender: UserSex | '';
@@ -70,6 +72,7 @@ function handleEmailNext(email: string): void {
 
 const { mutate: handleVerifyCode, isPending: isVerifyingCode } = useMutation({
   mutationFn: async (code: string) => {
+    verifyApiError.value = undefined;
     return authService.verifyCode({
       email: formData.value.email,
       code,
@@ -78,13 +81,13 @@ const { mutate: handleVerifyCode, isPending: isVerifyingCode } = useMutation({
   },
   onSuccess: (response) => {
     if (!response.success) {
-      showError(translateApiError(response));
+      verifyApiError.value = translateApiError(response);
       return;
     }
     currentStep.value = 'password';
   },
   onError: () => {
-    showError(t('errors.unknown'));
+    verifyApiError.value = t('errors.unknown');
   },
 });
 
@@ -138,8 +141,10 @@ const { mutate: handleRegister, isPending } = useMutation({
         v-else-if="currentStep === 'verify'"
         :email="formData.email"
         :is-pending="isVerifyingCode"
+        :api-error="verifyApiError"
         @next="handleVerifyNext"
         @back="currentStep = 'email'"
+        @resend="() => handleSendCode(formData.email)"
       />
 
       <SetPasswordForm
