@@ -17,6 +17,7 @@ const { showError, showSuccess } = useToast();
 const { translateApiError } = useDomainError();
 
 const step = ref<'email' | 'code' | 'password'>('email');
+const verifyApiError = ref<string | undefined>(undefined);
 
 const email = ref('');
 const code = ref('');
@@ -56,6 +57,7 @@ function onSendCode(): void {
 
 const { mutate: handleVerifyCode, isPending: isVerifyingCode } = useMutation({
   mutationFn: async (inputCode: string) => {
+    verifyApiError.value = undefined;
     return authService.verifyCode({
       email: email.value,
       code: inputCode,
@@ -64,13 +66,13 @@ const { mutate: handleVerifyCode, isPending: isVerifyingCode } = useMutation({
   },
   onSuccess: (response) => {
     if (!response.success) {
-      showError(translateApiError(response));
+      verifyApiError.value = translateApiError(response);
       return;
     }
     step.value = 'password';
   },
   onError: () => {
-    showError(t('errors.unknown'));
+    verifyApiError.value = t('errors.unknown');
   },
 });
 
@@ -133,10 +135,12 @@ function onResetSubmit(): void {
         v-else-if="step === 'code'"
         :email="email"
         :is-pending="isVerifyingCode"
+        :api-error="verifyApiError"
         :title="t('auth.stepVerify')"
         :submit-text="t('auth.verifyBtn')"
         @next="onVerifyCode"
         @back="step = 'email'"
+        @resend="() => handleSendCode(email)"
       />
       <SetPasswordForm
         v-else
