@@ -3,12 +3,9 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { AUTH_CONSTRAINTS } from '@memoro/shared';
 import AppButton from '@/components/shared/AppButton.vue';
-import AppInput from '@/components/shared/AppInput.vue';
-import AppIcon from '@/components/shared/AppIcon.vue';
+import AppPinInput from '@/components/shared/AppPinInput.vue';
 import AppText from '@/components/shared/AppText.vue';
 import AuthStepLayout from './AuthStepLayout.vue';
-
-const ICON_SIZE_FIELD = 18;
 
 interface Props {
   email: string;
@@ -41,6 +38,11 @@ function onNext(): void {
   codeError.value = undefined;
   emit('next', code.value);
 }
+
+function onCodeComplete(completedCode: string): void {
+  code.value = completedCode;
+  onNext();
+}
 </script>
 
 <template>
@@ -51,19 +53,15 @@ function onNext(): void {
       </AppText>
     </template>
 
-    <AppInput
-      id="reg-code"
-      v-model="code"
-      type="text"
-      :label="t('auth.codeLabel')"
-      :placeholder="t('auth.codePlaceholder')"
-      :maxlength="AUTH_CONSTRAINTS.VERIFICATION_CODE_LENGTH"
-      :error="codeError"
-    >
-      <template #icon-left>
-        <AppIcon name="check" :size="ICON_SIZE_FIELD" color="secondary" />
-      </template>
-    </AppInput>
+    <div class="verify-input-section">
+      <AppPinInput
+        v-model="code"
+        :error="codeError"
+        :disabled="isPending"
+        autofocus
+        @complete="onCodeComplete"
+      />
+    </div>
 
     <template #actions>
       <AppButton variant="primary" size="lg" block :loading="isPending" @click="onNext">
@@ -72,3 +70,17 @@ function onNext(): void {
     </template>
   </AuthStepLayout>
 </template>
+
+<style scoped>
+.verify-input-section {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: var(--space-md) 0;
+}
+
+.highlight {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+</style>
