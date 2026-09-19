@@ -1,11 +1,15 @@
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import fastify from 'fastify';
-import type { FastifyInstance } from 'fastify';
+import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import fastifyHelmet from '@fastify/helmet';
 import fastifyCookie from '@fastify/cookie';
 import fastifyCors from '@fastify/cors';
 import fastifyRateLimit from '@fastify/rate-limit';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
+import fastifyStatic from '@fastify/static';
 import {
   jsonSchemaTransform,
   serializerCompiler,
@@ -15,11 +19,19 @@ import type { AppContainer } from './container';
 import type { AppConfig } from './config';
 import type { Logger } from './logger/index';
 import { AppError } from '@/common/error/app.error';
-import { ApiRoutes, HttpStatusCode } from '@memoro/shared';
+import { API_PREFIX, ApiRoutes, HttpStatusCode } from '@memoro/shared';
 import { errorResponse, successResponse } from '@/common/utils/api-response';
 import { HTTP_STATUS_BY_APP_ERROR, HTTP_STATUS_MESSAGES } from './common/error/http-status.map';
 
-const DOCS_ROUTE_PREFIX = '/docs';
+const DOCS_ROUTE_PREFIX = '/docs' as const;
+const STATIC_PREFIX = '/' as const;
+const INDEX_FILE_NAME = 'index.html' as const;
+const CLIENT_DIST_RELATIVE_PATH = '../../client/dist' as const;
+const HTTP_METHOD_GET = 'GET' as const;
+
+const CURRENT_DIR = fileURLToPath(new URL('.', import.meta.url));
+const CLIENT_DIST_PATH = resolve(CURRENT_DIR, CLIENT_DIST_RELATIVE_PATH);
+const CLIENT_INDEX_PATH = resolve(CLIENT_DIST_PATH, INDEX_FILE_NAME);
 
 interface CreateServerOptions {
   container: AppContainer;
@@ -61,15 +73,36 @@ async function registerDocs(server: FastifyInstance, config: AppConfig) {
   });
 }
 
-function registerErrorHandlers(server: FastifyInstance, logger: Logger) {
-  server.setNotFoundHandler((_request, reply) => {
-    reply.status(HttpStatusCode.NOT_FOUND).send(
-      errorResponse({
-        code: HttpStatusCode.NOT_FOUND,
-        message: HTTP_STATUS_MESSAGES[HttpStatusCode.NOT_FOUND],
-      }),
-    );
+async function registerStatic(server: FastifyInstance) {
+  if (!existsSync(CLIENT_INDEX_PATH)) {
+    return;
+  }
+
+  await server.register(fastifyStatic, {
+    root: CLIENT_DIST_PATH,
+    prefix: STATIC_PREFIX,
   });
+}
+
+function handleNotFound(request: FastifyRequest, reply: FastifyReply) {
+  if (
+    request.method === HTTP_METHOD_GET &&
+    !request.url.startsWith(API_PREFIX) &&
+    existsSync(CLIENT_INDEX_PATH)
+  ) {
+    return reply.sendFile(INDEX_FILE_NAME);
+  }
+
+  return reply.status(HttpStatusCode.NOT_FOUND).send(
+    errorResponse({
+      code: HttpStatusCode.NOT_FOUND,
+      message: HTTP_STATUS_MESSAGES[HttpStatusCode.NOT_FOUND],
+    }),
+  );
+}
+
+function registerErrorHandlers(server: FastifyInstance, logger: Logger) {
+  server.setNotFoundHandler((request, reply) => handleNotFound(request, reply));
 
   server.setSchemaErrorFormatter((errors) => {
     const error = errors[0];
@@ -101,7 +134,11 @@ function registerErrorHandlers(server: FastifyInstance, logger: Logger) {
 
 function registerResponseHooks(server: FastifyInstance) {
   server.addHook('preSerialization', (request, reply, payload, done) => {
-    if (reply.statusCode >= 400 || request.url.startsWith(DOCS_ROUTE_PREFIX)) {
+    if (
+      reply.statusCode >= HttpStatusCode.BAD_REQUEST ||
+      !request.url.startsWith(API_PREFIX) ||
+      request.url.startsWith(DOCS_ROUTE_PREFIX)
+    ) {
       done(null, payload);
       return;
     }
@@ -136,6 +173,7 @@ export const createServer = async (options: CreateServerOptions): Promise<Fastif
   server.setSerializerCompiler(serializerCompiler);
 
   await registerPlugins(server, config);
+  await registerStatic(server);
   await registerDocs(server, config);
   registerResponseHooks(server);
   registerLifecycleHooks(server, container);

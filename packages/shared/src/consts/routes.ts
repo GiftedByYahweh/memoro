@@ -1,4 +1,4 @@
-const API_PREFIX = '/api';
+export const API_PREFIX = '/api' as const;
 
 export const ApiRoutes = {
   health: `${API_PREFIX}/health`,

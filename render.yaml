@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: memoro-app
+    runtime: node
+    region: frankfurt
+    plan: free
+    buildCommand: npm ci && npm run build
+    preDeployCommand: npm run db:migrate --workspace=@memoro/server
+    startCommand: npx tsx apps/server/index.ts
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DB_CONNECTION_URL
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: SESSION_MAX_AGE_MS
+        value: "604800000"
+      - key: CORS_ORIGIN
+        value: "http://localhost:5174,http://localhost:5173"
+      - key: R2_ACCOUNT_ID
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_BUCKET_NAME
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: MAIL_FROM
+        sync: false
