@@ -52,14 +52,17 @@ async function sendRequest<T>(baseUrl: string, payload: SendPayload): Promise<Ap
   const { url, data, method, options = {} } = payload;
   const fullPath = `${baseUrl}${url}`;
   try {
+    const headers: Record<string, string> = { ...options.headers };
+
+    if (data) {
+      headers['Content-Type'] = 'application/json';
+    }
+
     const response = await fetch(fullPath, {
       ...options,
       method,
       credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
+      headers,
       body: data ? JSON.stringify(data) : undefined,
     });
     return await handleFetchResponse<T>(response);
