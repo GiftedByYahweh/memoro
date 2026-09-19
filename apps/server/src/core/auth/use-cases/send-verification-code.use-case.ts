@@ -62,7 +62,7 @@ export function sendVerificationCodeUseCase(
       });
     });
 
-    const { subject, text ,html } = renderVerificationEmail({
+    const { subject, text, html } = renderVerificationEmail({
       code,
       type: input.type,
     });
