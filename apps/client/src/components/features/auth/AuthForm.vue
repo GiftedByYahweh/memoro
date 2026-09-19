@@ -20,6 +20,7 @@ const props = defineProps<Props>();
 
 const emit = defineEmits<{
   submit: [payload: { email: string; password: string }];
+  forgotPassword: [];
 }>();
 
 const { t } = useI18n();
@@ -96,7 +97,7 @@ function onSubmit(): void {
     </AppInput>
 
     <div v-if="mode === 'login'" class="form-aux">
-      <a href="#" class="forgot-link" @click.prevent>
+      <a href="#" class="forgot-link" @click.prevent="emit('forgotPassword')">
         {{ t('auth.forgotPassword') }}
       </a>
     </div>

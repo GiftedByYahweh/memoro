@@ -1,4 +1,10 @@
-import { loginSchema, registerSchema } from '@memoro/shared';
+import {
+  loginSchema,
+  registerSchema,
+  resetPasswordSchema,
+  sendVerificationCodeSchema,
+  verifyCodeSchema,
+} from '@memoro/shared';
 
 const registerRouteSchema = {
   body: registerSchema,
@@ -8,4 +14,22 @@ const loginRouteSchema = {
   body: loginSchema,
 };
 
-export { registerRouteSchema, loginRouteSchema };
+const sendVerificationCodeRouteSchema = {
+  body: sendVerificationCodeSchema,
+};
+
+const verifyCodeRouteSchema = {
+  body: verifyCodeSchema,
+};
+
+const resetPasswordRouteSchema = {
+  body: resetPasswordSchema,
+};
+
+export {
+  registerRouteSchema,
+  loginRouteSchema,
+  sendVerificationCodeRouteSchema,
+  verifyCodeRouteSchema,
+  resetPasswordRouteSchema,
+};

@@ -40,5 +40,13 @@ export function drizzleUserRepository(dbProvider: DBProvider): UserRepository {
         .limit(1);
       return row ? toUserEntity(row) : null;
     },
+
+    updatePassword: async (id: string, passwordHash: string): Promise<void> => {
+      await dbProvider
+        .current()
+        .update(usersTable)
+        .set({ passwordHash, updatedAt: new Date() })
+        .where(eq(usersTable.id, id));
+    },
   };
 }

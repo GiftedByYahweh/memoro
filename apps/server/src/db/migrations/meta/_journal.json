@@ -15,6 +15,13 @@
       "when": 1789832190769,
       "tag": "0001_add_media_schema",
       "breakpoints": false
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789847508968,
+      "tag": "0002_lonely_corsair",
+      "breakpoints": false
     }
   ]
 }

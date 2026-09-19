@@ -22,6 +22,10 @@ const HTTP_STATUS_BY_APP_ERROR: Record<AppErrorCode, HttpStatusCode> = {
   [DomainErrorCode.USER_ALREADY_EXISTS]: HttpStatusCode.CONFLICT,
   [DomainErrorCode.INVALID_LOGIN_CREDENTIALS]: HttpStatusCode.UNAUTHORIZED,
   [DomainErrorCode.SESSION_EXPIRED]: HttpStatusCode.UNAUTHORIZED,
+  [DomainErrorCode.INVALID_VERIFICATION_CODE]: HttpStatusCode.BAD_REQUEST,
+  [DomainErrorCode.VERIFICATION_CODE_EXPIRED]: HttpStatusCode.BAD_REQUEST,
+  [DomainErrorCode.USER_NOT_FOUND]: HttpStatusCode.NOT_FOUND,
+  [DomainErrorCode.USERNAME_ALREADY_EXISTS]: HttpStatusCode.CONFLICT,
 };
 
 export { HTTP_STATUS_MESSAGES, HTTP_STATUS_BY_APP_ERROR };

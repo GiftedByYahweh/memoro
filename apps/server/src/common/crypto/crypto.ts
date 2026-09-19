@@ -1,8 +1,17 @@
-import { scrypt as scryptCb, randomBytes, createHash, timingSafeEqual } from 'node:crypto';
+import {
+  scrypt as scryptCb,
+  randomBytes,
+  randomInt,
+  createHash,
+  timingSafeEqual,
+} from 'node:crypto';
+import { AUTH_CONSTRAINTS } from '@memoro/shared';
 
 const KEY_LENGTH = 64;
 const SALT_LENGTH = 16;
 const DEFAULT_TOKEN_BYTES = 32;
+const DECIMAL_BASE = 10;
+const MIN_CODE_VALUE = 0;
 
 const SCRYPT_COST = 32768;
 const SCRYPT_BLOCK_SIZE = 8;
@@ -59,4 +68,11 @@ export const generateToken = (bytes: number = DEFAULT_TOKEN_BYTES): string => {
 
 export const hashToken = (token: string): string => {
   return createHash('sha256').update(token).digest('hex');
+};
+
+export const generateVerificationCode = (
+  length: number = AUTH_CONSTRAINTS.VERIFICATION_CODE_LENGTH,
+): string => {
+  const max = Math.pow(DECIMAL_BASE, length);
+  return randomInt(MIN_CODE_VALUE, max).toString().padStart(length, '0');
 };

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import AppBackButton from '@/components/shared/AppBackButton.vue';
-import AppText from '@/components/shared/AppText.vue';
 
 interface Props {
   title: string;
@@ -22,12 +21,6 @@ const emit = defineEmits<{
   <div class="step-container">
     <div class="step-header">
       <AppBackButton v-if="showBack" @click="emit('back')" />
-      <AppText variant="h3" color="primary">{{ title }}</AppText>
-      <slot name="description">
-        <AppText v-if="description" variant="body-sm" color="secondary">
-          {{ description }}
-        </AppText>
-      </slot>
     </div>
 
     <slot />

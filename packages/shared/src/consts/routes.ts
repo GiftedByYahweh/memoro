@@ -8,5 +8,8 @@ export const ApiRoutes = {
     login: '/login',
     logout: '/logout',
     session: '/session',
+    sendCode: '/send-code',
+    verifyCode: '/verify-code',
+    resetPassword: '/reset-password',
   },
 } as const;

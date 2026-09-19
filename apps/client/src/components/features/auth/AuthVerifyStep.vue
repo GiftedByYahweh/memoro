@@ -8,11 +8,20 @@ import AppIcon from '@/components/shared/AppIcon.vue';
 import AppText from '@/components/shared/AppText.vue';
 import AuthStepLayout from './AuthStepLayout.vue';
 
+const ICON_SIZE_FIELD = 18;
+
 interface Props {
   email: string;
+  isPending?: boolean;
+  title?: string;
+  submitText?: string;
 }
 
-defineProps<Props>();
+withDefaults(defineProps<Props>(), {
+  isPending: false,
+  title: undefined,
+  submitText: undefined,
+});
 
 const emit = defineEmits<{
   next: [code: string];
@@ -35,7 +44,7 @@ function onNext(): void {
 </script>
 
 <template>
-  <AuthStepLayout :title="t('auth.stepVerify')" @back="emit('back')">
+  <AuthStepLayout :title="title ?? t('auth.stepVerify')" @back="emit('back')">
     <template #description>
       <AppText variant="body-sm" color="secondary">
         {{ t('auth.codeSentTo') }} <span class="highlight">{{ email }}</span>
@@ -52,13 +61,13 @@ function onNext(): void {
       :error="codeError"
     >
       <template #icon-left>
-        <AppIcon name="check" :size="18" color="secondary" />
+        <AppIcon name="check" :size="ICON_SIZE_FIELD" color="secondary" />
       </template>
     </AppInput>
 
     <template #actions>
-      <AppButton variant="primary" size="lg" block @click="onNext">
-        {{ t('auth.verifyBtn') }}
+      <AppButton variant="primary" size="lg" block :loading="isPending" @click="onNext">
+        {{ submitText ?? t('auth.verifyBtn') }}
       </AppButton>
     </template>
   </AuthStepLayout>

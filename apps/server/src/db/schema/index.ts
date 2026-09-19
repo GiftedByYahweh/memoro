@@ -6,3 +6,4 @@ export * from './collections';
 export * from './labels';
 export * from './media-collections';
 export * from './collection-labels';
+export * from './verification-codes';
