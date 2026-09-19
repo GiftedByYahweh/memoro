@@ -14,10 +14,10 @@ import {
 import type { AppContainer } from './container';
 import type { AppConfig } from './config';
 import type { Logger } from './logger/index';
-import { AppError, ErrorCode } from '@/common/error/app.error';
-import { HTTP_STATUS_BY_ERROR_CODE } from '@/common/error/http-status.map';
-import { ApiRoutes } from '@memoro/shared';
+import { AppError } from '@/common/error/app.error';
+import { ApiRoutes, HttpStatusCode } from '@memoro/shared';
 import { errorResponse, successResponse } from '@/common/utils/api-response';
+import { HTTP_STATUS_BY_APP_ERROR, HTTP_STATUS_MESSAGES } from './common/error/http-status.map';
 
 const DOCS_ROUTE_PREFIX = '/docs';
 
@@ -38,7 +38,7 @@ async function registerPlugins(server: FastifyInstance, config: AppConfig) {
     max: 100,
     timeWindow: '1 minute',
     errorResponseBuilder: () => {
-      throw new AppError(ErrorCode.TOO_MANY_REQUESTS);
+      throw new AppError(HttpStatusCode.TOO_MANY_REQUESTS);
     },
   });
 }
@@ -62,31 +62,38 @@ async function registerDocs(server: FastifyInstance, config: AppConfig) {
 }
 
 function registerErrorHandlers(server: FastifyInstance, logger: Logger) {
-  server.setNotFoundHandler(() => {
-    throw new AppError(ErrorCode.NOT_FOUND);
+  server.setNotFoundHandler((_request, reply) => {
+    reply.status(HttpStatusCode.NOT_FOUND).send(
+      errorResponse({
+        code: HttpStatusCode.NOT_FOUND,
+        message: HTTP_STATUS_MESSAGES[HttpStatusCode.NOT_FOUND],
+      }),
+    );
   });
 
-  server.setSchemaErrorFormatter(() => {
-    return new AppError(ErrorCode.VALIDATION_ERROR);
+  server.setSchemaErrorFormatter((errors) => {
+    const error = errors[0];
+    const fieldName = error?.instancePath.substring(1) ?? '';
+    const message = error?.message ?? '';
+
+    return new AppError(
+      HttpStatusCode.BAD_REQUEST,
+      message ? `Field '${fieldName}' is invalid: ${message}` : `Field '${fieldName}' is invalid`,
+    );
   });
 
   server.setErrorHandler((error, request, reply) => {
     if (error instanceof AppError) {
-      const statusCode = HTTP_STATUS_BY_ERROR_CODE[error.code];
-      reply.status(statusCode).send(
-        errorResponse({
-          code: error.code,
-          errorCode: error.errorCode,
-        }),
-      );
+      const statusCode = HTTP_STATUS_BY_APP_ERROR[error.code];
+      reply.status(statusCode).send(errorResponse({ code: error.code, message: error.message }));
       return;
     }
 
     logger.error('API', `Unknown error at ${request.method} ${request.url}: ${String(error)}`);
-
-    reply.status(500).send(
+    reply.status(HttpStatusCode.INTERNAL_SERVER_ERROR).send(
       errorResponse({
-        code: ErrorCode.INTERNAL_SERVER_ERROR,
+        code: HttpStatusCode.INTERNAL_SERVER_ERROR,
+        message: HTTP_STATUS_MESSAGES[HttpStatusCode.INTERNAL_SERVER_ERROR],
       }),
     );
   });
@@ -100,6 +107,12 @@ function registerResponseHooks(server: FastifyInstance) {
     }
 
     done(null, successResponse(payload));
+  });
+}
+
+function registerLifecycleHooks(server: FastifyInstance, container: AppContainer) {
+  server.addHook('onClose', async () => {
+    await container.infrastructure.dbProvider.close();
   });
 }
 
@@ -125,6 +138,7 @@ export const createServer = async (options: CreateServerOptions): Promise<Fastif
   await registerPlugins(server, config);
   await registerDocs(server, config);
   registerResponseHooks(server);
+  registerLifecycleHooks(server, container);
   registerErrorHandlers(server, logger);
   await registerRoutes(server, container);
 

@@ -1,6 +1,6 @@
 import { DomainErrorCode, type AuthUserDto } from '@memoro/shared';
 import { hashPassword } from '@/common/crypto/crypto';
-import { AppError, ErrorCode } from '@/common/error/app.error';
+import { AppError } from '@/common/error/app.error';
 import type { UseCase } from '@/common/use-case';
 import type { ProfileRepository } from '@/core/profile';
 import type { UserRepository } from '@/core/user';
@@ -30,20 +30,17 @@ export function registerUseCase(deps: RegisterUseCaseDeps): RegisterUseCase {
   return async (input: RegisterInput): Promise<RegisterOutput> => {
     const existingUser = await userRepository.findByEmail(input.email);
     if (existingUser) {
-      throw new AppError(ErrorCode.CONFLICT, DomainErrorCode.USER_ALREADY_EXISTS);
+      throw new AppError(DomainErrorCode.USER_ALREADY_EXISTS);
     }
 
     const passwordHash = await hashPassword(input.password);
-
     const createdUser = await unitOfWork.run(async () => {
       const user = await userRepository.create({
         email: input.email,
         passwordHash,
       });
 
-      await profileRepository.create({
-        userId: user.id,
-      });
+      await profileRepository.create({ userId: user.id });
 
       return user;
     });
