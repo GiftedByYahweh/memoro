@@ -1,15 +1,18 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import AppPageHeader from '@/components/shared/AppPageHeader.vue';
 import AppEmptyState from '@/components/shared/AppEmptyState.vue';
+
+const { t } = useI18n();
 </script>
 
 <template>
   <main class="page-container">
-    <AppPageHeader title="Feed" />
+    <AppPageHeader :title="t('feed.title')" />
     <AppEmptyState
       icon="book"
-      title="No memories yet"
-      description="Capture moments on the map to see your timeline here."
+      :title="t('feed.emptyTitle')"
+      :description="t('feed.emptyDescription')"
     />
   </main>
 </template>

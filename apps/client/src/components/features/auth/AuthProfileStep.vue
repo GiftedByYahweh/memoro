@@ -6,6 +6,7 @@ import AppButton from '@/components/shared/AppButton.vue';
 import AppInput from '@/components/shared/AppInput.vue';
 import AppIcon from '@/components/shared/AppIcon.vue';
 import AppText from '@/components/shared/AppText.vue';
+import AuthStepLayout from './AuthStepLayout.vue';
 
 const emit = defineEmits<{
   next: [payload: { username: string; gender: string }];
@@ -48,12 +49,11 @@ function onNext(): void {
 </script>
 
 <template>
-  <div class="step-container">
-    <div class="step-header">
-      <AppText variant="h3" color="primary">{{ t('auth.stepProfile') }}</AppText>
-      <AppText variant="body-sm" color="secondary">{{ t('auth.stepProfileDesc') }}</AppText>
-    </div>
-
+  <AuthStepLayout
+    :title="t('auth.stepProfile')"
+    :description="t('auth.stepProfileDesc')"
+    :show-back="false"
+  >
     <AppInput
       id="reg-username"
       v-model="username"
@@ -83,35 +83,20 @@ function onNext(): void {
           {{ g.label }}
         </AppButton>
       </div>
-      <AppText v-if="genderError" variant="body-sm" color="error" class="gender-error">
+      <AppText v-if="genderError" variant="body-sm" color="error">
         {{ genderError }}
       </AppText>
     </div>
 
-    <div class="step-actions">
+    <template #actions>
       <AppButton variant="primary" size="lg" block @click="onNext">
         {{ t('auth.continue') }}
       </AppButton>
-    </div>
-  </div>
+    </template>
+  </AuthStepLayout>
 </template>
 
 <style scoped>
-.step-container {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-  width: 100%;
-}
-
-.step-header {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2xs);
-  text-align: center;
-  margin-bottom: var(--space-xs);
-}
-
 .gender-section {
   display: flex;
   flex-direction: column;
@@ -122,9 +107,5 @@ function onNext(): void {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-xs);
-}
-
-.step-actions {
-  margin-top: var(--space-md);
 }
 </style>
