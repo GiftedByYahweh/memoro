@@ -27,14 +27,9 @@ const { t } = useI18n();
 
     <div v-if="$slots.actions || showBack" class="step-actions">
       <slot name="actions" />
-      
+
       <div v-if="showBack" class="back-action">
-        <AppButton
-          variant="secondary"
-          size="lg"
-          block
-          @click="emit('back')"
-        >
+        <AppButton variant="secondary" size="lg" block @click="emit('back')">
           {{ t('nav.back', 'Назад') }}
         </AppButton>
       </div>
