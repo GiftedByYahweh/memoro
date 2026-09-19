@@ -2,7 +2,7 @@ import { DomainErrorCode, type AuthUserDto } from '@memoro/shared';
 import { verifyPassword } from '@/common/crypto/crypto';
 import { AppError, ErrorCode } from '@/common/error/app.error';
 import type { UseCase } from '@/common/use-case';
-import type { FindUserByEmailUseCase } from '@/core/user';
+import type { UserRepository } from '@/core/user';
 import { toAuthUserDto } from '@/core/user';
 import type { CreateSessionUseCase } from './create-session.use-case';
 
@@ -20,17 +20,17 @@ interface LoginOutput {
 }
 
 interface LoginUseCaseDeps {
-  findUserByEmailUseCase: FindUserByEmailUseCase;
+  userRepository: UserRepository;
   createSessionUseCase: CreateSessionUseCase;
 }
 
 export type LoginUseCase = UseCase<LoginInput, LoginOutput>;
 
 export function loginUseCase(deps: LoginUseCaseDeps): LoginUseCase {
-  const { findUserByEmailUseCase, createSessionUseCase } = deps;
+  const { userRepository, createSessionUseCase } = deps;
 
   return async (input: LoginInput): Promise<LoginOutput> => {
-    const user = await findUserByEmailUseCase({ email: input.email });
+    const user = await userRepository.findByEmail(input.email);
     if (!user) {
       throw new AppError(ErrorCode.INVALID_CREDENTIALS, DomainErrorCode.INVALID_LOGIN_CREDENTIALS);
     }

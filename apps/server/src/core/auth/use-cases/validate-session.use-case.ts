@@ -2,7 +2,7 @@ import { DomainErrorCode, type AuthUserDto } from '@memoro/shared';
 import { hashToken } from '@/common/crypto/crypto';
 import { AppError, ErrorCode } from '@/common/error/app.error';
 import type { UseCase } from '@/common/use-case';
-import type { FindUserByIdUseCase } from '@/core/user';
+import type { UserRepository } from '@/core/user';
 import { toAuthUserDto } from '@/core/user';
 import type { SessionRepository } from '../repositories/session.repository';
 
@@ -11,14 +11,14 @@ interface ValidateSessionInput {
 }
 
 interface ValidateSessionUseCaseDeps {
-  findUserByIdUseCase: FindUserByIdUseCase;
+  userRepository: UserRepository;
   sessionRepository: SessionRepository;
 }
 
 export type ValidateSessionUseCase = UseCase<ValidateSessionInput, AuthUserDto>;
 
 export function validateSessionUseCase(deps: ValidateSessionUseCaseDeps): ValidateSessionUseCase {
-  const { findUserByIdUseCase, sessionRepository } = deps;
+  const { userRepository, sessionRepository } = deps;
 
   return async (input: ValidateSessionInput): Promise<AuthUserDto> => {
     if (!input.sessionToken) {
@@ -37,7 +37,7 @@ export function validateSessionUseCase(deps: ValidateSessionUseCaseDeps): Valida
       throw new AppError(ErrorCode.INVALID_CREDENTIALS, DomainErrorCode.SESSION_EXPIRED);
     }
 
-    const user = await findUserByIdUseCase({ id: session.userId });
+    const user = await userRepository.findById(session.userId);
     if (!user) {
       await sessionRepository.deleteByTokenHash(tokenHash);
       throw new AppError(ErrorCode.INVALID_CREDENTIALS, DomainErrorCode.SESSION_EXPIRED);

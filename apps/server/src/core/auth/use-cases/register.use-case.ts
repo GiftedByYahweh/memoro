@@ -1,10 +1,9 @@
-import { DomainErrorCode } from '@memoro/shared';
-import type { AuthUserDto } from '@memoro/shared';
+import { DomainErrorCode, type AuthUserDto } from '@memoro/shared';
 import { hashPassword } from '@/common/crypto/crypto';
 import { AppError, ErrorCode } from '@/common/error/app.error';
 import type { UseCase } from '@/common/use-case';
-import type { CreateProfileUseCase } from '@/core/profile';
-import type { CreateUserUseCase, FindUserByEmailUseCase } from '@/core/user';
+import type { ProfileRepository } from '@/core/profile';
+import type { UserRepository } from '@/core/user';
 import { toAuthUserDto } from '@/core/user';
 import type { UnitOfWork } from '@/db/unit-of-work';
 
@@ -18,19 +17,18 @@ interface RegisterOutput {
 }
 
 interface RegisterUseCaseDeps {
-  findUserByEmailUseCase: FindUserByEmailUseCase;
-  createUserUseCase: CreateUserUseCase;
-  createProfileUseCase: CreateProfileUseCase;
+  userRepository: UserRepository;
+  profileRepository: ProfileRepository;
   unitOfWork: UnitOfWork;
 }
 
 export type RegisterUseCase = UseCase<RegisterInput, RegisterOutput>;
 
 export function registerUseCase(deps: RegisterUseCaseDeps): RegisterUseCase {
-  const { unitOfWork, findUserByEmailUseCase, createUserUseCase, createProfileUseCase } = deps;
+  const { userRepository, profileRepository, unitOfWork } = deps;
 
   return async (input: RegisterInput): Promise<RegisterOutput> => {
-    const existingUser = await findUserByEmailUseCase({ email: input.email });
+    const existingUser = await userRepository.findByEmail(input.email);
     if (existingUser) {
       throw new AppError(ErrorCode.CONFLICT, DomainErrorCode.USER_ALREADY_EXISTS);
     }
@@ -38,12 +36,12 @@ export function registerUseCase(deps: RegisterUseCaseDeps): RegisterUseCase {
     const passwordHash = await hashPassword(input.password);
 
     const createdUser = await unitOfWork.run(async () => {
-      const user = await createUserUseCase({
+      const user = await userRepository.create({
         email: input.email,
         passwordHash,
       });
 
-      await createProfileUseCase({
+      await profileRepository.create({
         userId: user.id,
       });
 
