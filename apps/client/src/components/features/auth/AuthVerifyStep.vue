@@ -118,10 +118,10 @@ function onResend(): void {
       </AppButton>
 
       <div class="resend-action">
-        <AppButton v-if="timer > 0" variant="outline" size="lg" block disabled>
+        <AppButton v-if="timer > 0" variant="secondary" size="lg" block disabled>
           {{ t('auth.resendCodeIn', { seconds: timer }) }}
         </AppButton>
-        <AppButton v-else variant="outline" size="lg" block @click="onResend">
+        <AppButton v-else variant="secondary" size="lg" block @click="onResend">
           {{ t('auth.resendCodeAction') }}
         </AppButton>
       </div>
