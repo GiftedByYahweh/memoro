@@ -1,4 +1,4 @@
-import type { DomainErrorCode } from './errors';
+import type { DomainErrorCode } from '../consts/errors';
 
 export interface ApiSuccessResponse<T = unknown> {
   success: true;

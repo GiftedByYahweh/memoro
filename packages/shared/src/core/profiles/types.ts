@@ -1,4 +1,4 @@
-import type { UserSex } from './profile.constants';
+import type { UserSex } from './constants';
 
 export interface ProfileDto {
   readonly id: string;
