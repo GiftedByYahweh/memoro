@@ -1,5 +1,13 @@
 import { apiClient } from '@/api';
-import type { ApiResponse, AuthUserDto, LoginDto, RegisterDto } from '@memoro/shared';
+import type {
+  ApiResponse,
+  AuthUserDto,
+  LoginDto,
+  RegisterDto,
+  ResetPasswordDto,
+  SendVerificationCodeDto,
+  VerifyCodeDto,
+} from '@memoro/shared';
 
 export const authService = {
   login: (data: LoginDto): Promise<ApiResponse<AuthUserDto>> => {
@@ -13,5 +21,14 @@ export const authService = {
   },
   session: (): Promise<ApiResponse<AuthUserDto>> => {
     return apiClient.auth.session();
+  },
+  sendCode: (data: SendVerificationCodeDto): Promise<ApiResponse<{ sent: boolean }>> => {
+    return apiClient.auth.sendCode(data);
+  },
+  verifyCode: (data: VerifyCodeDto): Promise<ApiResponse<{ verified: boolean }>> => {
+    return apiClient.auth.verifyCode(data);
+  },
+  resetPassword: (data: ResetPasswordDto): Promise<ApiResponse<{ success: boolean }>> => {
+    return apiClient.auth.resetPassword(data);
   },
 };

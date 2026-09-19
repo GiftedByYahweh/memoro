@@ -10,3 +10,21 @@
   padding: var(--space-xl) var(--space-md) calc(var(--bottom-nav-height) + var(--safe-bottom) + var(--space-xl));
   box-sizing: border-box;
 }
+
+.step-fade-enter-active,
+.step-fade-leave-active {
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.step-fade-enter-from {
+  opacity: 0;
+  transform: translateX(16px);
+}
+
+.step-fade-leave-to {
+  opacity: 0;
+  transform: translateX(-16px);
+}
+

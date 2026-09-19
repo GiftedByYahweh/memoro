@@ -8,8 +8,10 @@ import AppIcon from '@/components/shared/AppIcon.vue';
 import AppText from '@/components/shared/AppText.vue';
 import AuthStepLayout from './AuthStepLayout.vue';
 
+const ICON_SIZE_FIELD = 18;
+
 const emit = defineEmits<{
-  next: [payload: { username: string; gender: string }];
+  next: [payload: { username: string; gender: UserSex }];
 }>();
 
 const { t } = useI18n();
@@ -35,25 +37,22 @@ function onNext(): void {
     usernameError.value = undefined;
   }
 
-  if (!gender.value) {
+  const selectedGender = gender.value;
+  if (!selectedGender) {
     genderError.value = t('validation.genderRequired');
     hasError = true;
   } else {
     genderError.value = undefined;
   }
 
-  if (hasError) return;
+  if (hasError || !selectedGender) return;
 
-  emit('next', { username: username.value, gender: gender.value });
+  emit('next', { username: username.value, gender: selectedGender });
 }
 </script>
 
 <template>
-  <AuthStepLayout
-    :title="t('auth.stepProfile')"
-    :description="t('auth.stepProfileDesc')"
-    :show-back="false"
-  >
+  <AuthStepLayout :title="t('auth.stepProfile')" :show-back="false">
     <AppInput
       id="reg-username"
       v-model="username"
@@ -63,7 +62,7 @@ function onNext(): void {
       :error="usernameError"
     >
       <template #icon-left>
-        <AppIcon name="user" :size="18" color="secondary" />
+        <AppIcon name="user" :size="ICON_SIZE_FIELD" color="secondary" />
       </template>
     </AppInput>
 

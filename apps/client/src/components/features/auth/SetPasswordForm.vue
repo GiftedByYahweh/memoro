@@ -7,11 +7,19 @@ import AppInput from '@/components/shared/AppInput.vue';
 import AppIcon from '@/components/shared/AppIcon.vue';
 import AuthStepLayout from './AuthStepLayout.vue';
 
+const ICON_SIZE_FIELD = 18;
+
 interface Props {
   isPending?: boolean;
+  title?: string;
+  submitText?: string;
 }
 
-defineProps<Props>();
+withDefaults(defineProps<Props>(), {
+  isPending: false,
+  title: undefined,
+  submitText: undefined,
+});
 
 const emit = defineEmits<{
   submit: [password: string];
@@ -49,8 +57,7 @@ function onSubmit(): void {
 
 <template>
   <AuthStepLayout
-    :title="t('auth.stepPassword')"
-    :description="t('auth.stepPasswordDesc')"
+    :title="title ?? t('auth.stepPassword')"
     @back="emit('back')"
   >
     <form class="password-form" novalidate @submit.prevent="onSubmit">
@@ -65,7 +72,7 @@ function onSubmit(): void {
         :error="passwordError"
       >
         <template #icon-left>
-          <AppIcon name="lock" :size="18" color="secondary" />
+          <AppIcon name="lock" :size="ICON_SIZE_FIELD" color="secondary" />
         </template>
       </AppInput>
 
@@ -80,12 +87,12 @@ function onSubmit(): void {
         :error="confirmPasswordError"
       >
         <template #icon-left>
-          <AppIcon name="shield" :size="18" color="secondary" />
+          <AppIcon name="shield" :size="ICON_SIZE_FIELD" color="secondary" />
         </template>
       </AppInput>
 
       <AppButton type="submit" variant="primary" size="lg" block :loading="isPending">
-        {{ t('auth.finishRegister') }}
+        {{ submitText ?? t('auth.finishRegister') }}
       </AppButton>
     </form>
   </AuthStepLayout>

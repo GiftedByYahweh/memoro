@@ -2,6 +2,8 @@
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useMutation } from '@tanstack/vue-query';
+import { VerificationCodeType, type UserSex } from '@memoro/shared';
+import { authService } from '@/services';
 import { useAuth } from '@/composables/useAuth';
 import { useDomainError } from '@/composables/useDomainError';
 import { useToast } from '@/composables/useToast';
@@ -23,36 +25,85 @@ const { translateApiError } = useDomainError();
 type Step = 'profile' | 'email' | 'verify' | 'password';
 const currentStep = ref<Step>('profile');
 
-const formData = ref({
+const formData = ref<{
+  username: string;
+  gender: UserSex | '';
+  email: string;
+  password: string;
+}>({
   username: '',
   gender: '',
   email: '',
-  code: '',
   password: '',
 });
 
-function handleProfileNext(payload: { username: string; gender: string }): void {
+function handleProfileNext(payload: { username: string; gender: UserSex }): void {
   formData.value.username = payload.username;
   formData.value.gender = payload.gender;
   currentStep.value = 'email';
 }
 
+const { mutate: handleSendCode, isPending: isSendingCode } = useMutation({
+  mutationFn: async (email: string) => {
+    return authService.sendCode({
+      email,
+      type: VerificationCodeType.REGISTRATION,
+    });
+  },
+  onSuccess: (response) => {
+    if (!response.success) {
+      const errorMsg = translateApiError(response);
+      showError(errorMsg);
+      return;
+    }
+    currentStep.value = 'verify';
+  },
+  onError: () => {
+    showError(t('errors.unknown'));
+  },
+});
+
 function handleEmailNext(email: string): void {
   formData.value.email = email;
-  currentStep.value = 'verify';
+  handleSendCode(email);
 }
 
+const { mutate: handleVerifyCode, isPending: isVerifyingCode } = useMutation({
+  mutationFn: async (code: string) => {
+    return authService.verifyCode({
+      email: formData.value.email,
+      code,
+      type: VerificationCodeType.REGISTRATION,
+    });
+  },
+  onSuccess: (response) => {
+    if (!response.success) {
+      showError(translateApiError(response));
+      return;
+    }
+    currentStep.value = 'password';
+  },
+  onError: () => {
+    showError(t('errors.unknown'));
+  },
+});
+
 function handleVerifyNext(code: string): void {
-  formData.value.code = code;
-  currentStep.value = 'password';
+  handleVerifyCode(code);
 }
 
 const { mutate: handleRegister, isPending } = useMutation({
   mutationFn: async (password: string) => {
+    if (!formData.value.gender) {
+      throw new Error('Gender is required');
+    }
+
     formData.value.password = password;
     return register({
       email: formData.value.email,
       password: formData.value.password,
+      username: formData.value.username,
+      gender: formData.value.gender,
     });
   },
   onSuccess: (response) => {
@@ -78,6 +129,7 @@ const { mutate: handleRegister, isPending } = useMutation({
 
       <AuthEmailStep
         v-else-if="currentStep === 'email'"
+        :is-pending="isSendingCode"
         @next="handleEmailNext"
         @back="currentStep = 'profile'"
       />
@@ -85,6 +137,7 @@ const { mutate: handleRegister, isPending } = useMutation({
       <AuthVerifyStep
         v-else-if="currentStep === 'verify'"
         :email="formData.email"
+        :is-pending="isVerifyingCode"
         @next="handleVerifyNext"
         @back="currentStep = 'email'"
       />
