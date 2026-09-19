@@ -156,21 +156,4 @@ const { mutate: handleRegister, isPending } = useMutation({
 .register-flow {
   width: 100%;
 }
-
-.step-fade-enter-active,
-.step-fade-leave-active {
-  transition:
-    opacity var(--transition-fast),
-    transform var(--transition-fast);
-}
-
-.step-fade-enter-from {
-  opacity: 0;
-  transform: translateX(16px);
-}
-
-.step-fade-leave-to {
-  opacity: 0;
-  transform: translateX(-16px);
-}
 </style>

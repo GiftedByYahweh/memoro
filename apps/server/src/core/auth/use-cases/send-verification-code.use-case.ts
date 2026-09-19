@@ -6,7 +6,7 @@ import {
 } from '@memoro/shared';
 import { generateVerificationCode } from '@/common/crypto/crypto';
 import { AppError } from '@/common/error/app.error';
-import type { Mailer } from '@/common/mailer';
+import { renderVerificationEmail, type Mailer } from '@/common/mailer';
 import type { UseCase } from '@/common/use-case';
 import type { UserRepository } from '@/core/user';
 import type { UnitOfWork } from '@/db/unit-of-work';
@@ -62,16 +62,16 @@ export function sendVerificationCodeUseCase(
       });
     });
 
-    const subject =
-      input.type === VerificationCodeType.REGISTRATION
-        ? 'Your Memoro verification code'
-        : 'Your Memoro password reset code';
+    const { subject, text ,html } = renderVerificationEmail({
+      code,
+      type: input.type,
+    });
 
     await mailer.sendMail({
       to: input.email,
       subject,
-      text: `Your verification code is: ${code}`,
-      html: `<p>Your verification code is: <strong>${code}</strong></p>`,
+      text,
+      html,
     });
 
     return { sent: true };
