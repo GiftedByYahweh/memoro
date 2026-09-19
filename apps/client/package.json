@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "predev": "tsx scripts/copy-map-worker.ts",
+    "predev": "npx tsx scripts/copy-map-worker.ts",
     "dev": "vite --host 0.0.0.0",
-    "prebuild": "tsx scripts/copy-map-worker.ts",
+    "prebuild": "npx tsx scripts/copy-map-worker.ts",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit"
