@@ -59,7 +59,7 @@ async function register(dto: RegisterDto): Promise<ApiResponse<AuthUserDto>> {
   }
 }
 
-async function logout(): Promise<ApiResponse<null>> {
+async function logout(): Promise<ApiResponse<Record<string, never>>> {
   isLoading.value = true;
   try {
     await Promise.resolve();

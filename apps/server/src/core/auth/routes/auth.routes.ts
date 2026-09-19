@@ -72,7 +72,7 @@ function logoutRoute(server: FastifyInstanceZod, logoutUseCase: LogoutUseCase): 
       path: AUTH_COOKIE_PATH,
     });
 
-    return null;
+    return {};
   });
 }
 

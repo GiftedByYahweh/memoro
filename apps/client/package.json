@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "predev": "tsx scripts/copy-map-worker.ts",
     "dev": "vite --host 0.0.0.0",
-    "prebuild": "node -e \"const fs=require('fs');fs.copyFileSync(require.resolve('maplibre-gl/dist/maplibre-gl-worker.mjs'),'public/maplibre-gl-worker.mjs');fs.copyFileSync(require.resolve('maplibre-gl/dist/maplibre-gl-shared.mjs'),'public/maplibre-gl-shared.mjs');\"",
+    "prebuild": "tsx scripts/copy-map-worker.ts",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit"

@@ -2,13 +2,8 @@ import type { AppConfig } from './config';
 import { createTxContext } from '@/db/tx-context';
 import { DBProvider } from '@/db/db.provider';
 import { unitOfWork } from '@/db/unit-of-work';
-import {
-  drizzleUserRepository,
-  createUserUseCase,
-  findUserByEmailUseCase,
-  findUserByIdUseCase,
-} from '@/core/user';
-import { drizzleProfileRepository, createProfileUseCase } from '@/core/profile';
+import { drizzleUserRepository } from '@/core/user';
+import { drizzleProfileRepository } from '@/core/profile';
 import { drizzleSessionRepository } from '@/core/auth/repositories/drizzle-session.repository';
 import { registerUseCase } from '@/core/auth/use-cases/register.use-case';
 import { loginUseCase } from '@/core/auth/use-cases/login.use-case';
@@ -42,25 +37,19 @@ function initInfrastructure(config: AppConfig): InfrastructureDeps {
 }
 
 function initUseCases(infra: InfrastructureDeps, sessionMaxAgeMs: number) {
-  const createUser = createUserUseCase({ userRepository: infra.userRepository });
-  const findUserByEmail = findUserByEmailUseCase({ userRepository: infra.userRepository });
-  const findUserById = findUserByIdUseCase({ userRepository: infra.userRepository });
-  const createProfile = createProfileUseCase({ profileRepository: infra.profileRepository });
-
   const createSession = createSessionUseCase({
     sessionRepository: infra.sessionRepository,
     sessionMaxAgeMs,
   });
 
   const register = registerUseCase({
-    findUserByEmailUseCase: findUserByEmail,
-    createUserUseCase: createUser,
-    createProfileUseCase: createProfile,
+    userRepository: infra.userRepository,
+    profileRepository: infra.profileRepository,
     unitOfWork: infra.uow,
   });
 
   const login = loginUseCase({
-    findUserByEmailUseCase: findUserByEmail,
+    userRepository: infra.userRepository,
     createSessionUseCase: createSession,
   });
 
@@ -69,15 +58,11 @@ function initUseCases(infra: InfrastructureDeps, sessionMaxAgeMs: number) {
   });
 
   const validateSession = validateSessionUseCase({
-    findUserByIdUseCase: findUserById,
+    userRepository: infra.userRepository,
     sessionRepository: infra.sessionRepository,
   });
 
   return {
-    createUserUseCase: createUser,
-    findUserByEmailUseCase: findUserByEmail,
-    findUserByIdUseCase: findUserById,
-    createProfileUseCase: createProfile,
     createSessionUseCase: createSession,
     registerUseCase: register,
     loginUseCase: login,

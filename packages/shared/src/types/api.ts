@@ -1,16 +1,15 @@
-import type { DomainErrorCode } from './errors';
+import type { AppErrorCode } from '../errors';
 
 export interface ApiSuccessResponse<T = unknown> {
   success: true;
   data: T;
-  message?: string;
   timestamp: number;
 }
 
 export interface ApiErrorResponse {
   success: false;
-  code: string;
-  errorCode: DomainErrorCode | null;
+  code: AppErrorCode;
+  message: string;
   timestamp: number;
 }
 

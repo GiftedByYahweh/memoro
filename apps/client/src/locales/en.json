@@ -27,20 +27,66 @@
     "registeredSuccess": "Account created successfully! Please sign in.",
     "loginSuccess": "Welcome back!",
     "showPassword": "Show password",
-    "hidePassword": "Hide password"
+    "hidePassword": "Hide password",
+    "stepProfile": "About you",
+    "stepProfileDesc": "This info will be visible on your profile",
+    "usernameLabel": "Username",
+    "usernamePlaceholder": "e.g., alex_123",
+    "genderLabel": "Gender",
+    "genderMale": "Male",
+    "genderFemale": "Female",
+    "genderOther": "Other",
+    "stepEmail": "Your Email",
+    "stepEmailDesc": "We will send a verification code",
+    "sendCode": "Send code",
+    "stepVerify": "Enter code",
+    "codeSentTo": "Code sent to",
+    "codeLabel": "Verification code",
+    "codePlaceholder": "000000",
+    "verifyBtn": "Verify",
+    "stepPassword": "Create password",
+    "stepPasswordDesc": "To protect your account",
+    "passwordRepeatLabel": "Repeat password",
+    "passwordRepeatPlaceholder": "Enter password again",
+    "finishRegister": "Complete registration",
+    "continue": "Continue"
   },
   "nav": {
     "map": "Map",
+    "feed": "Feed",
+    "albums": "Albums",
     "timeline": "Timeline",
     "collections": "Collections",
-    "profile": "Profile"
+    "profile": "Profile",
+    "addMemory": "Add memory"
+  },
+  "feed": {
+    "title": "Feed",
+    "emptyTitle": "No memories yet",
+    "emptyDescription": "Capture moments on the map to see your timeline here."
+  },
+  "albums": {
+    "title": "Albums",
+    "emptyTitle": "No collections created",
+    "emptyDescription": "Organize your trips and moments into dedicated photo albums."
+  },
+  "profile": {
+    "title": "Profile",
+    "freePlan": "Free Plan",
+    "signOut": "Sign Out",
+    "defaultUser": "User"
   },
   "validation": {
     "required": "This field is required",
     "invalidEmail": "Invalid email address",
     "tooShort": "Must be at least {min} characters",
     "tooLong": "Must be at most {max} characters",
-    "invalid": "Invalid value"
+    "invalid": "Invalid value",
+    "usernameRequired": "Username is required",
+    "invalidEmailFormat": "Invalid email format",
+    "codeLength": "Code must be 6 characters",
+    "passwordsNotMatch": "Passwords do not match",
+    "genderRequired": "Please specify your gender"
   },
   "errors": {
     "userAlreadyExists": "User with this email already exists",

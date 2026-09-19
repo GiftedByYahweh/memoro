@@ -1,9 +1,8 @@
-import type { ApiErrorResponse, ApiSuccessResponse, DomainErrorCode } from '@memoro/shared';
-import type { ErrorCode } from '@/common/error/app.error';
+import type { ApiErrorResponse, ApiSuccessResponse, AppErrorCode } from '@memoro/shared';
 
 interface ErrorResponseOptions {
-  code: ErrorCode;
-  errorCode?: DomainErrorCode | null;
+  message: string;
+  code: AppErrorCode;
 }
 
 const successResponse = <T>(data: T): ApiSuccessResponse<T> => {
@@ -17,8 +16,8 @@ const successResponse = <T>(data: T): ApiSuccessResponse<T> => {
 const errorResponse = (options: ErrorResponseOptions): ApiErrorResponse => {
   return {
     success: false,
+    message: options.message,
     code: options.code,
-    errorCode: options.errorCode ?? null,
     timestamp: Date.now(),
   };
 };

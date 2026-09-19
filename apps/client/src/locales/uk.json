@@ -27,20 +27,66 @@
     "registeredSuccess": "Акаунт успішно створено! Будь ласка, увійдіть.",
     "loginSuccess": "З поверненням!",
     "showPassword": "Показати пароль",
-    "hidePassword": "Приховати пароль"
+    "hidePassword": "Приховати пароль",
+    "stepProfile": "Розкажіть про себе",
+    "stepProfileDesc": "Ці дані будуть видні у вашому профілі",
+    "usernameLabel": "Юзернейм",
+    "usernamePlaceholder": "Наприклад, alex_123",
+    "genderLabel": "Стать",
+    "genderMale": "Чоловіча",
+    "genderFemale": "Жіноча",
+    "genderOther": "Інша",
+    "stepEmail": "Ваш Email",
+    "stepEmailDesc": "Ми надішлемо код підтвердження",
+    "sendCode": "Надіслати код",
+    "stepVerify": "Введіть код",
+    "codeSentTo": "Код надіслано на",
+    "codeLabel": "Код підтвердження",
+    "codePlaceholder": "000000",
+    "verifyBtn": "Підтвердити",
+    "stepPassword": "Придумайте пароль",
+    "stepPasswordDesc": "Для захисту вашого акаунту",
+    "passwordRepeatLabel": "Повторіть пароль",
+    "passwordRepeatPlaceholder": "Введіть пароль ще раз",
+    "finishRegister": "Завершити реєстрацію",
+    "continue": "Продовжити"
   },
   "nav": {
     "map": "Мапа",
+    "feed": "Стрічка",
+    "albums": "Альбоми",
     "timeline": "Хронологія",
     "collections": "Колекції",
-    "profile": "Профіль"
+    "profile": "Профіль",
+    "addMemory": "Додати спогад"
+  },
+  "feed": {
+    "title": "Стрічка",
+    "emptyTitle": "Спогадів поки немає",
+    "emptyDescription": "Зберігайте моменти на карті, щоб переглядати хронологію тут."
+  },
+  "albums": {
+    "title": "Альбоми",
+    "emptyTitle": "Колекцій ще немає",
+    "emptyDescription": "Організуйте свої подорожі та важливі моменти в окремі фотоальбоми."
+  },
+  "profile": {
+    "title": "Профіль",
+    "freePlan": "Базовий план",
+    "signOut": "Вийти",
+    "defaultUser": "Користувач"
   },
   "validation": {
     "required": "Обов'язкове поле",
     "invalidEmail": "Некоректний email",
     "tooShort": "Мінімум {min} символів",
     "tooLong": "Максимум {max} символів",
-    "invalid": "Некоректне значення"
+    "invalid": "Некоректне значення",
+    "usernameRequired": "Юзернейм обовʼязковий",
+    "invalidEmailFormat": "Невірний формат email",
+    "codeLength": "Код має містити 6 символів",
+    "passwordsNotMatch": "Паролі не співпадають",
+    "genderRequired": "Будь ласка, вкажіть вашу стать"
   },
   "errors": {
     "userAlreadyExists": "Користувач із таким email вже існує",

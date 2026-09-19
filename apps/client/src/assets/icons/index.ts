@@ -1,3 +1,4 @@
+import arrowLeft from './arrow-left.svg?raw';
 import book from './book.svg?raw';
 import bookmark from './bookmark.svg?raw';
 import camera from './camera.svg?raw';
@@ -30,6 +31,7 @@ import trash from './trash.svg?raw';
 import user from './user.svg?raw';
 
 export const icons = {
+  arrowLeft,
   book,
   bookmark,
   camera,

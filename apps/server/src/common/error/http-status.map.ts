@@ -1,12 +1,27 @@
-import { ErrorCode } from './app.error';
+import { DomainErrorCode, HttpStatusCode, type AppErrorCode } from '@memoro/shared';
 
-export const HTTP_STATUS_BY_ERROR_CODE: Record<ErrorCode, number> = {
-  [ErrorCode.NOT_ENOUGH_PERMISSIONS]: 403,
-  [ErrorCode.INVALID_CREDENTIALS]: 401,
-  [ErrorCode.NOT_FOUND]: 404,
-  [ErrorCode.CONFLICT]: 409,
-  [ErrorCode.INVALID_STATE]: 400,
-  [ErrorCode.VALIDATION_ERROR]: 400,
-  [ErrorCode.TOO_MANY_REQUESTS]: 429,
-  [ErrorCode.INTERNAL_SERVER_ERROR]: 500,
+const HTTP_STATUS_MESSAGES: Record<HttpStatusCode, string> = {
+  [HttpStatusCode.BAD_REQUEST]: 'Bad Request',
+  [HttpStatusCode.UNAUTHORIZED]: 'Unauthorized',
+  [HttpStatusCode.FORBIDDEN]: 'Not allowed',
+  [HttpStatusCode.NOT_FOUND]: 'Not Found',
+  [HttpStatusCode.CONFLICT]: 'Conflict',
+  [HttpStatusCode.TOO_MANY_REQUESTS]: 'Too Many Requests',
+  [HttpStatusCode.INTERNAL_SERVER_ERROR]: 'Internal Server Error',
 };
+
+const HTTP_STATUS_BY_APP_ERROR: Record<AppErrorCode, HttpStatusCode> = {
+  [HttpStatusCode.BAD_REQUEST]: HttpStatusCode.BAD_REQUEST,
+  [HttpStatusCode.UNAUTHORIZED]: HttpStatusCode.UNAUTHORIZED,
+  [HttpStatusCode.FORBIDDEN]: HttpStatusCode.FORBIDDEN,
+  [HttpStatusCode.NOT_FOUND]: HttpStatusCode.NOT_FOUND,
+  [HttpStatusCode.CONFLICT]: HttpStatusCode.CONFLICT,
+  [HttpStatusCode.TOO_MANY_REQUESTS]: HttpStatusCode.TOO_MANY_REQUESTS,
+  [HttpStatusCode.INTERNAL_SERVER_ERROR]: HttpStatusCode.INTERNAL_SERVER_ERROR,
+
+  [DomainErrorCode.USER_ALREADY_EXISTS]: HttpStatusCode.CONFLICT,
+  [DomainErrorCode.INVALID_LOGIN_CREDENTIALS]: HttpStatusCode.UNAUTHORIZED,
+  [DomainErrorCode.SESSION_EXPIRED]: HttpStatusCode.UNAUTHORIZED,
+};
+
+export { HTTP_STATUS_MESSAGES, HTTP_STATUS_BY_APP_ERROR };
