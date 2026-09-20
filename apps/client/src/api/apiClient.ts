@@ -1,6 +1,8 @@
 import {
   ApiRoutes,
   type AuthUserDto,
+  type CreateMediaDto,
+  type CreateMediaResponseDto,
   type LoginDto,
   type RegisterDto,
   type ResetPasswordDto,
@@ -31,4 +33,17 @@ const authApi = (transport: HttpTransport) => ({
     ),
 });
 
-export { authApi };
+const mediaApi = (transport: HttpTransport) => ({
+  create: (data: CreateMediaDto) =>
+    transport.post<CreateMediaResponseDto>(
+      `${ApiRoutes.media.prefix}${ApiRoutes.media.root}`,
+      data,
+    ),
+  uploadToUrl: (url: string, file: Blob, contentType: string) =>
+    transport.put<null>(url, file, {
+      headers: { 'Content-Type': contentType },
+      credentials: 'omit',
+    }),
+});
+
+export { authApi, mediaApi };

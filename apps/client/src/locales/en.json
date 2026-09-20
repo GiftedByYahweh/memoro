@@ -146,5 +146,23 @@
       "step3": "Tap 'Add' in the top right corner",
       "gotIt": "Got it"
     }
+  },
+  "media": {
+    "createTitle": "New Memory",
+    "uploadPrompt": "Click or drop photo or video",
+    "supportedFormats": "JPEG, PNG, WebP, MP4, MOV",
+    "chooseFile": "Choose File",
+    "changeFile": "Change File",
+    "removeFile": "Remove File",
+    "location": "Location",
+    "attachLocation": "Detect current location",
+    "locating": "Detecting location...",
+    "locationDetected": "Location detected",
+    "captureTime": "Capture Time",
+    "submit": "Save to archive",
+    "uploadSuccess": "Memory added successfully",
+    "uploadFailed": "Failed to upload file",
+    "fileRequired": "Please choose a file to upload",
+    "unsupportedFormat": "Unsupported file format"
   }
 }

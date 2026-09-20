@@ -3,16 +3,9 @@ import { RouterLink } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import AppIcon from '@/components/shared/AppIcon.vue';
 import { NAV_ITEMS_LEFT, NAV_ITEMS_RIGHT } from '@/constants/nav.constants';
-
-const emit = defineEmits<{
-  create: [];
-}>();
+import { RoutePaths } from '@/router/routes';
 
 const { t } = useI18n();
-
-function handleCreate(): void {
-  emit('create');
-}
 </script>
 
 <template>
@@ -32,14 +25,14 @@ function handleCreate(): void {
       </div>
 
       <div class="fab-wrap">
-        <button
-          type="button"
+        <RouterLink
+          :to="RoutePaths.createMedia.path"
           class="fab-btn"
           :aria-label="t('nav.addMemory')"
-          @click="handleCreate"
+          exact-active-class="is-active"
         >
           <AppIcon name="plus" :size="24" color="inherit" />
-        </button>
+        </RouterLink>
       </div>
 
       <div class="nav-group">
@@ -138,6 +131,7 @@ function handleCreate(): void {
   color: var(--color-white);
   border: none;
   cursor: pointer;
+  text-decoration: none;
   transition:
     transform var(--transition-fast),
     background-color var(--transition-fast);
@@ -150,5 +144,10 @@ function handleCreate(): void {
 
 .fab-btn:active {
   transform: scale(0.95);
+}
+
+.fab-btn.is-active {
+  background-color: var(--color-primary-hover);
+  box-shadow: 0 0 0 3px var(--border-focus-primary);
 }
 </style>

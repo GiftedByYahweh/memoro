@@ -146,5 +146,23 @@
       "step3": "Натисніть «Додати» у правому верхньому кутку",
       "gotIt": "Зрозуміло"
     }
+  },
+  "media": {
+    "createTitle": "Новий спогад",
+    "uploadPrompt": "Натисніть або перетягніть фото чи відео",
+    "supportedFormats": "JPEG, PNG, WebP, MP4, MOV",
+    "chooseFile": "Обрати файл",
+    "changeFile": "Змінити файл",
+    "removeFile": "Видалити файл",
+    "location": "Місцезнаходження",
+    "attachLocation": "Визначити поточне місце",
+    "locating": "Визначення координат...",
+    "locationDetected": "Координати визначено",
+    "captureTime": "Час зйомки",
+    "submit": "Зберегти в архів",
+    "uploadSuccess": "Спогад успішно додано",
+    "uploadFailed": "Не вдалося завантажити файл",
+    "fileRequired": "Будь ласка, оберіть файл для завантаження",
+    "unsupportedFormat": "Непідтримуваний формат файлу"
   }
 }
