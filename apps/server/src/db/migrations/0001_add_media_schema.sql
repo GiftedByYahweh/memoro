@@ -1,4 +1,4 @@
-CREATE TYPE "public"."media_status" AS ENUM('pending', 'ready');
+CREATE TYPE "public"."media_status" AS ENUM('pending', 'ready', 'failed');
 CREATE TYPE "public"."media_type" AS ENUM('image', 'video');
 CREATE TYPE "public"."collection_visibility" AS ENUM('public', 'private');
 CREATE TABLE "media" (

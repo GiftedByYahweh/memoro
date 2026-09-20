@@ -105,7 +105,11 @@
     "invalidVerificationCode": "Invalid verification code",
     "verificationCodeExpired": "Verification code has expired",
     "userNotFound": "User not found",
-    "usernameAlreadyExists": "Username is already taken",
+    "usernameAlreadyExists": "This username is already taken",
+    "mediaNotFound": "Media not found",
+    "profileNotFound": "Profile not found",
+    "invalidFileType": "Unsupported file format",
+    "mediaForbidden": "Access to this media is forbidden",
     "unknown": "An unexpected error occurred"
   },
   "map": {
@@ -142,5 +146,35 @@
       "step3": "Tap 'Add' in the top right corner",
       "gotIt": "Got it"
     }
+  },
+  "media": {
+    "createTitle": "New Memory",
+    "uploadPrompt": "Click or drop photo or video",
+    "supportedFormats": "JPEG, PNG, WebP, MP4, MOV",
+    "chooseFile": "Choose File",
+    "changeFile": "Change File",
+    "removeFile": "Remove File",
+    "location": "Location",
+    "locationRequired": "Please specify a location",
+    "locationPlaceholder": "Select or detect location",
+    "resolvingAddress": "Resolving address...",
+    "detectGps": "Detect via GPS",
+    "pickOnMap": "Pick on map",
+    "clearLocation": "Clear",
+    "selectLocationTitle": "Select location on map",
+    "clickToSelectLocation": "Click on map to select location",
+    "confirmLocation": "Confirm",
+    "sourceExif": "From photo",
+    "sourceGps": "From GPS",
+    "sourceMap": "From map",
+    "attachLocation": "Detect current location",
+    "locating": "Detecting location...",
+    "locationDetected": "Location detected",
+    "captureTime": "Capture Time",
+    "submit": "Save to archive",
+    "uploadSuccess": "Memory added successfully",
+    "uploadFailed": "Failed to upload file",
+    "fileRequired": "Please choose a file to upload",
+    "unsupportedFormat": "Unsupported file format"
   }
 }

@@ -106,6 +106,10 @@
     "verificationCodeExpired": "Час дії коду підтвердження вичерпано",
     "userNotFound": "Користувача не знайдено",
     "usernameAlreadyExists": "Цей юзернейм вже зайнято",
+    "mediaNotFound": "Медіа не знайдено",
+    "profileNotFound": "Профіль не знайдено",
+    "invalidFileType": "Непідтримуваний формат файлу",
+    "mediaForbidden": "Доступ до цього медіа заборонено",
     "unknown": "Сталася неочікувана помилка"
   },
   "map": {
@@ -142,5 +146,35 @@
       "step3": "Натисніть «Додати» у правому верхньому кутку",
       "gotIt": "Зрозуміло"
     }
+  },
+  "media": {
+    "createTitle": "Новий спогад",
+    "uploadPrompt": "Натисніть або перетягніть фото чи відео",
+    "supportedFormats": "JPEG, PNG, WebP, MP4, MOV",
+    "chooseFile": "Обрати файл",
+    "changeFile": "Змінити файл",
+    "removeFile": "Видалити файл",
+    "location": "Місцезнаходження",
+    "locationRequired": "Вкажіть місцезнаходження",
+    "locationPlaceholder": "Оберіть або визначте місцезнаходження",
+    "resolvingAddress": "Визначення адреси...",
+    "detectGps": "Визначити за GPS",
+    "pickOnMap": "Обрати на карті",
+    "clearLocation": "Очистити",
+    "selectLocationTitle": "Вибір місця на карті",
+    "clickToSelectLocation": "Клікніть на мапі щоб обрати місце",
+    "confirmLocation": "Підтвердити",
+    "sourceExif": "З фото",
+    "sourceGps": "З GPS",
+    "sourceMap": "З карти",
+    "attachLocation": "Визначити поточне місце",
+    "locating": "Визначення координат...",
+    "locationDetected": "Координати визначено",
+    "captureTime": "Час зйомки",
+    "submit": "Зберегти в архів",
+    "uploadSuccess": "Спогад успішно додано",
+    "uploadFailed": "Не вдалося завантажити файл",
+    "fileRequired": "Будь ласка, оберіть файл для завантаження",
+    "unsupportedFormat": "Непідтримуваний формат файлу"
   }
 }

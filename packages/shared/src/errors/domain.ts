@@ -6,6 +6,10 @@ export const DomainErrorCode = {
   VERIFICATION_CODE_EXPIRED: 1005,
   USER_NOT_FOUND: 1006,
   USERNAME_ALREADY_EXISTS: 1007,
+  MEDIA_NOT_FOUND: 1008,
+  PROFILE_NOT_FOUND: 1009,
+  INVALID_FILE_TYPE: 1010,
+  MEDIA_FORBIDDEN: 1011,
 } as const;
 
 export type DomainErrorCode = (typeof DomainErrorCode)[keyof typeof DomainErrorCode];
