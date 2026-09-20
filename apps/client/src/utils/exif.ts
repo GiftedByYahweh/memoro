@@ -111,6 +111,11 @@ function parseGpsIfd(
 
   const lat = data.rawLat !== null ? (data.latRef === 'S' ? -data.rawLat : data.rawLat) : null;
   const lng = data.rawLng !== null ? (data.lngRef === 'W' ? -data.rawLng : data.rawLng) : null;
+
+  if (lat === 0 && lng === 0) {
+    return { lat: null, lng: null };
+  }
+
   return { lat, lng };
 }
 
