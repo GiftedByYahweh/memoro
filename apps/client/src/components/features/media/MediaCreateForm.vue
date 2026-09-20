@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { CreateMediaResponseDto } from '@memoro/shared';
+import type { MediaDto } from '@memoro/shared';
 import AppButton from '@/components/shared/AppButton.vue';
 import AppIcon from '@/components/shared/AppIcon.vue';
 import { useGeolocation } from '@/composables/useGeolocation';
@@ -11,7 +11,7 @@ import { MEDIA_UI_CONSTANTS, MEDIA_UPLOAD_LIMITS } from '@/constants/media.const
 import MediaUploadZone from './MediaUploadZone.vue';
 
 const emit = defineEmits<{
-  success: [response: CreateMediaResponseDto];
+  success: [response: MediaDto];
   cancel: [];
 }>();
 

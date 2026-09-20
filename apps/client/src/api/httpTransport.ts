@@ -49,7 +49,10 @@ async function handleFetchResponse<T>(response: Response): Promise<ApiResponse<T
   }
 
   if (response.ok) {
-    return { success: true, data: null as T, timestamp: Date.now() };
+    const rawEtag = response.headers.get('etag');
+    const etag = rawEtag ? rawEtag.replace(/"/g, '') : undefined;
+    const data = (etag !== undefined ? { etag } : null) as T;
+    return { success: true, data, timestamp: Date.now() };
   }
 
   return toErrorResponse(response.statusText);
@@ -76,7 +79,7 @@ async function sendRequest<T>(baseUrl: string, payload: SendPayload): Promise<Ap
 
     const response = await fetch(fullPath, {
       method,
-      credentials: 'include',
+      credentials: options.credentials ?? 'include',
       ...options,
       headers,
       body,

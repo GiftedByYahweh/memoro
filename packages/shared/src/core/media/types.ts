@@ -5,6 +5,7 @@ import type {
   CompleteMediaUploadDto,
   AbortMediaUploadDto,
   MediaFilterDto,
+  MediaIdParamDto,
 } from './schema';
 
 export type {
@@ -13,6 +14,7 @@ export type {
   CompleteMediaUploadDto,
   AbortMediaUploadDto,
   MediaFilterDto,
+  MediaIdParamDto,
 };
 
 export interface MediaDto {

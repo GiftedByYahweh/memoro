@@ -20,7 +20,13 @@ import { verifyCodeUseCase } from '@/core/auth/use-cases/verify-code.use-case';
 import { resetPasswordUseCase } from '@/core/auth/use-cases/reset-password.use-case';
 import { authGuard } from '@/common/guards/auth.guard';
 import { authRoutes } from '@/core/auth/routes/auth.routes';
-import { createMediaUseCase, drizzleMediaRepository, mediaRoutes } from '@/core/media';
+import {
+  abortMediaUseCase,
+  completeMediaUseCase,
+  createMediaUseCase,
+  drizzleMediaRepository,
+  mediaRoutes,
+} from '@/core/media';
 
 interface InfrastructureDeps {
   dbProvider: DBProvider;
@@ -120,8 +126,20 @@ function initMediaUseCases(infra: InfrastructureDeps) {
     mediaRepository: infra.mediaRepository,
   });
 
+  const completeMedia = completeMediaUseCase({
+    fileStorage: infra.fileStorage,
+    mediaRepository: infra.mediaRepository,
+  });
+
+  const abortMedia = abortMediaUseCase({
+    fileStorage: infra.fileStorage,
+    mediaRepository: infra.mediaRepository,
+  });
+
   return {
     createMediaUseCase: createMedia,
+    completeMediaUseCase: completeMedia,
+    abortMediaUseCase: abortMedia,
   };
 }
 
@@ -144,6 +162,8 @@ export const createAppContainer = (config: AppConfig, logger: Logger = new Conso
   const mediaRoutePlugin = mediaRoutes({
     authGuard: guard,
     createMediaUseCase: mediaUseCases.createMediaUseCase,
+    completeMediaUseCase: mediaUseCases.completeMediaUseCase,
+    abortMediaUseCase: mediaUseCases.abortMediaUseCase,
   });
 
   return {

@@ -139,3 +139,9 @@ export const mediaResponseSchema = z.object({
   createdAt: z.string(),
   updatedAt: z.string(),
 });
+
+export const mediaIdParamSchema = z.object({
+  id: z.string().uuid(),
+});
+
+export type MediaIdParamDto = z.infer<typeof mediaIdParamSchema>;

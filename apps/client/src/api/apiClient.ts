@@ -1,9 +1,12 @@
 import {
   ApiRoutes,
+  type AbortMediaUploadDto,
   type AuthUserDto,
+  type CompleteMediaUploadDto,
   type CreateMediaDto,
   type CreateMediaResponseDto,
   type LoginDto,
+  type MediaDto,
   type RegisterDto,
   type ResetPasswordDto,
   type SendVerificationCodeDto,
@@ -39,8 +42,12 @@ const mediaApi = (transport: HttpTransport) => ({
       `${ApiRoutes.media.prefix}${ApiRoutes.media.root}`,
       data,
     ),
+  complete: (id: string, data: CompleteMediaUploadDto) =>
+    transport.post<MediaDto>(`${ApiRoutes.media.prefix}/${id}/complete`, data),
+  abort: (id: string, data: AbortMediaUploadDto) =>
+    transport.post<Record<string, never>>(`${ApiRoutes.media.prefix}/${id}/abort`, data),
   uploadToUrl: (url: string, file: Blob, contentType: string) =>
-    transport.put<null>(url, file, {
+    transport.put<{ etag?: string }>(url, file, {
       headers: { 'Content-Type': contentType },
       credentials: 'omit',
     }),

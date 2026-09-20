@@ -4,7 +4,7 @@ import {
   MediaType,
   type AllowedContentType,
   type CreateMediaDto,
-  type CreateMediaResponseDto,
+  type MediaDto,
 } from '@memoro/shared';
 import { mediaService } from '@/services/media.service';
 
@@ -84,6 +84,30 @@ async function extractMetadata(file: File, objectUrl: string) {
   return { dimensions: dims, duration: null };
 }
 
+function attachSpatialMetadata(payload: CreateMediaDto, state: MediaUploadState): void {
+  if (state.latitude !== null) {
+    payload.latitude = state.latitude;
+  }
+  if (state.longitude !== null) {
+    payload.longitude = state.longitude;
+  }
+}
+
+function attachVisualMetadata(payload: CreateMediaDto, state: MediaUploadState): void {
+  if (state.dimensions && state.dimensions.width > 0) {
+    payload.width = state.dimensions.width;
+  }
+  if (state.dimensions && state.dimensions.height > 0) {
+    payload.height = state.dimensions.height;
+  }
+  if (state.duration !== null && state.duration > 0) {
+    payload.duration = state.duration;
+  }
+  if (state.cameraModel.trim().length > 0) {
+    payload.cameraModel = state.cameraModel.trim();
+  }
+}
+
 function buildPayload(activeFile: File, state: MediaUploadState): CreateMediaDto {
   const contentType = activeFile.type;
   if (!isAllowedContentType(contentType)) {
@@ -91,32 +115,32 @@ function buildPayload(activeFile: File, state: MediaUploadState): CreateMediaDto
   }
 
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const captureTime =
+    state.captureTime.length > 0
+      ? state.captureTime
+      : new Date(activeFile.lastModified).toISOString();
+
   const payload: CreateMediaDto = {
     fileName: activeFile.name,
     contentType,
     sizeBytes: activeFile.size,
     type: state.mediaType,
-    captureTime: state.captureTime,
+    captureTime,
     timezone: timeZone,
   };
-  if (state.latitude !== null) payload.latitude = state.latitude;
-  if (state.longitude !== null) payload.longitude = state.longitude;
-  if (state.dimensions && state.dimensions.width > 0) payload.width = state.dimensions.width;
-  if (state.dimensions && state.dimensions.height > 0) payload.height = state.dimensions.height;
-  if (state.duration !== null && state.duration > 0) payload.duration = state.duration;
-  if (state.cameraModel.trim().length > 0) payload.cameraModel = state.cameraModel.trim();
+  attachSpatialMetadata(payload, state);
+  attachVisualMetadata(payload, state);
   return payload;
 }
 
 async function uploadActiveMedia(
   activeFile: File,
   state: MediaUploadState,
-): Promise<CreateMediaResponseDto> {
+): Promise<MediaDto> {
   const payload = buildPayload(activeFile, state);
   const res = await mediaService.create(payload);
   if (!res.success) throw new Error(String(res.code));
-  await mediaService.uploadFile(activeFile, res.data);
-  return res.data;
+  return mediaService.uploadFile(activeFile, res.data);
 }
 
 function resetMediaState(state: MediaUploadState): void {
@@ -125,6 +149,10 @@ function resetMediaState(state: MediaUploadState): void {
   state.previewUrl = null;
   state.dimensions = null;
   state.duration = null;
+  state.captureTime = '';
+  state.latitude = null;
+  state.longitude = null;
+  state.cameraModel = '';
   state.error = null;
 }
 
@@ -135,7 +163,7 @@ export function useMediaUpload() {
     mediaType: MediaType.IMAGE,
     dimensions: null,
     duration: null,
-    captureTime: new Date().toISOString(),
+    captureTime: '',
     latitude: null,
     longitude: null,
     cameraModel: '',
@@ -169,7 +197,7 @@ export function useMediaUpload() {
     state.longitude = lng;
   }
 
-  async function submitUpload(): Promise<CreateMediaResponseDto> {
+  async function submitUpload(): Promise<MediaDto> {
     if (!state.file) throw new Error('media.fileRequired');
     state.isUploading = true;
     state.error = null;
