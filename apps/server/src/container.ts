@@ -20,8 +20,7 @@ import { verifyCodeUseCase } from '@/core/auth/use-cases/verify-code.use-case';
 import { resetPasswordUseCase } from '@/core/auth/use-cases/reset-password.use-case';
 import { authGuard } from '@/common/guards/auth.guard';
 import { authRoutes } from '@/core/auth/routes/auth.routes';
-import { requestUploadUrlUseCase } from '@/core/media/use-cases/request-upload-url.use-case';
-import { mediaRoutes } from '@/core/media/routes/media.routes';
+import { createMediaUseCase, drizzleMediaRepository, mediaRoutes } from '@/core/media';
 
 interface InfrastructureDeps {
   dbProvider: DBProvider;
@@ -31,6 +30,7 @@ interface InfrastructureDeps {
   profileRepository: ReturnType<typeof drizzleProfileRepository>;
   sessionRepository: ReturnType<typeof drizzleSessionRepository>;
   verificationCodeRepository: ReturnType<typeof drizzleVerificationCodeRepository>;
+  mediaRepository: ReturnType<typeof drizzleMediaRepository>;
   mailer: ResendMailerProvider;
   fileStorage: FileStorage;
 }
@@ -52,6 +52,7 @@ function initInfrastructure(config: AppConfig, logger: Logger): InfrastructureDe
     profileRepository: drizzleProfileRepository(dbProvider),
     sessionRepository: drizzleSessionRepository(dbProvider),
     verificationCodeRepository: drizzleVerificationCodeRepository(dbProvider),
+    mediaRepository: drizzleMediaRepository(dbProvider),
   };
 }
 
@@ -114,12 +115,13 @@ function initAuthUseCases(infra: InfrastructureDeps, sessionMaxAgeMs: number) {
 }
 
 function initMediaUseCases(infra: InfrastructureDeps) {
-  const requestUploadUrl = requestUploadUrlUseCase({
+  const createMedia = createMediaUseCase({
     fileStorage: infra.fileStorage,
+    mediaRepository: infra.mediaRepository,
   });
 
   return {
-    requestUploadUrlUseCase: requestUploadUrl,
+    createMediaUseCase: createMedia,
   };
 }
 
@@ -141,7 +143,7 @@ export const createAppContainer = (config: AppConfig, logger: Logger = new Conso
 
   const mediaRoutePlugin = mediaRoutes({
     authGuard: guard,
-    requestUploadUrlUseCase: mediaUseCases.requestUploadUrlUseCase,
+    createMediaUseCase: mediaUseCases.createMediaUseCase,
   });
 
   return {

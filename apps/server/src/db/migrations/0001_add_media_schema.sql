@@ -1,4 +1,4 @@
-CREATE TYPE "public"."media_status" AS ENUM('pending', 'ready');
+CREATE TYPE "public"."media_status" AS ENUM('pending', 'ready', 'failed');
 CREATE TYPE "public"."media_type" AS ENUM('image', 'video');
 CREATE TYPE "public"."collection_visibility" AS ENUM('public', 'private');
 CREATE TABLE "media" (
@@ -20,6 +20,7 @@ CREATE TABLE "media" (
 	"original_iv" varchar(32),
 	"duration" double precision,
 	"video_codec" varchar(32),
+	"has_thumbnail" boolean DEFAULT false NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "media_file_key_unique" UNIQUE("file_key")

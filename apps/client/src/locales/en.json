@@ -105,7 +105,11 @@
     "invalidVerificationCode": "Invalid verification code",
     "verificationCodeExpired": "Verification code has expired",
     "userNotFound": "User not found",
-    "usernameAlreadyExists": "Username is already taken",
+    "usernameAlreadyExists": "This username is already taken",
+    "mediaNotFound": "Media not found",
+    "profileNotFound": "Profile not found",
+    "invalidFileType": "Unsupported file format",
+    "mediaForbidden": "Access to this media is forbidden",
     "unknown": "An unexpected error occurred"
   },
   "map": {

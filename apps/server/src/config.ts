@@ -25,6 +25,7 @@ export const loadAppConfig = () => {
       accessKeyId: requireEnv(env, 'R2_ACCESS_KEY_ID'),
       secretAccessKey: requireEnv(env, 'R2_SECRET_ACCESS_KEY'),
       bucketName: requireEnv(env, 'R2_BUCKET_NAME'),
+      region: requireEnv(env, 'R2_REGION'),
     },
     cors: {
       origin: requireEnv(env, 'CORS_ORIGIN').split(','),

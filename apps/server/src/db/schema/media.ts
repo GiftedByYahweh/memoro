@@ -7,9 +7,10 @@ import {
   doublePrecision,
   bigint,
   pgEnum,
+  boolean,
 } from 'drizzle-orm/pg-core';
 import { profilesTable } from './profiles';
-import { MEDIA_CONSTRAINTS, MediaStatus, MediaType } from '@memoro/shared';
+import { ENCRYPTION_CONSTRAINTS, MEDIA_CONSTRAINTS, MediaStatus, MediaType } from '@memoro/shared';
 
 export const mediaStatusEnum = pgEnum(
   'media_status',
@@ -40,10 +41,15 @@ export const mediaTable = pgTable('media', {
   width: integer('width'),
   height: integer('height'),
   sizeBytes: bigint('size_bytes', { mode: 'number' }),
-  encryptionAlgorithm: varchar('encryption_algorithm', { length: 16 }),
-  originalIv: varchar('original_iv', { length: 32 }),
+  encryptionAlgorithm: varchar('encryption_algorithm', {
+    length: ENCRYPTION_CONSTRAINTS.ALGORITHM_MAX_LENGTH,
+  }),
+  originalIv: varchar('original_iv', {
+    length: ENCRYPTION_CONSTRAINTS.ORIGINAL_IV_MAX_LENGTH,
+  }),
   duration: doublePrecision('duration'),
-  videoCodec: varchar('video_codec', { length: 32 }),
+  videoCodec: varchar('video_codec', { length: MEDIA_CONSTRAINTS.VIDEO_CODEC_MAX_LENGTH }),
+  hasThumbnail: boolean('has_thumbnail').default(false).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });

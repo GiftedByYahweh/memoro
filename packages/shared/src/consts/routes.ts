@@ -14,8 +14,9 @@ export const ApiRoutes = {
   },
   media: {
     prefix: `${API_PREFIX}/media`,
-    uploadUrl: '/upload-url',
     root: '/',
     byId: '/:id',
+    complete: '/:id/complete',
+    abort: '/:id/abort',
   },
 } as const;

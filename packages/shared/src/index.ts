@@ -4,4 +4,5 @@ export * from './errors';
 export * from './types/api';
 export * from './core';
 export * from './consts/routes';
+export * from './consts/encryption';
 export * from './utils/validation';

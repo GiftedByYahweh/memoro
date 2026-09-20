@@ -1,8 +1,8 @@
-import { requestUploadUrlSchema, uploadUrlResponseSchema } from '@memoro/shared';
+import { createMediaResponseSchema, createMediaSchema } from '@memoro/shared';
 
-export const requestUploadUrlRouteSchema = {
-  body: requestUploadUrlSchema,
+export const createMediaRouteSchema = {
+  body: createMediaSchema,
   response: {
-    200: uploadUrlResponseSchema,
+    200: createMediaResponseSchema,
   },
 };

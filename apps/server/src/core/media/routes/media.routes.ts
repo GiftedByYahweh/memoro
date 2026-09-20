@@ -2,41 +2,40 @@ import type { FastifyPluginCallbackZod } from 'fastify-type-provider-zod';
 import type { preHandlerAsyncHookHandler } from 'fastify';
 import { ApiRoutes } from '@memoro/shared';
 import type { FastifyInstanceZod } from '@/common/fastify.types';
-import type { RequestUploadUrlUseCase } from '../use-cases/request-upload-url.use-case';
-import { requestUploadUrlRouteSchema } from './media.schema';
+import type { CreateMediaUseCase } from '../use-cases/create-media.use-case';
+import { createMediaRouteSchema } from './media.schema';
 
 export interface MediaRoutesDeps {
   authGuard: preHandlerAsyncHookHandler;
-  requestUploadUrlUseCase: RequestUploadUrlUseCase;
+  createMediaUseCase: CreateMediaUseCase;
 }
 
-function requestUploadUrlRoute(
+function createMediaRoute(
   server: FastifyInstanceZod,
   authGuard: preHandlerAsyncHookHandler,
-  useCase: RequestUploadUrlUseCase,
+  useCase: CreateMediaUseCase,
 ): void {
   server.post(
-    ApiRoutes.media.uploadUrl,
+    ApiRoutes.media.root,
     {
       preHandler: authGuard,
-      schema: requestUploadUrlRouteSchema,
+      schema: createMediaRouteSchema,
     },
     async (request) => {
       const profileId = request.profile?.id ?? '';
       return useCase({
         profileId,
-        fileName: request.body.fileName,
-        contentType: request.body.contentType,
+        data: request.body,
       });
     },
   );
 }
 
 export function mediaRoutes(deps: MediaRoutesDeps): FastifyPluginCallbackZod {
-  const { authGuard, requestUploadUrlUseCase: uploadUrlUseCase } = deps;
+  const { authGuard, createMediaUseCase: createUseCase } = deps;
 
   return (server, _options, done): void => {
-    requestUploadUrlRoute(server, authGuard, uploadUrlUseCase);
+    createMediaRoute(server, authGuard, createUseCase);
     done();
   };
 }

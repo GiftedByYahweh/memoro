@@ -1,38 +1,26 @@
-import type { AllowedContentType, MediaStatus, MediaType } from './constants';
+import type { MediaStatus, MediaType } from './constants';
+import type {
+  CreateMediaDto,
+  CreateMediaResponseDto,
+  CompleteMediaUploadDto,
+  AbortMediaUploadDto,
+  MediaFilterDto,
+} from './schema';
 
-export interface RequestUploadUrlDto {
-  readonly fileName: string;
-  readonly contentType: AllowedContentType;
-}
-
-export interface UploadUrlResponseDto {
-  readonly uploadUrl: string;
-  readonly fileKey: string;
-}
-
-export interface CreateMediaDto {
-  readonly fileKey: string;
-  readonly contentType: string;
-  readonly type: MediaType;
-  readonly status: MediaStatus;
-  readonly captureTime?: string;
-  readonly timezone?: string;
-  readonly latitude?: number;
-  readonly longitude?: number;
-  readonly cameraModel?: string;
-  readonly width?: number;
-  readonly height?: number;
-  readonly sizeBytes?: number;
-  readonly duration?: number;
-  readonly collectionIds?: string[];
-}
+export type {
+  CreateMediaDto,
+  CreateMediaResponseDto,
+  CompleteMediaUploadDto,
+  AbortMediaUploadDto,
+  MediaFilterDto,
+};
 
 export interface MediaDto {
   readonly id: string;
   readonly profileId: string;
   readonly fileKey: string;
   readonly fileUrl: string;
-  readonly thumbnailUrl?: string;
+  readonly thumbnailUrl: string | null;
   readonly contentType: string;
   readonly status: MediaStatus;
   readonly type: MediaType;
@@ -44,19 +32,11 @@ export interface MediaDto {
   readonly width: number | null;
   readonly height: number | null;
   readonly sizeBytes: number | null;
+  readonly encryptionAlgorithm: string | null;
+  readonly originalIv: string | null;
   readonly duration: number | null;
+  readonly videoCodec: string | null;
+  readonly hasThumbnail: boolean;
   readonly createdAt: string;
   readonly updatedAt: string;
-}
-
-export interface MediaFilterDto {
-  readonly minLatitude?: number;
-  readonly maxLatitude?: number;
-  readonly minLongitude?: number;
-  readonly maxLongitude?: number;
-  readonly dateFrom?: string;
-  readonly dateTo?: string;
-  readonly collectionId?: string;
-  readonly limit?: number;
-  readonly offset?: number;
 }
