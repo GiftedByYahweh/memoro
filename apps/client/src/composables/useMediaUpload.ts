@@ -1,12 +1,14 @@
 import { reactive, toRefs } from 'vue';
 import {
-  ALLOWED_CONTENT_TYPES,
   MediaType,
-  type AllowedContentType,
   type CreateMediaDto,
   type MediaDto,
 } from '@memoro/shared';
 import { mediaService } from '@/services/media.service';
+
+import { extractExifMetadata, type ExifMetadata } from '@/utils/exif';
+import { geocodingService } from '@/services/geocoding.service';
+import { resolveFileContentType } from '@/utils/media-file';
 
 interface MediaDimensions {
   readonly width: number;
@@ -17,6 +19,8 @@ interface VideoMetadata extends MediaDimensions {
   readonly duration: number;
 }
 
+export type LocationSource = 'exif' | 'device' | 'map' | null;
+
 interface MediaUploadState {
   file: File | null;
   previewUrl: string | null;
@@ -26,13 +30,12 @@ interface MediaUploadState {
   captureTime: string;
   latitude: number | null;
   longitude: number | null;
+  address: string | null;
+  isResolvingAddress: boolean;
+  locationSource: LocationSource;
   cameraModel: string;
   isUploading: boolean;
   error: string | null;
-}
-
-function isAllowedContentType(type: string): type is AllowedContentType {
-  return (ALLOWED_CONTENT_TYPES as readonly string[]).includes(type);
 }
 
 function resolveMediaType(mimeType: string): MediaType {
@@ -40,7 +43,7 @@ function resolveMediaType(mimeType: string): MediaType {
 }
 
 function validateMediaFile(file: File): string | null {
-  if (!isAllowedContentType(file.type)) return 'media.unsupportedFormat';
+  if (!resolveFileContentType(file)) return 'media.unsupportedFormat';
   return null;
 }
 
@@ -109,8 +112,8 @@ function attachVisualMetadata(payload: CreateMediaDto, state: MediaUploadState):
 }
 
 function buildPayload(activeFile: File, state: MediaUploadState): CreateMediaDto {
-  const contentType = activeFile.type;
-  if (!isAllowedContentType(contentType)) {
+  const contentType = resolveFileContentType(activeFile);
+  if (!contentType) {
     throw new Error('media.unsupportedFormat');
   }
 
@@ -152,8 +155,65 @@ function resetMediaState(state: MediaUploadState): void {
   state.captureTime = '';
   state.latitude = null;
   state.longitude = null;
+  state.address = null;
+  state.isResolvingAddress = false;
+  state.locationSource = null;
   state.cameraModel = '';
   state.error = null;
+}
+
+async function updateCoordinatesState(
+  state: MediaUploadState,
+  lat: number | null,
+  lng: number | null,
+  source: LocationSource = null,
+): Promise<void> {
+  state.latitude = lat;
+  state.longitude = lng;
+  state.locationSource = source;
+  if (lat === null || lng === null) {
+    state.address = null;
+    state.isResolvingAddress = false;
+    return;
+  }
+  state.isResolvingAddress = true;
+  try {
+    state.address = await geocodingService.reverseGeocode(lat, lng);
+  } finally {
+    state.isResolvingAddress = false;
+  }
+}
+
+function applyExifData(state: MediaUploadState, exif: ExifMetadata | null): void {
+  if (!exif) return;
+  if (exif.captureTime) state.captureTime = exif.captureTime;
+  if (exif.cameraModel) state.cameraModel = exif.cameraModel;
+  if (exif.latitude !== null && exif.longitude !== null) {
+    void updateCoordinatesState(state, exif.latitude, exif.longitude, 'exif');
+  }
+}
+
+async function handleFileSelection(state: MediaUploadState, selectedFile: File): Promise<void> {
+  resetMediaState(state);
+  const validationError = validateMediaFile(selectedFile);
+  if (validationError) {
+    state.error = validationError;
+    return;
+  }
+  const resolvedType = resolveFileContentType(selectedFile);
+  const objectUrl = URL.createObjectURL(selectedFile);
+  state.file = selectedFile;
+  state.mediaType = resolveMediaType(resolvedType ?? selectedFile.type);
+  state.previewUrl = objectUrl;
+  state.captureTime = new Date(selectedFile.lastModified).toISOString();
+
+  const [meta, exif] = await Promise.all([
+    extractMetadata(selectedFile, objectUrl),
+    extractExifMetadata(selectedFile),
+  ]);
+  state.dimensions = meta.dimensions;
+  state.duration = meta.duration;
+  applyExifData(state, exif);
 }
 
 export function useMediaUpload() {
@@ -166,6 +226,9 @@ export function useMediaUpload() {
     captureTime: '',
     latitude: null,
     longitude: null,
+    address: null,
+    isResolvingAddress: false,
+    locationSource: null,
     cameraModel: '',
     isUploading: false,
     error: null,
@@ -175,26 +238,16 @@ export function useMediaUpload() {
     resetMediaState(state);
   }
 
-  async function processSelectedFile(selectedFile: File): Promise<void> {
-    clearFile();
-    const validationError = validateMediaFile(selectedFile);
-    if (validationError) {
-      state.error = validationError;
-      return;
-    }
-    const objectUrl = URL.createObjectURL(selectedFile);
-    state.file = selectedFile;
-    state.mediaType = resolveMediaType(selectedFile.type);
-    state.previewUrl = objectUrl;
-    state.captureTime = new Date(selectedFile.lastModified).toISOString();
-    const meta = await extractMetadata(selectedFile, objectUrl);
-    state.dimensions = meta.dimensions;
-    state.duration = meta.duration;
+  function processSelectedFile(selectedFile: File): Promise<void> {
+    return handleFileSelection(state, selectedFile);
   }
 
-  function setCoordinates(lat: number | null, lng: number | null): void {
-    state.latitude = lat;
-    state.longitude = lng;
+  function setCoordinates(
+    lat: number | null,
+    lng: number | null,
+    source: LocationSource = null,
+  ): Promise<void> {
+    return updateCoordinatesState(state, lat, lng, source);
   }
 
   async function submitUpload(): Promise<MediaDto> {

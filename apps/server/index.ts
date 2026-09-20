@@ -1,11 +1,10 @@
-import type { FastifyInstance } from 'fastify';
 import { createAppContainer } from './src/container';
 import type { AppConfig } from './src/config';
 import { loadAppConfig } from './src/config';
 import { createServer } from './src/server';
 import { ConsoleLogger } from './src/logger/index';
 
-export const app = async (config: AppConfig): Promise<FastifyInstance> => {
+export const app = async (config: AppConfig) => {
   const logger = new ConsoleLogger();
 
   const container = createAppContainer(config, logger);
