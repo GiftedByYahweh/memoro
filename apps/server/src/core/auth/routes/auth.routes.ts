@@ -1,4 +1,5 @@
 import type { FastifyPluginCallbackZod } from 'fastify-type-provider-zod';
+import type { preHandlerAsyncHookHandler } from 'fastify';
 import { ApiRoutes } from '@memoro/shared';
 import { AUTH_COOKIE_NAME, AUTH_COOKIE_PATH, SAME_SITE } from '../auth.constants';
 import type { RegisterUseCase } from '../use-cases/register.use-case';
@@ -18,6 +19,7 @@ import {
 } from './auth.schema';
 
 export interface AuthRoutesDeps {
+  authGuard: preHandlerAsyncHookHandler;
   registerUseCase: RegisterUseCase;
   loginUseCase: LoginUseCase;
   logoutUseCase: LogoutUseCase;
@@ -117,8 +119,12 @@ function loginRoute(
   });
 }
 
-function logoutRoute(server: FastifyInstanceZod, logoutUseCase: LogoutUseCase): void {
-  server.post(ApiRoutes.auth.logout, async (request, reply) => {
+function logoutRoute(
+  server: FastifyInstanceZod,
+  logoutUseCase: LogoutUseCase,
+  authGuard: preHandlerAsyncHookHandler,
+): void {
+  server.post(ApiRoutes.auth.logout, { preHandler: authGuard }, async (request, reply) => {
     const rawCookie = request.cookies[AUTH_COOKIE_NAME];
     const unsigned = rawCookie ? request.unsignCookie(rawCookie) : null;
     const sessionToken = unsigned?.valid ? unsigned.value : undefined;
@@ -152,6 +158,7 @@ function sessionRoute(
 
 export function authRoutes(deps: AuthRoutesDeps): FastifyPluginCallbackZod {
   const {
+    authGuard,
     registerUseCase,
     loginUseCase,
     logoutUseCase,
@@ -168,7 +175,7 @@ export function authRoutes(deps: AuthRoutesDeps): FastifyPluginCallbackZod {
     verifyCodeRoute(server, verifyCodeUseCase);
     resetPasswordRoute(server, resetPasswordUseCase);
     loginRoute(server, loginUseCase, isProduction);
-    logoutRoute(server, logoutUseCase);
+    logoutRoute(server, logoutUseCase, authGuard);
     sessionRoute(server, validateSessionUseCase);
     done();
   };

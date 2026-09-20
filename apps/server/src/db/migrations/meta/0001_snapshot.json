@@ -339,13 +339,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "has_thumbnail": {
-          "name": "has_thumbnail",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
-        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",

@@ -7,7 +7,6 @@ import {
   doublePrecision,
   bigint,
   pgEnum,
-  boolean,
 } from 'drizzle-orm/pg-core';
 import { profilesTable } from './profiles';
 import { MEDIA_CONSTRAINTS, MediaStatus, MediaType } from '@memoro/shared';
@@ -45,7 +44,6 @@ export const mediaTable = pgTable('media', {
   originalIv: varchar('original_iv', { length: 32 }),
   duration: doublePrecision('duration'),
   videoCodec: varchar('video_codec', { length: 32 }),
-  hasThumbnail: boolean('has_thumbnail').default(false).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });

@@ -124,6 +124,10 @@ async function registerRoutes(server: FastifyInstance, container: AppContainer) 
   await server.register(container.routes.authRoutes, {
     prefix: ApiRoutes.auth.prefix,
   });
+
+  await server.register(container.routes.mediaRoutes, {
+    prefix: ApiRoutes.media.prefix,
+  });
 }
 
 export const createServer = async (options: CreateServerOptions): Promise<FastifyInstance> => {

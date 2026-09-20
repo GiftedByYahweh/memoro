@@ -25,4 +25,15 @@ export const ALLOWED_CONTENT_TYPES = [
   'image/webp',
   'video/mp4',
   'video/quicktime',
-];
+] as const;
+
+export type AllowedContentType = (typeof ALLOWED_CONTENT_TYPES)[number];
+
+export const MEDIA_UPLOAD_CONSTRAINTS = {
+  FOLDER_NAME: 'media',
+} as const;
+
+export const MEDIA_QUERY_CONSTRAINTS = {
+  DEFAULT_LIMIT: 50,
+  MAX_LIMIT: 500,
+} as const;

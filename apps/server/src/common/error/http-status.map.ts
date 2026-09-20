@@ -26,6 +26,10 @@ const HTTP_STATUS_BY_APP_ERROR: Record<AppErrorCode, HttpStatusCode> = {
   [DomainErrorCode.VERIFICATION_CODE_EXPIRED]: HttpStatusCode.BAD_REQUEST,
   [DomainErrorCode.USER_NOT_FOUND]: HttpStatusCode.NOT_FOUND,
   [DomainErrorCode.USERNAME_ALREADY_EXISTS]: HttpStatusCode.CONFLICT,
+  [DomainErrorCode.MEDIA_NOT_FOUND]: HttpStatusCode.NOT_FOUND,
+  [DomainErrorCode.PROFILE_NOT_FOUND]: HttpStatusCode.NOT_FOUND,
+  [DomainErrorCode.INVALID_FILE_TYPE]: HttpStatusCode.BAD_REQUEST,
+  [DomainErrorCode.MEDIA_FORBIDDEN]: HttpStatusCode.FORBIDDEN,
 };
 
 export { HTTP_STATUS_MESSAGES, HTTP_STATUS_BY_APP_ERROR };

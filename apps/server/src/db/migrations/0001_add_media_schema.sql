@@ -20,7 +20,6 @@ CREATE TABLE "media" (
 	"original_iv" varchar(32),
 	"duration" double precision,
 	"video_codec" varchar(32),
-	"has_thumbnail" boolean DEFAULT false NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "media_file_key_unique" UNIQUE("file_key")
