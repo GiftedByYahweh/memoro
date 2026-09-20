@@ -140,7 +140,12 @@ onMounted(() => {
   map.on('click', handleMapClick);
   map.getCanvas().style.cursor = 'crosshair';
 
-  if (props.initialLat !== null && props.initialLat !== undefined && props.initialLng !== null && props.initialLng !== undefined) {
+  if (
+    props.initialLat !== null &&
+    props.initialLat !== undefined &&
+    props.initialLng !== null &&
+    props.initialLng !== undefined
+  ) {
     setPoint(props.initialLat, props.initialLng);
   }
 });
@@ -185,7 +190,9 @@ onUnmounted(() => {
       <div class="address-preview">
         <AppIcon name="navigation" :size="MEDIA_UI_CONSTANTS.PREVIEW_ICON_SIZE" color="primary" />
         <span class="address-text">{{
-          isResolving ? t('media.resolvingAddress') : (resolvedAddress || t('media.clickToSelectLocation'))
+          isResolving
+            ? t('media.resolvingAddress')
+            : resolvedAddress || t('media.clickToSelectLocation')
         }}</span>
       </div>
       <div class="footer-actions">

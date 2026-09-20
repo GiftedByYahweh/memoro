@@ -11,10 +11,7 @@ export const MEDIA_EXTENSIONS = [
   '.mov',
 ] as const;
 
-export const MEDIA_ACCEPT_ATTRIBUTE = [
-  ...ALLOWED_CONTENT_TYPES,
-  ...MEDIA_EXTENSIONS,
-].join(',');
+export const MEDIA_ACCEPT_ATTRIBUTE = [...ALLOWED_CONTENT_TYPES, ...MEDIA_EXTENSIONS].join(',');
 
 export const EXTENSION_MIME_MAP: Partial<Record<string, AllowedContentType>> = {
   jpg: 'image/jpeg',

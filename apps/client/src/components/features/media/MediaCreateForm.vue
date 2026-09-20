@@ -142,11 +142,7 @@ async function handleSubmit(): Promise<void> {
           :aria-label="t('media.clearLocation')"
           @click="handleRemoveLocation"
         >
-          <AppIcon
-            name="close"
-            :size="MEDIA_UI_CONSTANTS.PREVIEW_ICON_SIZE"
-            color="inherit"
-          />
+          <AppIcon name="close" :size="MEDIA_UI_CONSTANTS.PREVIEW_ICON_SIZE" color="inherit" />
         </button>
       </div>
 
@@ -174,11 +170,7 @@ async function handleSubmit(): Promise<void> {
           @click="isMapPickerOpen = true"
         >
           <template #icon-left>
-            <AppIcon
-              name="target"
-              :size="MEDIA_UI_CONSTANTS.PREVIEW_ICON_SIZE"
-              color="inherit"
-            />
+            <AppIcon name="target" :size="MEDIA_UI_CONSTANTS.PREVIEW_ICON_SIZE" color="inherit" />
           </template>
           {{ t('media.pickOnMap') }}
         </AppButton>
@@ -337,9 +329,6 @@ async function handleSubmit(): Promise<void> {
   flex-wrap: wrap;
   gap: var(--space-xs);
 }
-
-
-
 
 .form-actions {
   display: flex;

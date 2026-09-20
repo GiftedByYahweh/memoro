@@ -78,11 +78,7 @@ interface GpsParserContext {
   readonly data: GpsRawData;
 }
 
-function parseGpsEntry(
-  view: DataView,
-  entryOffset: number,
-  ctx: GpsParserContext,
-): void {
+function parseGpsEntry(view: DataView, entryOffset: number, ctx: GpsParserContext): void {
   const { tiffOffset, littleEndian, data } = ctx;
   const tag = view.getUint16(entryOffset, littleEndian);
   if (tag === TAG_GPS_LAT_REF) {

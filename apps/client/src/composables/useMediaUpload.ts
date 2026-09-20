@@ -1,9 +1,5 @@
 import { reactive, toRefs } from 'vue';
-import {
-  MediaType,
-  type CreateMediaDto,
-  type MediaDto,
-} from '@memoro/shared';
+import { MediaType, type CreateMediaDto, type MediaDto } from '@memoro/shared';
 import { mediaService } from '@/services/media.service';
 
 import { extractExifMetadata, type ExifMetadata } from '@/utils/exif';
@@ -136,10 +132,7 @@ function buildPayload(activeFile: File, state: MediaUploadState): CreateMediaDto
   return payload;
 }
 
-async function uploadActiveMedia(
-  activeFile: File,
-  state: MediaUploadState,
-): Promise<MediaDto> {
+async function uploadActiveMedia(activeFile: File, state: MediaUploadState): Promise<MediaDto> {
   const payload = buildPayload(activeFile, state);
   const res = await mediaService.create(payload);
   if (!res.success) throw new Error(String(res.code));
