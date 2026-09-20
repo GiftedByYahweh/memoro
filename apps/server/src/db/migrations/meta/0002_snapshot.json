@@ -736,7 +736,8 @@
       "schema": "public",
       "values": [
         "pending",
-        "ready"
+        "ready",
+        "failed"
       ]
     },
     "public.media_type": {

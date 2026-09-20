@@ -20,6 +20,11 @@ export const RoutePaths = {
     path: '/feed',
     auth: true,
   },
+  createMedia: {
+    name: 'create-media',
+    path: '/media/new',
+    auth: true,
+  },
   albums: {
     name: 'albums',
     path: '/albums',
@@ -74,6 +79,12 @@ export const routes: RouteRecordRaw[] = [
     name: RoutePaths.feed.name,
     component: () => import('../pages/FeedPage.vue'),
     meta: { layout: appLayouts.main, requiresAuth: RoutePaths.feed.auth },
+  },
+  {
+    path: RoutePaths.createMedia.path,
+    name: RoutePaths.createMedia.name,
+    component: () => import('../pages/CreateMediaPage.vue'),
+    meta: { layout: appLayouts.main, requiresAuth: RoutePaths.createMedia.auth },
   },
   {
     path: RoutePaths.albums.path,

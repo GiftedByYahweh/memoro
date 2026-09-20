@@ -12,4 +12,11 @@ export const ApiRoutes = {
     verifyCode: '/verify-code',
     resetPassword: '/reset-password',
   },
+  media: {
+    prefix: `${API_PREFIX}/media`,
+    root: '/',
+    byId: '/:id',
+    complete: '/:id/complete',
+    abort: '/:id/abort',
+  },
 } as const;

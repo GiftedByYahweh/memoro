@@ -1,10 +1,9 @@
-import type { MediaType } from '../media';
-
 export const CollectionVisibilityStatus = {
   PUBLIC: 'public',
   PRIVATE: 'private',
 } as const;
-export type CollectionVisibilityStatus = (typeof MediaType)[keyof typeof MediaType];
+export type CollectionVisibilityStatus =
+  (typeof CollectionVisibilityStatus)[keyof typeof CollectionVisibilityStatus];
 
 export const COLLECTION_CONSTRAINTS = {
   TITLE_MAX_LENGTH: 255,

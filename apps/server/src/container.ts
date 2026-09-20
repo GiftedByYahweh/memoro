@@ -5,6 +5,7 @@ import { createTxContext } from '@/db/tx-context';
 import { DBProvider } from '@/db/db.provider';
 import { unitOfWork } from '@/db/unit-of-work';
 import { ResendMailerProvider } from '@/common/mailer';
+import { R2FileStorageProvider, type FileStorage } from '@/common/file-storage';
 import { drizzleUserRepository } from '@/core/user';
 import { drizzleProfileRepository } from '@/core/profile';
 import { drizzleSessionRepository } from '@/core/auth/repositories/drizzle-session.repository';
@@ -17,7 +18,15 @@ import { validateSessionUseCase } from '@/core/auth/use-cases/validate-session.u
 import { sendVerificationCodeUseCase } from '@/core/auth/use-cases/send-verification-code.use-case';
 import { verifyCodeUseCase } from '@/core/auth/use-cases/verify-code.use-case';
 import { resetPasswordUseCase } from '@/core/auth/use-cases/reset-password.use-case';
+import { authGuard } from '@/common/guards/auth.guard';
 import { authRoutes } from '@/core/auth/routes/auth.routes';
+import {
+  abortMediaUseCase,
+  completeMediaUseCase,
+  createMediaUseCase,
+  drizzleMediaRepository,
+  mediaRoutes,
+} from '@/core/media';
 
 interface InfrastructureDeps {
   dbProvider: DBProvider;
@@ -27,7 +36,9 @@ interface InfrastructureDeps {
   profileRepository: ReturnType<typeof drizzleProfileRepository>;
   sessionRepository: ReturnType<typeof drizzleSessionRepository>;
   verificationCodeRepository: ReturnType<typeof drizzleVerificationCodeRepository>;
+  mediaRepository: ReturnType<typeof drizzleMediaRepository>;
   mailer: ResendMailerProvider;
+  fileStorage: FileStorage;
 }
 
 function initInfrastructure(config: AppConfig, logger: Logger): InfrastructureDeps {
@@ -35,20 +46,23 @@ function initInfrastructure(config: AppConfig, logger: Logger): InfrastructureDe
   const dbProvider = new DBProvider(config, txContext);
   const uow = unitOfWork(dbProvider);
   const mailer = new ResendMailerProvider(config.resend, logger);
+  const fileStorage = new R2FileStorageProvider(config.r2);
 
   return {
     txContext,
     dbProvider,
     uow,
     mailer,
+    fileStorage,
     userRepository: drizzleUserRepository(dbProvider),
     profileRepository: drizzleProfileRepository(dbProvider),
     sessionRepository: drizzleSessionRepository(dbProvider),
     verificationCodeRepository: drizzleVerificationCodeRepository(dbProvider),
+    mediaRepository: drizzleMediaRepository(dbProvider),
   };
 }
 
-function initUseCases(infra: InfrastructureDeps, sessionMaxAgeMs: number) {
+function initAuthUseCases(infra: InfrastructureDeps, sessionMaxAgeMs: number) {
   const createSession = createSessionUseCase({
     sessionRepository: infra.sessionRepository,
     sessionMaxAgeMs,
@@ -106,19 +120,50 @@ function initUseCases(infra: InfrastructureDeps, sessionMaxAgeMs: number) {
   };
 }
 
+function initMediaUseCases(infra: InfrastructureDeps) {
+  const createMedia = createMediaUseCase({
+    fileStorage: infra.fileStorage,
+    mediaRepository: infra.mediaRepository,
+  });
+
+  const completeMedia = completeMediaUseCase({
+    fileStorage: infra.fileStorage,
+    mediaRepository: infra.mediaRepository,
+  });
+
+  const abortMedia = abortMediaUseCase({
+    fileStorage: infra.fileStorage,
+    mediaRepository: infra.mediaRepository,
+  });
+
+  return {
+    createMediaUseCase: createMedia,
+    completeMediaUseCase: completeMedia,
+    abortMediaUseCase: abortMedia,
+  };
+}
+
 export const createAppContainer = (config: AppConfig, logger: Logger = new ConsoleLogger()) => {
   const infra = initInfrastructure(config, logger);
-  const useCases = initUseCases(infra, config.session.maxAge);
+  const authUseCases = initAuthUseCases(infra, config.session.maxAge);
+  const mediaUseCases = initMediaUseCases(infra);
+
+  const guard = authGuard({
+    validateSessionUseCase: authUseCases.validateSessionUseCase,
+    profileRepository: infra.profileRepository,
+  });
 
   const authRoutePlugin = authRoutes({
-    registerUseCase: useCases.registerUseCase,
-    loginUseCase: useCases.loginUseCase,
-    logoutUseCase: useCases.logoutUseCase,
-    validateSessionUseCase: useCases.validateSessionUseCase,
-    sendVerificationCodeUseCase: useCases.sendVerificationCodeUseCase,
-    verifyCodeUseCase: useCases.verifyCodeUseCase,
-    resetPasswordUseCase: useCases.resetPasswordUseCase,
+    ...authUseCases,
+    authGuard: guard,
     isProduction: config.isProduction,
+  });
+
+  const mediaRoutePlugin = mediaRoutes({
+    authGuard: guard,
+    createMediaUseCase: mediaUseCases.createMediaUseCase,
+    completeMediaUseCase: mediaUseCases.completeMediaUseCase,
+    abortMediaUseCase: mediaUseCases.abortMediaUseCase,
   });
 
   return {
@@ -127,10 +172,15 @@ export const createAppContainer = (config: AppConfig, logger: Logger = new Conso
       txContext: infra.txContext,
       uow: infra.uow,
       mailer: infra.mailer,
+      fileStorage: infra.fileStorage,
     },
-    useCases,
+    useCases: {
+      ...authUseCases,
+      ...mediaUseCases,
+    },
     routes: {
       authRoutes: authRoutePlugin,
+      mediaRoutes: mediaRoutePlugin,
     },
   };
 };
