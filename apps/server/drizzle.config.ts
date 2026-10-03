@@ -6,7 +6,6 @@ const ENV_FILE_PATH = fileURLToPath(new URL('../../.env', import.meta.url));
 
 if (existsSync(ENV_FILE_PATH)) process.loadEnvFile(ENV_FILE_PATH);
 
-
 const dbUrl = process.env['DB_CONNECTION_URL'] || '';
 
 export default defineConfig({
