@@ -54,3 +54,6 @@ CLAUDE.md
 .cline/
 .roo/
 .aider*
+
+.agents/
+skills-lock.json
