@@ -47,7 +47,7 @@ watch(
   { deep: true },
 );
 
-function handleComplete(values: number[]): void {
+function handleComplete(values: (number | undefined)[]): void {
   emit('complete', values.join(''));
 }
 </script>
