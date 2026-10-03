@@ -20,10 +20,20 @@
 
 ### 1.3 Docker-First Environment
 
-- All services run in Docker containers (Node 24 Alpine):
+- All services run in Docker containers (Node 24 Alpine, non-root `node` user). A root `.env` (copied from `.env.example`) is required.
+- `docker-compose.yml` is the production stack; `docker-compose.override.yml` is applied automatically by `docker compose` and switches it to development.
+- Development (`npm run docker:up`):
   - `postgres` on port `5433:5432`.
-  - `server` on port `3000:3000`.
-  - `client` on port `5174:5173`.
+  - `migrate` applies Drizzle migrations (`drizzle-kit migrate`) once and exits; `server` starts only after it succeeds.
+  - `server` on port `3000:3000` (`tsx watch`, bind-mounted sources).
+  - `client` on port `5174:5173` (Vite, proxies `/api` to `server`).
+  - After dependency changes run `npm run docker:rebuild` to refresh the `node_modules` volumes.
+- Production (`npm run docker:prod:build && npm run docker:prod:up`):
+  - `postgres` is published only on the VM loopback (`127.0.0.1:${POSTGRES_HOST_PORT:-5432}`).
+  - Migrations are NOT run by the stack: the CD workflow (`.github/workflows/cd.yml`) applies them after a successful CI run on `main` via an SSH tunnel to the VM and `npm run db:migrate`.
+  - `server` runs via `node --import tsx` with production dependencies only and is exposed only inside the network.
+  - `client` is the built PWA served by nginx (`nginx.conf`) on `${CLIENT_PORT:-8080}`, proxying `/api` to `server`.
+- `DB_CONNECTION_URL` inside containers is always built from `POSTGRES_*`; the value in `.env` is used only for running tools from the host.
 
 ### 1.4 Zero Code Comments
 

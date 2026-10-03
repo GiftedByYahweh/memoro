@@ -1,0 +1,47 @@
+x-dev-volumes: &dev-volumes
+  - .:/app
+  - /app/node_modules
+  - /app/apps/server/node_modules
+  - /app/apps/client/node_modules
+
+services:
+  postgres:
+    ports: !override
+      - '${POSTGRES_HOST_PORT:-5433}:5432'
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: server-dev
+    command: ['npm', 'run', 'db:migrate', '--workspace=@memoro/server']
+    restart: 'no'
+    environment:
+      DB_CONNECTION_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    volumes: *dev-volumes
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  server:
+    build:
+      target: server-dev
+    environment:
+      NODE_ENV: development
+    ports:
+      - '3000:3000'
+    volumes: *dev-volumes
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  client:
+    build:
+      target: client-dev
+    init: true
+    environment:
+      NODE_ENV: development
+      VITE_API_TARGET: http://server:3000
+    ports: !override
+      - '5174:5173'
+    volumes: *dev-volumes
