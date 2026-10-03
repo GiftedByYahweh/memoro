@@ -1,42 +1,45 @@
 FROM node:24-alpine AS base
-
 WORKDIR /app
+RUN chown node:node /app
+USER node
+COPY --chown=node:node package.json package-lock.json ./
+COPY --chown=node:node packages/shared/package.json ./packages/shared/
+COPY --chown=node:node apps/server/package.json ./apps/server/
+COPY --chown=node:node apps/client/package.json ./apps/client/
 
-# Copy monorepo package manifests
-COPY package.json package-lock.json* ./
-COPY packages/shared/package.json ./packages/shared/
-COPY apps/server/package.json ./apps/server/
-COPY apps/client/package.json ./apps/client/
+FROM base AS deps
+RUN npm ci
 
-# Install dependencies inside the container
-RUN npm install
+FROM deps AS dev
+COPY --chown=node:node . .
 
-# Copy source code
-COPY . .
-
-# Target: Server development (tsx watch)
-FROM base AS server-dev
-WORKDIR /app
+FROM dev AS server-dev
 EXPOSE 3000
 CMD ["npm", "run", "dev:server"]
 
-# Target: Client development (vite)
-FROM base AS client-dev
-WORKDIR /app
+FROM dev AS client-dev
 EXPOSE 5173
 CMD ["npm", "run", "dev:client"]
 
-# Target: Production builder (for staging / deployment)
-FROM base AS builder
-RUN npm run build --workspaces --if-present
+FROM dev AS client-build
+RUN npm run build --workspace=@memoro/client
 
-# Target: Server production
+FROM base AS server-build
+RUN npm ci --omit=dev --workspace=@memoro/server
+COPY --chown=node:node tsconfig.base.json ./
+COPY --chown=node:node packages/shared ./packages/shared
+COPY --chown=node:node apps/server ./apps/server
+
 FROM node:24-alpine AS server-prod
-WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/packages/shared ./packages/shared
-COPY --from=builder /app/apps/server ./apps/server
+USER node
+COPY --from=server-build /app /app
+WORKDIR /app/apps/server
 EXPOSE 3000
-CMD ["node", "apps/server/dist/server.js"]
+CMD ["node", "--import", "tsx", "index.ts"]
+
+FROM nginx:stable-alpine AS client-prod
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY security-headers.inc /etc/nginx/conf.d/security-headers.inc
+COPY --from=client-build /app/apps/client/dist /usr/share/nginx/html
+EXPOSE 80
