@@ -10,8 +10,8 @@ body {
   padding: 0;
   width: 100%;
   min-height: 100%;
-  color-scheme: dark;
-  background-color: var(--color-canvas);
+  color-scheme: light;
+  background-color: var(--color-bg);
   color: var(--color-text-primary);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;

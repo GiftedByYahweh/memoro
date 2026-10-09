@@ -1,4 +1,4 @@
-import { EXIF_CONSTANTS } from '@/constants/geocoding.constants';
+import { EXIF_CONSTANTS } from '@/constants/media.constants';
 
 export interface ExifMetadata {
   readonly latitude: number | null;

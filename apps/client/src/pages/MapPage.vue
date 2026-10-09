@@ -104,7 +104,7 @@ onMounted(() => {
   height: 100dvh;
   min-height: 100dvh;
   overflow: hidden;
-  background-color: var(--color-oled-black);
+  background-color: var(--color-bg);
 }
 
 .map-container {
@@ -122,14 +122,14 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   z-index: 5;
-  background-color: var(--color-oled-black);
+  background-color: var(--color-bg);
   pointer-events: none;
 }
 
 .map-spinner {
   width: 36px;
   height: 36px;
-  border: 3px solid var(--border-subtle);
+  border: 3px solid var(--color-border);
   border-top-color: var(--color-primary);
   border-radius: var(--radius-full);
   animation: map-spin 0.8s linear infinite;
@@ -144,7 +144,7 @@ onMounted(() => {
   padding: var(--space-sm) var(--space-md);
   border: 1px solid var(--color-error);
   border-radius: var(--radius-md);
-  background-color: var(--scrim-overlay);
+  background-color: var(--color-surface-translucent);
   backdrop-filter: blur(12px);
 }
 

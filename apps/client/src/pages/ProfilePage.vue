@@ -13,7 +13,7 @@ const { user, logout, isLoading } = useAuth();
 
 async function handleLogout(): Promise<void> {
   await logout();
-  await router.push(RoutePaths.auth.path);
+  await router.push(RoutePaths.login.path);
 }
 </script>
 
@@ -44,8 +44,8 @@ async function handleLogout(): Promise<void> {
   gap: var(--space-md);
   padding: var(--space-md);
   border-radius: var(--radius-lg);
-  background-color: var(--color-surface-card);
-  border: 1px solid var(--border-subtle);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
   margin-bottom: var(--space-2xl);
 }
 
@@ -56,8 +56,8 @@ async function handleLogout(): Promise<void> {
   width: 56px;
   height: 56px;
   border-radius: var(--radius-full);
-  background-color: var(--color-surface-elevated);
-  border: 1px solid var(--border-subtle);
+  background-color: var(--color-surface-variant);
+  border: 1px solid var(--color-border);
 }
 
 .user-info {
@@ -68,7 +68,7 @@ async function handleLogout(): Promise<void> {
 
 .user-email {
   font-family: var(--font-sans);
-  font-size: var(--space-md);
+  font-size: var(--text-md);
   font-weight: 600;
   color: var(--color-text-primary);
   margin: 0;
@@ -76,7 +76,7 @@ async function handleLogout(): Promise<void> {
 
 .user-role {
   font-family: var(--font-sans);
-  font-size: var(--space-sm);
+  font-size: var(--text-xs);
   color: var(--color-text-tertiary);
   margin: 0;
 }

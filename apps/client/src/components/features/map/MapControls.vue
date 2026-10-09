@@ -148,11 +148,11 @@ onUnmounted(() => {
   justify-content: center;
   width: 44px;
   height: 44px;
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
-  background-color: var(--scrim-overlay);
+  background-color: var(--color-surface-translucent);
   color: var(--color-text-secondary);
-  box-shadow: var(--shadow-pin);
+  box-shadow: var(--shadow-1);
   cursor: pointer;
   backdrop-filter: blur(12px);
   transition:
@@ -163,8 +163,8 @@ onUnmounted(() => {
 }
 
 .control-btn:hover {
-  border-color: var(--border-hover);
-  background-color: var(--color-surface-hover);
+  border-color: var(--color-border-strong);
+  background-color: var(--color-state-hover);
   color: var(--color-text-primary);
 }
 
@@ -173,12 +173,12 @@ onUnmounted(() => {
 }
 
 .control-btn.is-active {
-  border-color: var(--border-focus);
+  border-color: var(--color-primary);
   color: var(--color-primary);
 }
 
 .control-btn.is-locating {
-  border-color: var(--border-focus);
+  border-color: var(--color-primary);
   color: var(--color-primary);
   cursor: default;
 }
@@ -200,10 +200,10 @@ onUnmounted(() => {
   gap: var(--space-2xs);
   min-width: 140px;
   padding: var(--space-2xs);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  background-color: var(--scrim-overlay);
-  box-shadow: var(--shadow-elevated);
+  background-color: var(--color-surface-translucent);
+  box-shadow: var(--shadow-3);
   transform: translateY(-50%);
   backdrop-filter: blur(16px);
 }
@@ -219,7 +219,7 @@ onUnmounted(() => {
   background: transparent;
   color: var(--color-text-secondary);
   font-family: var(--font-sans);
-  font-size: var(--space-sm);
+  font-size: var(--text-sm);
   text-align: left;
   text-transform: capitalize;
   cursor: pointer;
@@ -229,12 +229,12 @@ onUnmounted(() => {
 }
 
 .style-option-btn:hover {
-  background-color: var(--color-surface-hover);
+  background-color: var(--color-state-hover);
   color: var(--color-text-primary);
 }
 
 .style-option-btn.is-selected {
-  background-color: var(--glow-primary);
+  background-color: var(--color-primary-container);
   color: var(--color-primary);
   font-weight: 600;
 }

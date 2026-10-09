@@ -39,14 +39,14 @@ defineProps<Props>();
   width: 64px;
   height: 64px;
   border-radius: var(--radius-full);
-  background-color: var(--color-surface-card);
-  border: 1px solid var(--border-subtle);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
   margin-bottom: var(--space-xs);
 }
 
 .empty-title {
   font-family: var(--font-sans);
-  font-size: var(--space-md);
+  font-size: var(--text-md);
   font-weight: 600;
   color: var(--color-text-primary);
   margin: 0;
@@ -54,7 +54,7 @@ defineProps<Props>();
 
 .empty-description {
   font-family: var(--font-sans);
-  font-size: var(--space-sm);
+  font-size: var(--text-sm);
   color: var(--color-text-tertiary);
   margin: 0;
   max-width: 280px;

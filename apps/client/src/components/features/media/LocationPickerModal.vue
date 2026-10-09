@@ -16,7 +16,6 @@ import {
   MIN_MAP_ZOOM,
   USER_LOCATION_ZOOM,
 } from '@/constants/map.constants';
-import { MEDIA_UI_CONSTANTS } from '@/constants/media.constants';
 import { geocodingService } from '@/services/geocoding.service';
 
 const props = defineProps<{
@@ -188,7 +187,7 @@ onUnmounted(() => {
 
     <div class="modal-footer">
       <div class="address-preview">
-        <AppIcon name="navigation" :size="MEDIA_UI_CONSTANTS.PREVIEW_ICON_SIZE" color="primary" />
+        <AppIcon name="navigation" :size="16" color="primary" />
         <span class="address-text">{{
           isResolving
             ? t('media.resolvingAddress')
@@ -219,7 +218,7 @@ onUnmounted(() => {
   z-index: 1000;
   display: flex;
   flex-direction: column;
-  background-color: var(--color-oled-black);
+  background-color: var(--color-bg);
 }
 
 .modal-header {
@@ -229,8 +228,8 @@ onUnmounted(() => {
   align-items: center;
   justify-content: space-between;
   padding: var(--space-sm) var(--space-md);
-  background-color: var(--color-surface-card);
-  border-bottom: 1px solid var(--border-subtle);
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .header-back-btn {
@@ -294,7 +293,7 @@ onUnmounted(() => {
   border-radius: var(--radius-full);
   background-color: var(--color-primary);
   color: var(--color-white);
-  border: 2px solid var(--color-surface-card);
+  border: 2px solid var(--color-surface);
   transition: transform var(--transition-fast);
 }
 
@@ -327,9 +326,9 @@ onUnmounted(() => {
   width: 44px;
   height: 44px;
   padding: 0;
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
-  background-color: var(--color-surface-card);
+  background-color: var(--color-surface);
   color: var(--color-text-primary);
   cursor: pointer;
   box-shadow: 0 4px 12px rgb(0 0 0 / 40%);
@@ -342,8 +341,8 @@ onUnmounted(() => {
   flex-direction: column;
   gap: var(--space-sm);
   padding: var(--space-md);
-  background-color: var(--color-surface-card);
-  border-top: 1px solid var(--border-subtle);
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border);
 }
 
 .address-preview {

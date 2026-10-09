@@ -9,7 +9,7 @@ const { t } = useI18n();
 </script>
 
 <template>
-  <nav class="bottom-nav" aria-label="Main Navigation">
+  <nav class="bottom-nav" :aria-label="t('nav.mainNavigation')">
     <div class="nav-container">
       <div class="nav-group">
         <RouterLink
@@ -58,9 +58,9 @@ const { t } = useI18n();
   left: 0;
   right: 0;
   z-index: 100;
-  background-color: var(--scrim-overlay);
+  background-color: var(--color-surface-translucent);
   backdrop-filter: blur(16px);
-  border-top: 1px solid var(--border-subtle);
+  border-top: 1px solid var(--color-border);
   padding-bottom: var(--safe-bottom);
 }
 
@@ -148,6 +148,6 @@ const { t } = useI18n();
 
 .fab-btn.is-active {
   background-color: var(--color-primary-hover);
-  box-shadow: 0 0 0 3px var(--border-focus-primary);
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
 }
 </style>

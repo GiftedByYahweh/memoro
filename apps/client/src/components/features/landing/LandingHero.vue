@@ -106,10 +106,10 @@ function handleNavigateApp(): void {
   justify-content: center;
   width: 80px;
   height: 80px;
-  background-color: var(--color-surface-card);
-  border: 1px solid var(--border-focus-primary);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-focus-ring);
   border-radius: var(--radius-full);
-  box-shadow: var(--shadow-fab);
+  box-shadow: var(--shadow-2);
 }
 
 .badge-container {
@@ -117,8 +117,8 @@ function handleNavigateApp(): void {
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-2xs) var(--space-sm);
-  background-color: var(--color-surface-elevated);
-  border: 1px solid var(--border-subtle);
+  background-color: var(--color-surface-variant);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
 }
 

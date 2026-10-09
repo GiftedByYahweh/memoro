@@ -6,9 +6,20 @@ export const RoutePaths = {
     name: 'landing',
     path: '/download-app',
   },
-  auth: {
-    name: 'auth',
-    path: '/auth',
+  login: {
+    name: 'login',
+    path: '/login',
+    guest: true,
+  },
+  registration: {
+    name: 'registration',
+    path: '/registration',
+    guest: true,
+  },
+  restore: {
+    name: 'restore',
+    path: '/restore',
+    guest: true,
   },
   map: {
     name: 'map',
@@ -63,10 +74,22 @@ export const routes: RouteRecordRaw[] = [
     meta: { layout: appLayouts.auth },
   },
   {
-    path: RoutePaths.auth.path,
-    name: RoutePaths.auth.name,
-    component: () => import('../pages/AuthPage.vue'),
-    meta: { layout: appLayouts.auth },
+    path: RoutePaths.login.path,
+    name: RoutePaths.login.name,
+    component: () => import('../pages/LoginPage.vue'),
+    meta: { layout: appLayouts.auth, guestOnly: RoutePaths.login.guest },
+  },
+  {
+    path: RoutePaths.registration.path,
+    name: RoutePaths.registration.name,
+    component: () => import('../pages/RegistrationPage.vue'),
+    meta: { layout: appLayouts.auth, guestOnly: RoutePaths.registration.guest },
+  },
+  {
+    path: RoutePaths.restore.path,
+    name: RoutePaths.restore.name,
+    component: () => import('../pages/RestorePasswordPage.vue'),
+    meta: { layout: appLayouts.auth, guestOnly: RoutePaths.restore.guest },
   },
   {
     path: RoutePaths.map.path,

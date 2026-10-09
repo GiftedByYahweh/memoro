@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { AUTH_CONSTRAINTS } from '@memoro/shared';
 import AppButton from '@/components/shared/AppButton.vue';
 import AppPinInput from '@/components/shared/AppPinInput.vue';
-import AppText from '@/components/shared/AppText.vue';
+import type { StepProgress } from '@/composables/useStepFlow';
+import { COUNTDOWN_TICK_MS, RESEND_COOLDOWN_SECONDS } from '@/constants/auth.constants';
 import AuthStepLayout from './AuthStepLayout.vue';
 
 interface Props {
   email: string;
+  progress: StepProgress;
   isPending?: boolean;
-  title?: string;
-  submitText?: string;
+  isResending?: boolean;
   apiError?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   isPending: false,
-  title: undefined,
-  submitText: undefined,
+  isResending: false,
   apiError: undefined,
 });
 
@@ -32,118 +32,113 @@ const { t } = useI18n();
 
 const code = ref('');
 const codeError = ref<string | undefined>(undefined);
+const secondsLeft = ref(RESEND_COOLDOWN_SECONDS);
+let countdownId: number | undefined;
 
-const timer = ref(60);
-let interval: number | undefined;
-
-function startTimer(): void {
-  timer.value = 60;
-  clearInterval(interval);
-  interval = window.setInterval(() => {
-    if (timer.value > 0) {
-      timer.value--;
-    } else {
-      clearInterval(interval);
-    }
-  }, 1000);
+function tick(): void {
+  if (secondsLeft.value > 0) {
+    secondsLeft.value -= 1;
+    return;
+  }
+  window.clearInterval(countdownId);
 }
 
-onMounted(() => {
-  startTimer();
-});
-
-onUnmounted(() => {
-  clearInterval(interval);
-});
+function startCountdown(): void {
+  secondsLeft.value = RESEND_COOLDOWN_SECONDS;
+  window.clearInterval(countdownId);
+  countdownId = window.setInterval(tick, COUNTDOWN_TICK_MS);
+}
 
 watch(
   () => props.apiError,
-  (newErr) => {
-    if (newErr) {
-      codeError.value = newErr;
-      code.value = '';
-    }
+  (error) => {
+    if (!error) return;
+    codeError.value = error;
+    code.value = '';
   },
 );
 
-watch(code, (newCode) => {
-  if (newCode.length > 0 && codeError.value) {
-    codeError.value = undefined;
-  }
+watch(code, (value) => {
+  if (value.length > 0) codeError.value = undefined;
 });
 
-function onNext(): void {
+function handleSubmit(): void {
+  if (props.isPending) return;
   if (code.value.length < AUTH_CONSTRAINTS.VERIFICATION_CODE_LENGTH) {
     codeError.value = t('validation.codeLength');
     return;
   }
-  codeError.value = undefined;
   emit('next', code.value);
 }
 
-function onCodeComplete(completedCode: string): void {
+function handleComplete(completedCode: string): void {
   code.value = completedCode;
-  onNext();
+  handleSubmit();
 }
 
-function onResend(): void {
+function handleResend(): void {
   code.value = '';
   codeError.value = undefined;
   emit('resend');
-  startTimer();
+  startCountdown();
 }
+
+onMounted(startCountdown);
+onUnmounted(() => {
+  window.clearInterval(countdownId);
+});
 </script>
 
 <template>
-  <AuthStepLayout :title="title ?? t('auth.stepVerify')" @back="emit('back')">
+  <AuthStepLayout
+    :title="t('auth.verifyTitle')"
+    :progress="progress"
+    show-back
+    @submit="handleSubmit"
+    @back="emit('back')"
+  >
     <template #description>
-      <AppText variant="body-sm" color="secondary">
-        {{ t('auth.codeSentTo') }} <span class="highlight">{{ email }}</span>
-      </AppText>
+      {{ t('auth.codeSentTo') }} <strong class="email-highlight">{{ email }}</strong>
     </template>
 
-    <div class="verify-input-section">
-      <AppPinInput
-        v-model="code"
-        :error="codeError"
-        :disabled="isPending"
-        autofocus
-        @complete="onCodeComplete"
-      />
-    </div>
+    <AppPinInput
+      v-model="code"
+      :error="codeError"
+      :disabled="isPending"
+      autofocus
+      @complete="handleComplete"
+    />
+
+    <AppButton
+      variant="ghost"
+      size="sm"
+      class="resend-btn"
+      :disabled="secondsLeft > 0"
+      :loading="isResending"
+      @click="handleResend"
+    >
+      {{
+        secondsLeft > 0
+          ? t('auth.resendCodeIn', { seconds: secondsLeft })
+          : t('auth.resendCodeAction')
+      }}
+    </AppButton>
 
     <template #actions>
-      <AppButton variant="primary" size="lg" block :loading="isPending" @click="onNext">
-        {{ submitText ?? t('auth.verifyBtn') }}
+      <AppButton type="submit" size="lg" block :loading="isPending">
+        {{ t('auth.verifyBtn') }}
       </AppButton>
-
-      <div class="resend-action">
-        <AppButton v-if="timer > 0" variant="secondary" size="lg" block disabled>
-          {{ t('auth.resendCodeIn', { seconds: timer }) }}
-        </AppButton>
-        <AppButton v-else variant="secondary" size="lg" block @click="onResend">
-          {{ t('auth.resendCodeAction') }}
-        </AppButton>
-      </div>
     </template>
   </AuthStepLayout>
 </template>
 
 <style scoped>
-.verify-input-section {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  padding: var(--space-md) 0;
-}
-
-.resend-action {
-  margin-top: var(--space-sm);
-  width: 100%;
-}
-
-.highlight {
+.email-highlight {
+  font-weight: 500;
   color: var(--color-text-primary);
-  font-weight: 600;
+}
+
+.resend-btn {
+  align-self: center;
 }
 </style>

@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { MediaType } from '@memoro/shared';
 import AppIcon from '@/components/shared/AppIcon.vue';
-import { MEDIA_ACCEPT_ATTRIBUTE, MEDIA_UI_CONSTANTS } from '@/constants/media.constants';
+import { MEDIA_ACCEPT_ATTRIBUTE } from '@/constants/media.constants';
 
 interface Props {
   previewUrl: string | null;
@@ -70,12 +70,12 @@ function handleDrop(event: DragEvent): void {
       @drop.prevent="handleDrop"
     >
       <div class="icon-circle">
-        <AppIcon name="camera" :size="MEDIA_UI_CONSTANTS.EMPTY_ZONE_ICON_SIZE" color="primary" />
+        <AppIcon name="camera" :size="48" color="primary" />
       </div>
       <p class="dropzone-title">{{ t('media.uploadPrompt') }}</p>
       <p class="dropzone-subtitle">{{ t('media.supportedFormats') }}</p>
       <button type="button" class="choose-btn" :disabled="disabled" @click.stop="triggerFileInput">
-        <AppIcon name="plus" :size="MEDIA_UI_CONSTANTS.ACTION_ICON_SIZE" color="inherit" />
+        <AppIcon name="plus" :size="20" color="inherit" />
         <span>{{ t('media.chooseFile') }}</span>
       </button>
     </div>
@@ -97,7 +97,7 @@ function handleDrop(event: DragEvent): void {
         :disabled="disabled"
         @click="emit('remove')"
       >
-        <AppIcon name="close" :size="MEDIA_UI_CONSTANTS.PREVIEW_ICON_SIZE" color="inherit" />
+        <AppIcon name="close" :size="16" color="inherit" />
       </button>
 
       <div v-if="fileName" class="preview-meta">
@@ -124,9 +124,9 @@ function handleDrop(event: DragEvent): void {
   gap: var(--space-xs);
   min-height: 240px;
   padding: var(--space-xl) var(--space-md);
-  border: 2px dashed var(--border-subtle);
+  border: 2px dashed var(--color-border);
   border-radius: var(--radius-xl);
-  background-color: var(--color-surface-card);
+  background-color: var(--color-surface);
   cursor: pointer;
   transition:
     border-color var(--transition-fast),
@@ -136,7 +136,7 @@ function handleDrop(event: DragEvent): void {
 .dropzone-box:hover,
 .dropzone-box.is-dragging {
   border-color: var(--color-primary);
-  background-color: var(--color-surface-elevated);
+  background-color: var(--color-surface-variant);
 }
 
 .dropzone-box.is-disabled {
@@ -151,8 +151,8 @@ function handleDrop(event: DragEvent): void {
   width: 80px;
   height: 80px;
   border-radius: var(--radius-full);
-  background-color: var(--color-surface-elevated);
-  border: 1px solid var(--border-subtle);
+  background-color: var(--color-surface-variant);
+  border: 1px solid var(--color-border);
   margin-bottom: var(--space-2xs);
 }
 
@@ -183,8 +183,8 @@ function handleDrop(event: DragEvent): void {
   font-size: 0.875rem;
   font-weight: 600;
   border-radius: var(--radius-full);
-  border: 1px solid var(--border-subtle);
-  background-color: var(--color-surface-floating);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface-variant);
   color: var(--color-text-primary);
   cursor: pointer;
   transition:
@@ -193,8 +193,8 @@ function handleDrop(event: DragEvent): void {
 }
 
 .choose-btn:hover {
-  background-color: var(--color-surface-hover);
-  border-color: var(--border-hover);
+  background-color: var(--color-state-hover);
+  border-color: var(--color-border-strong);
 }
 
 .preview-box {
@@ -203,8 +203,8 @@ function handleDrop(event: DragEvent): void {
   max-height: 380px;
   border-radius: var(--radius-xl);
   overflow: hidden;
-  background-color: var(--color-surface-card);
-  border: 1px solid var(--border-subtle);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
 }
 
 .preview-element {
@@ -212,7 +212,7 @@ function handleDrop(event: DragEvent): void {
   max-height: 380px;
   object-fit: contain;
   display: block;
-  background-color: var(--color-oled-black);
+  background-color: var(--color-bg);
 }
 
 .remove-btn {
@@ -225,9 +225,9 @@ function handleDrop(event: DragEvent): void {
   width: 32px;
   height: 32px;
   border-radius: var(--radius-full);
-  background-color: var(--scrim-overlay);
+  background-color: var(--color-surface-translucent);
   backdrop-filter: blur(8px);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--color-border);
   color: var(--color-white);
   cursor: pointer;
   transition:
@@ -242,8 +242,8 @@ function handleDrop(event: DragEvent): void {
 
 .preview-meta {
   padding: var(--space-xs) var(--space-md);
-  background-color: var(--color-surface-card);
-  border-top: 1px solid var(--border-subtle);
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border);
 }
 
 .preview-filename {

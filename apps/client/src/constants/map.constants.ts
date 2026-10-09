@@ -8,7 +8,7 @@ export const MAP_STYLES = {
 
 export type MapStyleKey = keyof typeof MAP_STYLES;
 
-export const DEFAULT_MAP_STYLE_KEY: MapStyleKey = 'dark';
+export const DEFAULT_MAP_STYLE_KEY: MapStyleKey = 'positron';
 export const DEFAULT_MAP_STYLE = MAP_STYLES[DEFAULT_MAP_STYLE_KEY];
 
 export const MAPLIBRE_WORKER_URL = `${import.meta.env.BASE_URL}maplibre-gl-worker.mjs`;

@@ -59,14 +59,14 @@ const features: FeatureItem[] = [
   align-items: flex-start;
   gap: var(--space-md);
   padding: var(--space-md);
-  background-color: var(--color-surface-card);
-  border: 1px solid var(--border-card);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   transition: border-color var(--transition-fast);
 }
 
 .feature-card:hover {
-  border-color: var(--border-subtle-hover);
+  border-color: var(--color-border-strong);
 }
 
 .feature-icon-wrapper {
@@ -77,8 +77,8 @@ const features: FeatureItem[] = [
   height: 40px;
   flex-shrink: 0;
   border-radius: var(--radius-lg);
-  background-color: var(--glow-primary);
-  border: 1px solid var(--border-focus-primary);
+  background-color: var(--color-primary-container);
+  border: 1px solid var(--color-focus-ring);
 }
 
 .feature-info {

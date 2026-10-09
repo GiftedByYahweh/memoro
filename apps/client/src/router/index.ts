@@ -11,13 +11,11 @@ router.beforeEach(async (to) => {
   const { isAuthenticated, ensureHydrated } = useAuth();
   await ensureHydrated();
 
-  const isAuthPage = to.name === RoutePaths.auth.name;
-
   if (!isAuthenticated.value && to.meta.requiresAuth) {
-    return { name: RoutePaths.auth.name };
+    return { name: RoutePaths.login.name };
   }
 
-  if (isAuthenticated.value && isAuthPage) {
+  if (isAuthenticated.value && to.meta.guestOnly) {
     return { name: RoutePaths.map.name };
   }
 

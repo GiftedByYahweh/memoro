@@ -7,7 +7,7 @@ import AppIcon from '@/components/shared/AppIcon.vue';
 import { useGeolocation } from '@/composables/useGeolocation';
 import { useMediaUpload } from '@/composables/useMediaUpload';
 import { useToast } from '@/composables/useToast';
-import { MEDIA_UI_CONSTANTS, MEDIA_UPLOAD_LIMITS } from '@/constants/media.constants';
+import { MEDIA_UPLOAD_LIMITS } from '@/constants/media.constants';
 import MediaUploadZone from './MediaUploadZone.vue';
 import LocationPickerModal from './LocationPickerModal.vue';
 
@@ -125,11 +125,7 @@ async function handleSubmit(): Promise<void> {
 
       <div class="location-field" :class="{ 'has-value': hasLocation }">
         <div class="field-icon-wrapper">
-          <AppIcon
-            name="navigation"
-            :size="MEDIA_UI_CONSTANTS.NAVIGATION_ICON_SIZE"
-            :color="hasLocation ? 'primary' : 'inherit'"
-          />
+          <AppIcon name="navigation" :size="18" :color="hasLocation ? 'primary' : 'inherit'" />
         </div>
         <span class="field-value-text" :class="{ placeholder: !hasLocation }">
           {{ displayAddress }}
@@ -142,7 +138,7 @@ async function handleSubmit(): Promise<void> {
           :aria-label="t('media.clearLocation')"
           @click="handleRemoveLocation"
         >
-          <AppIcon name="close" :size="MEDIA_UI_CONSTANTS.PREVIEW_ICON_SIZE" color="inherit" />
+          <AppIcon name="close" :size="16" color="inherit" />
         </button>
       </div>
 
@@ -154,11 +150,7 @@ async function handleSubmit(): Promise<void> {
           @click="handleDetectLocation"
         >
           <template #icon-left>
-            <AppIcon
-              name="navigation"
-              :size="MEDIA_UI_CONSTANTS.PREVIEW_ICON_SIZE"
-              color="inherit"
-            />
+            <AppIcon name="navigation" :size="16" color="inherit" />
           </template>
           {{ isLocating ? t('media.locating') : t('media.detectGps') }}
         </AppButton>
@@ -170,7 +162,7 @@ async function handleSubmit(): Promise<void> {
           @click="isMapPickerOpen = true"
         >
           <template #icon-left>
-            <AppIcon name="target" :size="MEDIA_UI_CONSTANTS.PREVIEW_ICON_SIZE" color="inherit" />
+            <AppIcon name="target" :size="16" color="inherit" />
           </template>
           {{ t('media.pickOnMap') }}
         </AppButton>
@@ -224,8 +216,8 @@ async function handleSubmit(): Promise<void> {
   gap: var(--space-sm);
   padding: var(--space-md);
   border-radius: var(--radius-lg);
-  background-color: var(--color-surface-card);
-  border: 1px solid var(--border-subtle);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
 }
 
 .section-header {
@@ -253,9 +245,9 @@ async function handleSubmit(): Promise<void> {
   font-weight: 600;
   padding: 2px var(--space-xs);
   border-radius: var(--radius-sm);
-  background-color: var(--color-surface-elevated);
+  background-color: var(--color-surface-variant);
   color: var(--color-primary);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--color-border);
 }
 
 .location-field {
@@ -264,13 +256,13 @@ async function handleSubmit(): Promise<void> {
   gap: var(--space-sm);
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-md);
-  background-color: var(--color-surface-elevated);
-  border: 1px solid var(--border-subtle);
+  background-color: var(--color-surface-variant);
+  border: 1px solid var(--color-border);
   min-height: 44px;
 }
 
 .location-field.has-value {
-  border-color: var(--border-focus);
+  border-color: var(--color-primary);
 }
 
 .field-icon-wrapper {
@@ -321,7 +313,7 @@ async function handleSubmit(): Promise<void> {
 
 .field-clear-btn:hover:not(:disabled) {
   color: var(--color-error);
-  background-color: var(--color-surface-card);
+  background-color: var(--color-surface);
 }
 
 .location-controls {

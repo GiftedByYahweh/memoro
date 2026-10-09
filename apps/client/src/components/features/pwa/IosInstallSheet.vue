@@ -83,7 +83,7 @@ function handleClose(): void {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  background-color: var(--scrim-overlay);
+  background-color: var(--color-surface-translucent);
   backdrop-filter: blur(8px);
   padding-bottom: var(--safe-bottom);
 }
@@ -91,13 +91,13 @@ function handleClose(): void {
 .sheet-modal {
   width: 100%;
   max-width: 440px;
-  background-color: var(--color-surface-card);
+  background-color: var(--color-surface);
   border-top-left-radius: var(--radius-xl);
   border-top-right-radius: var(--radius-xl);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--color-border);
   border-bottom: none;
   padding: var(--space-md) var(--space-xl) var(--space-xl);
-  box-shadow: var(--shadow-elevated);
+  box-shadow: var(--shadow-3);
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
@@ -106,7 +106,7 @@ function handleClose(): void {
 .sheet-handle {
   width: 36px;
   height: 4px;
-  background-color: var(--border-hover-strong);
+  background-color: var(--color-border-strong);
   border-radius: var(--radius-full);
   align-self: center;
 }
@@ -123,8 +123,8 @@ function handleClose(): void {
   justify-content: center;
   width: 40px;
   height: 40px;
-  background-color: var(--glow-primary);
-  border: 1px solid var(--border-focus-primary);
+  background-color: var(--color-primary-container);
+  border: 1px solid var(--color-focus-ring);
   border-radius: var(--radius-md);
 }
 
@@ -146,8 +146,8 @@ function handleClose(): void {
   align-items: center;
   gap: var(--space-md);
   padding: var(--space-sm) var(--space-md);
-  background-color: var(--color-surface-elevated);
-  border: 1px solid var(--border-card);
+  background-color: var(--color-surface-variant);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
 }
 
@@ -159,7 +159,7 @@ function handleClose(): void {
   height: 34px;
   flex-shrink: 0;
   border-radius: var(--radius-md);
-  background-color: var(--glow-primary);
+  background-color: var(--color-primary-container);
 }
 
 .step-content {

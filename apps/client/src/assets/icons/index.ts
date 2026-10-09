@@ -1,7 +1,9 @@
+import alertCircle from './alert-circle.svg?raw';
 import arrowLeft from './arrow-left.svg?raw';
 import book from './book.svg?raw';
 import bookmark from './bookmark.svg?raw';
 import camera from './camera.svg?raw';
+import checkCircle from './check-circle.svg?raw';
 import check from './check.svg?raw';
 import close from './close.svg?raw';
 import compass from './compass.svg?raw';
@@ -13,6 +15,7 @@ import filter from './filter.svg?raw';
 import flight from './flight.svg?raw';
 import folderStar from './folder-star.svg?raw';
 import layers from './layers.svg?raw';
+import info from './info.svg?raw';
 import lock from './lock.svg?raw';
 import logo from './logo.svg?raw';
 import mail from './mail.svg?raw';
@@ -31,11 +34,13 @@ import trash from './trash.svg?raw';
 import user from './user.svg?raw';
 
 export const icons = {
+  alertCircle,
   arrowLeft,
   book,
   bookmark,
   camera,
   check,
+  checkCircle,
   close,
   compass,
   download,
@@ -46,6 +51,7 @@ export const icons = {
   flight,
   folderStar,
   layers,
+  info,
   lock,
   logo,
   mail,

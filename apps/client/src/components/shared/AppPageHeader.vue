@@ -19,8 +19,8 @@ defineProps<Props>();
 
 .page-title {
   font-family: var(--font-sans);
-  font-size: var(--space-xl);
-  font-weight: 700;
+  font-size: var(--text-2xl);
+  font-weight: 400;
   color: var(--color-text-primary);
   margin: 0;
 }

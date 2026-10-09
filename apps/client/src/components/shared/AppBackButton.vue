@@ -1,13 +1,16 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import AppIcon from './AppIcon.vue';
 
 const emit = defineEmits<{
   click: [];
 }>();
+
+const { t } = useI18n();
 </script>
 
 <template>
-  <button type="button" class="back-btn" aria-label="Назад" @click="emit('click')">
+  <button type="button" class="back-btn" :aria-label="t('common.back')" @click="emit('click')">
     <AppIcon name="arrowLeft" :size="20" color="primary" />
   </button>
 </template>
@@ -30,6 +33,6 @@ const emit = defineEmits<{
 }
 
 .back-btn:hover {
-  background-color: var(--color-surface-hover);
+  background-color: var(--color-state-hover);
 }
 </style>
