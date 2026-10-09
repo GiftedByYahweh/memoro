@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { AUTH_CONSTRAINTS, VerificationCodeType } from './constants';
-import { PROFILE_CONSTRAINTS, UserSex } from '../profiles/constants';
+import { USER_CONSTRAINTS, UserSex } from '../users/constants';
 import type {
   RegisterDto,
   LoginDto,
@@ -27,9 +27,9 @@ export const registerSchema: z.ZodType<RegisterDto> = z.object({
   username: z
     .string()
     .trim()
-    .min(PROFILE_CONSTRAINTS.USERNAME_MIN_LENGTH)
-    .max(PROFILE_CONSTRAINTS.USERNAME_MAX_LENGTH),
-  gender: z.enum([UserSex.MALE, UserSex.FEMALE, UserSex.OTHER]),
+    .min(USER_CONSTRAINTS.USERNAME_MIN_LENGTH)
+    .max(USER_CONSTRAINTS.USERNAME_MAX_LENGTH),
+  sex: z.enum([UserSex.MALE, UserSex.FEMALE, UserSex.OTHER]),
 });
 
 export const loginSchema: z.ZodType<LoginDto> = z.object({

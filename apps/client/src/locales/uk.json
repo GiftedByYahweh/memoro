@@ -39,10 +39,10 @@
     "stepProfileDesc": "Ці дані будуть видні у вашому профілі",
     "usernameLabel": "Юзернейм",
     "usernamePlaceholder": "Наприклад, alex_123",
-    "genderLabel": "Стать",
-    "genderMale": "Чоловіча",
-    "genderFemale": "Жіноча",
-    "genderOther": "Інша",
+    "sexLabel": "Стать",
+    "sexMale": "Чоловіча",
+    "sexFemale": "Жіноча",
+    "sexOther": "Інша",
     "stepEmail": "Ваш Email",
     "stepEmailDesc": "Ми надішлемо код підтвердження",
     "sendCode": "Надіслати код",
@@ -96,7 +96,7 @@
     "invalidEmailFormat": "Невірний формат email",
     "codeLength": "Код має містити 6 символів",
     "passwordsNotMatch": "Паролі не співпадають",
-    "genderRequired": "Будь ласка, вкажіть вашу стать"
+    "sexRequired": "Будь ласка, вкажіть вашу стать"
   },
   "errors": {
     "userAlreadyExists": "Користувач із таким email вже існує",
@@ -107,7 +107,6 @@
     "userNotFound": "Користувача не знайдено",
     "usernameAlreadyExists": "Цей юзернейм вже зайнято",
     "mediaNotFound": "Медіа не знайдено",
-    "profileNotFound": "Профіль не знайдено",
     "invalidFileType": "Непідтримуваний формат файлу",
     "mediaForbidden": "Доступ до цього медіа заборонено",
     "unknown": "Сталася неочікувана помилка"

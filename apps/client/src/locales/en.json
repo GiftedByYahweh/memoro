@@ -39,10 +39,10 @@
     "stepProfileDesc": "This info will be visible on your profile",
     "usernameLabel": "Username",
     "usernamePlaceholder": "e.g., alex_123",
-    "genderLabel": "Gender",
-    "genderMale": "Male",
-    "genderFemale": "Female",
-    "genderOther": "Other",
+    "sexLabel": "Gender",
+    "sexMale": "Male",
+    "sexFemale": "Female",
+    "sexOther": "Other",
     "stepEmail": "Your Email",
     "stepEmailDesc": "We will send a verification code",
     "sendCode": "Send code",
@@ -96,7 +96,7 @@
     "invalidEmailFormat": "Invalid email format",
     "codeLength": "Code must be 6 characters",
     "passwordsNotMatch": "Passwords do not match",
-    "genderRequired": "Please specify your gender"
+    "sexRequired": "Please specify your gender"
   },
   "errors": {
     "userAlreadyExists": "User with this email already exists",
@@ -107,7 +107,6 @@
     "userNotFound": "User not found",
     "usernameAlreadyExists": "This username is already taken",
     "mediaNotFound": "Media not found",
-    "profileNotFound": "Profile not found",
     "invalidFileType": "Unsupported file format",
     "mediaForbidden": "Access to this media is forbidden",
     "unknown": "An unexpected error occurred"

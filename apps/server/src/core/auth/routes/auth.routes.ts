@@ -1,5 +1,4 @@
 import type { FastifyPluginCallbackZod } from 'fastify-type-provider-zod';
-import type { preHandlerAsyncHookHandler } from 'fastify';
 import { ApiRoutes } from '@memoro/shared';
 import { AUTH_COOKIE_NAME, AUTH_COOKIE_PATH, SAME_SITE } from '../auth.constants';
 import type { RegisterUseCase } from '../use-cases/register.use-case';
@@ -17,9 +16,9 @@ import {
   sendVerificationCodeRouteSchema,
   verifyCodeRouteSchema,
 } from './auth.schema';
+import { readSessionToken } from './session-cookie';
 
 export interface AuthRoutesDeps {
-  authGuard: preHandlerAsyncHookHandler;
   registerUseCase: RegisterUseCase;
   loginUseCase: LoginUseCase;
   logoutUseCase: LogoutUseCase;
@@ -37,7 +36,7 @@ function registerRoute(server: FastifyInstanceZod, registerUseCase: RegisterUseC
       email: body.email,
       password: body.password,
       username: body.username,
-      gender: body.gender,
+      sex: body.sex,
     });
 
     return user;
@@ -119,15 +118,9 @@ function loginRoute(
   });
 }
 
-function logoutRoute(
-  server: FastifyInstanceZod,
-  logoutUseCase: LogoutUseCase,
-  authGuard: preHandlerAsyncHookHandler,
-): void {
-  server.post(ApiRoutes.auth.logout, { preHandler: authGuard }, async (request, reply) => {
-    const rawCookie = request.cookies[AUTH_COOKIE_NAME];
-    const unsigned = rawCookie ? request.unsignCookie(rawCookie) : null;
-    const sessionToken = unsigned?.valid ? unsigned.value : undefined;
+function logoutRoute(server: FastifyInstanceZod, logoutUseCase: LogoutUseCase): void {
+  server.post(ApiRoutes.auth.logout, async (request, reply) => {
+    const sessionToken = readSessionToken(request);
 
     await logoutUseCase({
       sessionToken,
@@ -146,9 +139,7 @@ function sessionRoute(
   validateSessionUseCase: ValidateSessionUseCase,
 ): void {
   server.get(ApiRoutes.auth.session, async (request) => {
-    const rawCookie = request.cookies[AUTH_COOKIE_NAME];
-    const unsigned = rawCookie ? request.unsignCookie(rawCookie) : null;
-    const sessionToken = unsigned?.valid ? unsigned.value : undefined;
+    const sessionToken = readSessionToken(request);
 
     return validateSessionUseCase({
       sessionToken,
@@ -158,7 +149,6 @@ function sessionRoute(
 
 export function authRoutes(deps: AuthRoutesDeps): FastifyPluginCallbackZod {
   const {
-    authGuard,
     registerUseCase,
     loginUseCase,
     logoutUseCase,
@@ -175,7 +165,7 @@ export function authRoutes(deps: AuthRoutesDeps): FastifyPluginCallbackZod {
     verifyCodeRoute(server, verifyCodeUseCase);
     resetPasswordRoute(server, resetPasswordUseCase);
     loginRoute(server, loginUseCase, isProduction);
-    logoutRoute(server, logoutUseCase, authGuard);
+    logoutRoute(server, logoutUseCase);
     sessionRoute(server, validateSessionUseCase);
     done();
   };

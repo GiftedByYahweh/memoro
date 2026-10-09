@@ -27,11 +27,11 @@ const currentStep = ref<Step>('profile');
 
 const formData = ref<{
   username: string;
-  gender: UserSex | '';
+  sex: UserSex | '';
   email: string;
 }>({
   username: '',
-  gender: '',
+  sex: '',
   email: '',
 });
 
@@ -46,9 +46,9 @@ const { sendCode, isSendingCode, verifyCode, isVerifyingCode, verifyApiError } =
     },
   });
 
-function handleProfileNext(payload: { username: string; gender: UserSex }): void {
+function handleProfileNext(payload: { username: string; sex: UserSex }): void {
   formData.value.username = payload.username;
-  formData.value.gender = payload.gender;
+  formData.value.sex = payload.sex;
   currentStep.value = 'email';
 }
 
@@ -63,15 +63,15 @@ function handleVerifyNext(code: string): void {
 
 const { mutate: handleRegister, isPending } = useMutation({
   mutationFn: async (password: string) => {
-    if (!formData.value.gender) {
-      throw new Error('Gender is required');
+    if (!formData.value.sex) {
+      throw new Error('Sex is required');
     }
 
     return register({
       email: formData.value.email,
       password,
       username: formData.value.username,
-      gender: formData.value.gender,
+      sex: formData.value.sex,
     });
   },
   onSuccess: (response) => {

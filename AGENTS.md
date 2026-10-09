@@ -96,13 +96,13 @@ src/core/<feature>/
 ### 3.2 Single Use Case per Route & Atomic Transactions
 
 - **A route handler MUST call ONLY ONE use case**. Never orchestrate multiple use cases inside a route handler.
-- **Atomic Operations in Use Cases**: Multi-step workflows (e.g. creating User + Profile + Session during registration) MUST be orchestrated inside a single use case and executed atomically inside `unitOfWork.run(async () => { ... })`.
+- **Atomic Operations in Use Cases**: Multi-step workflows (e.g. creating User + deleting used verification codes during registration) MUST be orchestrated inside a single use case and executed atomically inside `unitOfWork.run(async () => { ... })`.
 - Route handlers do zero arithmetic and zero business logic (e.g. TTL calculations belong in use cases or entities, not routes).
 
 ### 3.3 Prohibition of `create` Prefix on Factories and Functions
 
 - **STRICTLY FORBIDDEN: using `create` prefix on factories, repositories, and utilities** (avoids `createCreate...` stuttering and boilerplate):
-  - Repositories: `drizzleUserRepository`, `drizzleSessionRepository`, `drizzleProfileRepository` (NOT `createDrizzleUserRepository`).
+  - Repositories: `drizzleUserRepository`, `drizzleSessionRepository`, `drizzleMediaRepository` (NOT `createDrizzleUserRepository`).
   - Use case factories: `registerUseCase`, `createSessionUseCase` (acceptable only when domain action is creation of entity), `loginUseCase`, `logoutUseCase`.
   - Route plugins: `authRoutes` (NOT `createAuthRoutes`).
   - Response helpers: `successResponse`, `errorResponse` (NOT `createSuccessResponse`).
@@ -122,7 +122,7 @@ src/core/<feature>/
 
 ### 3.5 Centralized Application Routes (`ApiRoutes`)
 
-- **Single Source of Truth**: ALL route paths across the entire monorepo MUST be declared in `@memoro/shared` in `packages/shared/src/routes.ts` (`ApiRoutes`).
+- **Single Source of Truth**: ALL route paths across the entire monorepo MUST be declared in `@memoro/shared` in `packages/shared/src/consts/routes.ts` (`ApiRoutes`).
 - Shared identically between Fastify (`server.ts`, route plugins) and the frontend transport (`apiClient.ts`).
 - **STRICTLY FORBIDDEN: defining module-local route path constants or inline route strings**.
 - Route registration uses `ApiRoutes.<module>.prefix` for plugin mounting and subpaths inside route plugins.
@@ -132,7 +132,12 @@ src/core/<feature>/
 - **Fastify is isolated to the presentation layer**: Only `src/server.ts`, `index.ts`, and `<feature>.routes.ts` touch Fastify.
 - Fastify objects (`FastifyRequest`, `FastifyReply`) must NEVER be passed into use cases, domain services, or repositories.
 - **Route schemas in separate files**: Route validation schemas and Swagger specs MUST live in `*.schema.ts` files and be attached via `{ schema: ... }`. Never inline schema definitions in route handlers.
-- **Manual Dependency Injection (Composition Root)**: All dependencies are wired explicitly in `src/container.ts` (`createAppContainer`).
+- **Manual Dependency Injection (Composition Root)**: All dependencies are wired explicitly in `src/container/`:
+  - `infrastructure.container.ts` — infrastructure adapters (`DBProvider`, `UnitOfWork`, mailer, file storage).
+  - `repositories.container.ts` — all repository implementations.
+  - `<feature>.container.ts` — use cases and route plugin of a single feature module (`initAuthModule`, `initMediaModule`).
+  - `app.container.ts` — `createAppContainer`, composes everything above.
+- **Classes vs Functions**: Infrastructure adapters that wrap stateful clients or SDKs (`DBProvider`, `R2FileStorageProvider`, `ResendMailerProvider`, `ConsoleLogger`) are classes implementing a port interface. Business logic — use cases, repositories, mappers, route plugins, guards — is written as plain factory functions.
 
 ### 3.7 Use Case Contract & Rules
 
@@ -223,7 +228,7 @@ Clear boundaries must be maintained across layers (modeled after `kadr`):
 Before completing any task, the agent MUST run and verify:
 
 1. `npm run typecheck` — 0 TypeScript errors across all workspaces.
-2. `npm run lint` — 0 ESLint and Stylelint errors/warnings.
+2. `npm run lint` — 0 ESLint errors/warnings.
 3. Keep code decomposed and respect ESLint complexity limits (`max-lines-per-function: 60`, `max-params: 4`, `complexity: 10`).
 4. **No comments anywhere in the codebase** (`//`, `/* */`, `<!-- -->`).
 5. **No inline SVGs in templates or components.**

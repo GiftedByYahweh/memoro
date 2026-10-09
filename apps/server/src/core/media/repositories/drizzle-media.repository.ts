@@ -34,8 +34,8 @@ function buildDateConditions(filter: MediaFilterDto): SQL[] {
   return conditions;
 }
 
-function buildFilterConditions(profileId: string, filter?: MediaFilterDto): SQL[] {
-  const conditions: SQL[] = [eq(mediaTable.profileId, profileId)];
+function buildFilterConditions(userId: string, filter?: MediaFilterDto): SQL[] {
+  const conditions: SQL[] = [eq(mediaTable.userId, userId)];
   if (!filter) return conditions;
 
   conditions.push(...buildGeoConditions(filter));
@@ -48,7 +48,7 @@ async function insertMedia(dbProvider: DBProvider, input: InsertMediaInput): Pro
     .current()
     .insert(mediaTable)
     .values({
-      profileId: input.profileId,
+      userId: input.userId,
       fileKey: input.fileKey,
       contentType: input.contentType,
       status: input.status,
@@ -83,12 +83,12 @@ async function findMediaById(dbProvider: DBProvider, id: string): Promise<Media 
   return row ? toMediaDomain(row) : null;
 }
 
-async function findMediaByProfileId(
+async function findMediaByUserId(
   dbProvider: DBProvider,
-  profileId: string,
+  userId: string,
   filter?: MediaFilterDto,
 ): Promise<Media[]> {
-  const conditions = buildFilterConditions(profileId, filter);
+  const conditions = buildFilterConditions(userId, filter);
   const limit = filter?.limit ?? MEDIA_QUERY_CONSTRAINTS.DEFAULT_LIMIT;
   const offset = filter?.offset ?? 0;
 
@@ -126,8 +126,8 @@ export function drizzleMediaRepository(dbProvider: DBProvider): MediaRepository 
   return {
     insert: (input: InsertMediaInput): Promise<Media> => insertMedia(dbProvider, input),
     findById: (id: string): Promise<Media | null> => findMediaById(dbProvider, id),
-    findByProfileId: (profileId: string, filter?: MediaFilterDto): Promise<Media[]> =>
-      findMediaByProfileId(dbProvider, profileId, filter),
+    findByUserId: (userId: string, filter?: MediaFilterDto): Promise<Media[]> =>
+      findMediaByUserId(dbProvider, userId, filter),
     updateStatus: (id: string, status: MediaStatus): Promise<Media | null> =>
       updateMediaStatus(dbProvider, id, status),
     delete: (id: string): Promise<void> => deleteMedia(dbProvider, id),

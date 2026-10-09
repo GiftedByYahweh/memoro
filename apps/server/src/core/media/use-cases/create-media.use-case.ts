@@ -13,7 +13,7 @@ import { toInsertMediaInput } from '../mappers/media.mapper';
 import type { MediaRepository } from '../repositories/media.repository';
 
 export interface CreateMediaInput {
-  profileId: string;
+  userId: string;
   data: CreateMediaDto;
 }
 
@@ -34,13 +34,13 @@ export function createMediaUseCase(deps: CreateMediaDeps): CreateMediaUseCase {
 
     const uploadResult = await fileStorage.getUploadUrls({
       folder: MEDIA_UPLOAD_CONSTRAINTS.FOLDER_NAME,
-      profileId: input.profileId,
+      userId: input.userId,
       fileName: input.data.fileName,
       contentType: input.data.contentType,
       sizeBytes: input.data.sizeBytes,
     });
 
-    const insertData = toInsertMediaInput(input.profileId, uploadResult.fileKey, input.data);
+    const insertData = toInsertMediaInput(input.userId, uploadResult.fileKey, input.data);
     const media = await mediaRepository.insert(insertData).catch(async (err: unknown) => {
       if (uploadResult.type === UploadType.MULTIPART) {
         await fileStorage.abortMultipartUpload(uploadResult.fileKey, uploadResult.uploadId);

@@ -11,20 +11,20 @@ import AuthStepLayout from './AuthStepLayout.vue';
 const ICON_SIZE_FIELD = 18;
 
 const emit = defineEmits<{
-  next: [payload: { username: string; gender: UserSex }];
+  next: [payload: { username: string; sex: UserSex }];
 }>();
 
 const { t } = useI18n();
 
 const username = ref('');
-const gender = ref<UserSex | ''>('');
+const sex = ref<UserSex | ''>('');
 const usernameError = ref<string | undefined>(undefined);
-const genderError = ref<string | undefined>(undefined);
+const sexError = ref<string | undefined>(undefined);
 
-const genders = [
-  { value: UserSex.MALE, label: t('auth.genderMale') },
-  { value: UserSex.FEMALE, label: t('auth.genderFemale') },
-  { value: UserSex.OTHER, label: t('auth.genderOther') },
+const sexOptions = [
+  { value: UserSex.MALE, label: t('auth.sexMale') },
+  { value: UserSex.FEMALE, label: t('auth.sexFemale') },
+  { value: UserSex.OTHER, label: t('auth.sexOther') },
 ];
 
 function onNext(): void {
@@ -37,17 +37,17 @@ function onNext(): void {
     usernameError.value = undefined;
   }
 
-  const selectedGender = gender.value;
-  if (!selectedGender) {
-    genderError.value = t('validation.genderRequired');
+  const selectedSex = sex.value;
+  if (!selectedSex) {
+    sexError.value = t('validation.sexRequired');
     hasError = true;
   } else {
-    genderError.value = undefined;
+    sexError.value = undefined;
   }
 
-  if (hasError || !selectedGender) return;
+  if (hasError || !selectedSex) return;
 
-  emit('next', { username: username.value, gender: selectedGender });
+  emit('next', { username: username.value, sex: selectedSex });
 }
 </script>
 
@@ -66,24 +66,24 @@ function onNext(): void {
       </template>
     </AppInput>
 
-    <div class="gender-section">
-      <AppText variant="label" color="secondary">{{ t('auth.genderLabel') }}</AppText>
-      <div class="gender-grid">
+    <div class="sex-section">
+      <AppText variant="label" color="secondary">{{ t('auth.sexLabel') }}</AppText>
+      <div class="sex-grid">
         <AppButton
-          v-for="g in genders"
-          :key="g.value"
-          :variant="gender === g.value ? 'primary' : 'secondary'"
+          v-for="option in sexOptions"
+          :key="option.value"
+          :variant="sex === option.value ? 'primary' : 'secondary'"
           size="sm"
           @click="
-            gender = g.value;
-            genderError = undefined;
+            sex = option.value;
+            sexError = undefined;
           "
         >
-          {{ g.label }}
+          {{ option.label }}
         </AppButton>
       </div>
-      <AppText v-if="genderError" variant="body-sm" color="error">
-        {{ genderError }}
+      <AppText v-if="sexError" variant="body-sm" color="error">
+        {{ sexError }}
       </AppText>
     </div>
 
@@ -96,13 +96,13 @@ function onNext(): void {
 </template>
 
 <style scoped>
-.gender-section {
+.sex-section {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
 }
 
-.gender-grid {
+.sex-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-xs);

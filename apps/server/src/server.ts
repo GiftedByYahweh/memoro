@@ -13,7 +13,7 @@ import {
 } from 'fastify-type-provider-zod';
 import type { AppContainer } from './container';
 import type { AppConfig } from './config';
-import type { Logger } from './logger/index';
+import type { Logger } from './logger';
 import { AppError } from '@/common/error/app.error';
 import { ApiRoutes, HttpStatusCode } from '@memoro/shared';
 import { errorResponse, successResponse } from '@/common/utils/api-response';
@@ -35,8 +35,8 @@ async function registerPlugins(server: FastifyInstance, config: AppConfig) {
   });
   await server.register(fastifyCookie, { secret: config.session.secret });
   await server.register(fastifyRateLimit, {
-    max: 100,
-    timeWindow: '1 minute',
+    max: config.rateLimit.maxRequests,
+    timeWindow: config.rateLimit.timeWindowMs,
     errorResponseBuilder: () => {
       throw new AppError(HttpStatusCode.TOO_MANY_REQUESTS);
     },

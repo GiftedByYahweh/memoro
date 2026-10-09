@@ -1,44 +1,44 @@
+import type { FastifyInstance } from 'fastify';
 import { createAppContainer } from './src/container';
-import type { AppConfig } from './src/config';
 import { loadAppConfig } from './src/config';
 import { createServer } from './src/server';
-import { ConsoleLogger } from './src/logger/index';
+import { ConsoleLogger } from './src/logger';
 
-export const app = async (config: AppConfig) => {
-  const logger = new ConsoleLogger();
-
-  const container = createAppContainer(config, logger);
-  logger.info('Server', 'App Container created');
-
-  return createServer({ container, config, logger });
-};
+const SHUTDOWN_SIGNALS = ['SIGINT', 'SIGTERM'] as const;
 
 const config = loadAppConfig();
 const logger = new ConsoleLogger();
 
-app(config)
-  .then(async (server) => {
-    const signals = ['SIGINT', 'SIGTERM'] as const;
-    for (const signal of signals) {
-      process.on(signal, () => {
-        void (async () => {
-          logger.info('Server', `Received ${signal}, starting graceful shutdown...`);
-          try {
-            await server.close();
-            logger.info('Server', 'Server closed gracefully');
-            process.exit(0);
-          } catch (err: unknown) {
-            logger.error('Server', 'Error during graceful shutdown', err);
-            process.exit(1);
-          }
-        })();
-      });
-    }
+function registerShutdownHandlers(server: FastifyInstance): void {
+  for (const signal of SHUTDOWN_SIGNALS) {
+    process.on(signal, () => {
+      void (async () => {
+        logger.info('Server', `Received ${signal}, starting graceful shutdown...`);
+        try {
+          await server.close();
+          logger.info('Server', 'Server closed gracefully');
+          process.exit(0);
+        } catch (err: unknown) {
+          logger.error('Server', 'Error during graceful shutdown', err);
+          process.exit(1);
+        }
+      })();
+    });
+  }
+}
 
-    await server.listen({ port: config.port, host: config.host });
-    logger.info('Server', `Application running on http://${config.host}:${String(config.port)}`);
-  })
-  .catch((err: unknown) => {
-    logger.error('Server', 'Failed to start server', err);
-    process.exit(1);
-  });
+async function bootstrap(): Promise<void> {
+  const container = createAppContainer(config, logger);
+  logger.info('Server', 'App Container created');
+
+  const server = await createServer({ container, config, logger });
+  registerShutdownHandlers(server);
+
+  await server.listen({ port: config.port, host: config.host });
+  logger.info('Server', `Application running on http://${config.host}:${String(config.port)}`);
+}
+
+bootstrap().catch((err: unknown) => {
+  logger.error('Server', 'Failed to start server', err);
+  process.exit(1);
+});

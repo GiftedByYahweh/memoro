@@ -2,7 +2,7 @@ import type { UploadType } from '@memoro/shared';
 
 export interface GenerateUploadUrlInput {
   folder: string;
-  profileId: string;
+  userId: string;
   fileName: string;
   contentType: string;
   sizeBytes: number;

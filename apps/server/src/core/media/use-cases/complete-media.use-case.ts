@@ -12,7 +12,7 @@ import type { MediaRepository } from '../repositories/media.repository';
 
 export interface CompleteMediaInput {
   mediaId: string;
-  profileId: string;
+  userId: string;
   data: CompleteMediaUploadDto;
 }
 
@@ -32,7 +32,7 @@ export function completeMediaUseCase(deps: CompleteMediaDeps): CompleteMediaUseC
       throw new AppError(DomainErrorCode.MEDIA_NOT_FOUND);
     }
 
-    if (media.profileId !== input.profileId) {
+    if (media.userId !== input.userId) {
       throw new AppError(DomainErrorCode.MEDIA_FORBIDDEN);
     }
 

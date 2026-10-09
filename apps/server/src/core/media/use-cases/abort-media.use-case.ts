@@ -6,7 +6,7 @@ import type { MediaRepository } from '../repositories/media.repository';
 
 export interface AbortMediaInput {
   mediaId: string;
-  profileId: string;
+  userId: string;
   data: AbortMediaUploadDto;
 }
 
@@ -26,7 +26,7 @@ export function abortMediaUseCase(deps: AbortMediaDeps): AbortMediaUseCase {
       throw new AppError(DomainErrorCode.MEDIA_NOT_FOUND);
     }
 
-    if (media.profileId !== input.profileId) {
+    if (media.userId !== input.userId) {
       throw new AppError(DomainErrorCode.MEDIA_FORBIDDEN);
     }
 

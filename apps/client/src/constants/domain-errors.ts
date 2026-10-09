@@ -9,7 +9,6 @@ export const DOMAIN_ERROR_KEYS: Record<DomainErrorCode, string> = {
   [DomainErrorCode.USER_NOT_FOUND]: 'errors.userNotFound',
   [DomainErrorCode.USERNAME_ALREADY_EXISTS]: 'errors.usernameAlreadyExists',
   [DomainErrorCode.MEDIA_NOT_FOUND]: 'errors.mediaNotFound',
-  [DomainErrorCode.PROFILE_NOT_FOUND]: 'errors.profileNotFound',
   [DomainErrorCode.INVALID_FILE_TYPE]: 'errors.invalidFileType',
   [DomainErrorCode.MEDIA_FORBIDDEN]: 'errors.mediaForbidden',
 };
