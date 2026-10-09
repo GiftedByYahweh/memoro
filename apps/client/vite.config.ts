@@ -3,6 +3,11 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { VitePWA } from 'vite-plugin-pwa';
 
+const SECONDS_PER_YEAR = 31_536_000;
+const FONT_CACHE_MAX_ENTRIES = 30;
+const OPAQUE_RESPONSE_STATUS = 0;
+const OK_RESPONSE_STATUS = 200;
+
 export default defineConfig({
   plugins: [
     vue(),
@@ -15,8 +20,8 @@ export default defineConfig({
         description: 'Lifetime media storage anchored to location and time',
         display: 'standalone',
         start_url: '/map',
-        theme_color: '#000000',
-        background_color: '#000000',
+        theme_color: '#ffffff',
+        background_color: '#ffffff',
         icons: [
           {
             src: 'pwa-192x192.png',
@@ -33,6 +38,22 @@ export default defineConfig({
       workbox: {
         navigateFallbackDenylist: [/^\/api/],
         globPatterns: ['**/*.{js,css,html,ico,png,svg,mjs}'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/,
+            handler: 'StaleWhileRevalidate',
+            options: { cacheName: 'google-fonts-stylesheets' },
+          },
+          {
+            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-webfonts',
+              expiration: { maxEntries: FONT_CACHE_MAX_ENTRIES, maxAgeSeconds: SECONDS_PER_YEAR },
+              cacheableResponse: { statuses: [OPAQUE_RESPONSE_STATUS, OK_RESPONSE_STATUS] },
+            },
+          },
+        ],
       },
     }),
   ],

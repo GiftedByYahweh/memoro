@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import type { IconName } from '@/assets/icons';
 import AppButton from '@/components/shared/AppButton.vue';
 import AppIcon from '@/components/shared/AppIcon.vue';
 
@@ -13,63 +14,32 @@ const emit = defineEmits<{
   close: [];
 }>();
 
-const { t } = useI18n();
+const STEPS: readonly { icon: IconName; textKey: string }[] = [
+  { icon: 'share', textKey: 'landing.iosGuide.step1' },
+  { icon: 'plus', textKey: 'landing.iosGuide.step2' },
+  { icon: 'check', textKey: 'landing.iosGuide.step3' },
+];
 
-function handleClose(): void {
-  emit('close');
-}
+const { t } = useI18n();
 </script>
 
 <template>
-  <Transition name="sheet-fade">
-    <div v-if="isOpen" class="sheet-overlay" @click.self="handleClose">
-      <div class="sheet-modal" role="dialog" aria-modal="true">
-        <div class="sheet-handle" />
-
-        <div class="sheet-header">
-          <div class="sheet-logo-badge">
-            <AppIcon name="logo" :size="24" color="accent" />
-          </div>
-          <h2 class="sheet-title">{{ t('landing.iosGuide.title') }}</h2>
-        </div>
-
-        <div class="sheet-steps">
-          <div class="step-item">
-            <div class="step-badge">
-              <AppIcon name="share" :size="18" color="accent" />
-            </div>
-            <div class="step-content">
-              <span class="step-number">1</span>
-              <p class="step-text">{{ t('landing.iosGuide.step1') }}</p>
-            </div>
-          </div>
-
-          <div class="step-item">
-            <div class="step-badge">
-              <AppIcon name="plus" :size="18" color="accent" />
-            </div>
-            <div class="step-content">
-              <span class="step-number">2</span>
-              <p class="step-text">{{ t('landing.iosGuide.step2') }}</p>
-            </div>
-          </div>
-
-          <div class="step-item">
-            <div class="step-badge">
-              <AppIcon name="check" :size="18" color="accent" />
-            </div>
-            <div class="step-content">
-              <span class="step-number">3</span>
-              <p class="step-text">{{ t('landing.iosGuide.step3') }}</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="sheet-actions">
-          <AppButton variant="secondary" size="lg" block @click="handleClose">
-            {{ t('landing.iosGuide.gotIt') }}
-          </AppButton>
-        </div>
+  <Transition name="sheet">
+    <div v-if="isOpen" class="sheet-overlay" @click.self="emit('close')">
+      <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="ios-sheet-title">
+        <span class="sheet-handle" aria-hidden="true" />
+        <h2 id="ios-sheet-title" class="sheet-title">{{ t('landing.iosGuide.title') }}</h2>
+        <ol class="sheet-steps">
+          <li v-for="step in STEPS" :key="step.textKey" class="sheet-step">
+            <span class="step-icon">
+              <AppIcon :name="step.icon" :size="20" />
+            </span>
+            <span>{{ t(step.textKey) }}</span>
+          </li>
+        </ol>
+        <AppButton size="lg" block @click="emit('close')">
+          {{ t('landing.iosGuide.gotIt') }}
+        </AppButton>
       </div>
     </div>
   </Transition>
@@ -83,55 +53,33 @@ function handleClose(): void {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  background-color: var(--scrim-overlay);
-  backdrop-filter: blur(8px);
-  padding-bottom: var(--safe-bottom);
+  background-color: var(--color-scrim);
 }
 
-.sheet-modal {
-  width: 100%;
-  max-width: 440px;
-  background-color: var(--color-surface-card);
-  border-top-left-radius: var(--radius-xl);
-  border-top-right-radius: var(--radius-xl);
-  border: 1px solid var(--border-subtle);
-  border-bottom: none;
-  padding: var(--space-md) var(--space-xl) var(--space-xl);
-  box-shadow: var(--shadow-elevated);
+.sheet {
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
+  width: 100%;
+  max-width: 448px;
+  padding: var(--space-sm) var(--space-xl) calc(var(--safe-bottom) + var(--space-xl));
+  border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-3);
 }
 
 .sheet-handle {
-  width: 36px;
-  height: 4px;
-  background-color: var(--border-hover-strong);
-  border-radius: var(--radius-full);
   align-self: center;
-}
-
-.sheet-header {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-}
-
-.sheet-logo-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background-color: var(--glow-primary);
-  border: 1px solid var(--border-focus-primary);
-  border-radius: var(--radius-md);
+  width: 32px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-border-strong);
 }
 
 .sheet-title {
   margin: 0;
-  font-size: 1.125rem;
-  font-weight: 700;
+  font-size: var(--text-xl);
+  font-weight: 400;
   color: var(--color-text-primary);
 }
 
@@ -139,69 +87,49 @@ function handleClose(): void {
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.step-item {
+.sheet-step {
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  padding: var(--space-sm) var(--space-md);
-  background-color: var(--color-surface-elevated);
-  border: 1px solid var(--border-card);
-  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+  color: var(--color-text-primary);
 }
 
-.step-badge {
+.step-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
   flex-shrink: 0;
-  border-radius: var(--radius-md);
-  background-color: var(--glow-primary);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary-container);
+  color: var(--color-on-primary-container);
 }
 
-.step-content {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
+.sheet-enter-active,
+.sheet-leave-active {
+  transition: opacity var(--transition-normal);
 }
 
-.step-number {
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--color-primary);
-}
-
-.step-text {
-  margin: 0;
-  font-size: 0.875rem;
-  line-height: 1.4;
-  color: var(--color-text-secondary);
-}
-
-.sheet-actions {
-  margin-top: var(--space-xs);
-}
-
-.sheet-fade-enter-active,
-.sheet-fade-leave-active {
-  transition: opacity var(--transition-fast);
-}
-
-.sheet-fade-enter-active .sheet-modal,
-.sheet-fade-leave-active .sheet-modal {
+.sheet-enter-active .sheet,
+.sheet-leave-active .sheet {
   transition: transform var(--transition-normal);
 }
 
-.sheet-fade-enter-from,
-.sheet-fade-leave-to {
+.sheet-enter-from,
+.sheet-leave-to {
   opacity: 0;
 }
 
-.sheet-fade-enter-from .sheet-modal,
-.sheet-fade-leave-to .sheet-modal {
+.sheet-enter-from .sheet,
+.sheet-leave-to .sheet {
   transform: translateY(100%);
 }
 </style>

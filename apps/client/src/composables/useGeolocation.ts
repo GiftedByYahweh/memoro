@@ -146,53 +146,30 @@ async function fetchCoordinates(): Promise<GeoCoordinates> {
   };
 }
 
-export function useGeolocation() {
-  const coordinates = ref<GeoCoordinates | null>(null);
-  const isLocating = ref(false);
-  const error = ref<GeoError | null>(null);
-  const permissionState = ref<PermissionState | null>(null);
+async function ensurePermissionNotDenied(): Promise<void> {
+  const status = await queryPermissionStatus();
+  assertGeolocationAllowed(status?.state ?? null);
+}
 
-  async function checkPermission(): Promise<PermissionState | null> {
-    const status = await queryPermissionStatus();
-    if (!status) {
-      return null;
-    }
-    permissionState.value = status.state;
-    status.onchange = () => {
-      permissionState.value = status.state;
-    };
-    return status.state;
-  }
+export function useGeolocation() {
+  const isLocating = ref(false);
 
   async function getCurrentPosition(): Promise<GeoCoordinates> {
     const supportError = checkGeolocationSupport();
     if (supportError) {
       throw supportError;
     }
-    const permState = await checkPermission();
-    assertGeolocationAllowed(permState);
+    await ensurePermissionNotDenied();
     isLocating.value = true;
-    error.value = null;
 
     try {
-      const coords = await fetchCoordinates();
-      coordinates.value = coords;
-      return coords;
+      return await fetchCoordinates();
     } catch (err: unknown) {
-      const geoError = resolveGeoError(err);
-      error.value = geoError;
-      throw geoError;
+      throw resolveGeoError(err);
     } finally {
       isLocating.value = false;
     }
   }
 
-  return {
-    coordinates,
-    isLocating,
-    error,
-    permissionState,
-    checkPermission,
-    getCurrentPosition,
-  };
+  return { isLocating, getCurrentPosition };
 }

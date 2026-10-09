@@ -10,10 +10,17 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 100dvh;
   width: 100%;
-  padding: var(--space-xl) var(--space-md);
-  background-color: var(--color-oled-black);
+  min-height: 100dvh;
+  padding: calc(var(--safe-top) + var(--space-xl)) var(--space-md)
+    calc(var(--safe-bottom) + var(--space-xl));
+  background-color: var(--color-bg);
   overflow-x: hidden;
+}
+
+@media (width >= 600px) {
+  .auth-layout {
+    background-color: var(--color-bg-subtle);
+  }
 }
 </style>

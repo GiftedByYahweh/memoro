@@ -37,8 +37,7 @@ function handleNavigateApp(): void {
   align-items: center;
   gap: var(--space-2xl);
   width: 100%;
-  max-width: 540px;
+  max-width: 448px;
   margin: 0 auto;
-  padding: var(--space-xl) var(--space-md) var(--space-3xl);
 }
 </style>

@@ -1,4 +1,5 @@
 import { GEOCODING_CONSTANTS } from '@/constants/geocoding.constants';
+import i18n from '@/i18n';
 
 interface NominatimAddress {
   city?: string;
@@ -19,12 +20,6 @@ interface NominatimResponse {
 
 const geocodingCache = new Map<string, string>();
 
-function buildCacheKey(lat: number, lng: number): string {
-  const roundedLat = lat.toFixed(GEOCODING_CONSTANTS.COORDINATE_PRECISION);
-  const roundedLng = lng.toFixed(GEOCODING_CONSTANTS.COORDINATE_PRECISION);
-  return `${roundedLat},${roundedLng}`;
-}
-
 function extractLocality(addr: NominatimAddress): string {
   return addr.city ?? addr.town ?? addr.village ?? addr.suburb ?? '';
 }
@@ -34,38 +29,37 @@ function extractStreet(addr: NominatimAddress): string {
   return addr.house_number ? `${addr.road}, ${addr.house_number}` : addr.road;
 }
 
-function buildLocalityString(locality: string, country?: string): string {
-  return country ? `${locality}, ${country}` : locality;
+function formatCoordinates(lat: number, lng: number): string {
+  const precision = GEOCODING_CONSTANTS.COORDINATE_PRECISION;
+  return `${lat.toFixed(precision)}, ${lng.toFixed(precision)}`;
 }
 
-function formatAddress(data: NominatimResponse, fallbackCoords: string): string {
-  const addr = data.address;
-  if (!addr) {
-    return data.display_name?.split(',').slice(0, 3).join(',').trim() ?? fallbackCoords;
-  }
+function shortenDisplayName(displayName: string): string {
+  return displayName.split(',').slice(0, GEOCODING_CONSTANTS.DISPLAY_NAME_PARTS).join(',').trim();
+}
 
+function formatStructuredAddress(addr: NominatimAddress): string {
   const locality = extractLocality(addr);
   const street = extractStreet(addr);
+  if (locality && street) return `${locality}, ${street}`;
+  if (locality) return addr.country ? `${locality}, ${addr.country}` : locality;
+  return street;
+}
 
-  if (locality && street) {
-    return `${locality}, ${street}`;
-  }
-  if (locality) {
-    return buildLocalityString(locality, addr.country);
-  }
-  if (street) {
-    return street;
-  }
-  return data.display_name?.split(',').slice(0, 3).join(',').trim() ?? fallbackCoords;
+function formatAddress(data: NominatimResponse, fallback: string): string {
+  const structured = data.address ? formatStructuredAddress(data.address) : '';
+  if (structured) return structured;
+  return data.display_name ? shortenDisplayName(data.display_name) : fallback;
 }
 
 export const geocodingService = {
-  reverseGeocode: async (lat: number, lng: number, lang = 'uk'): Promise<string> => {
-    const cacheKey = buildCacheKey(lat, lng);
+  reverseGeocode: async (lat: number, lng: number): Promise<string> => {
+    const fallback = formatCoordinates(lat, lng);
+    const lang = i18n.global.locale.value;
+    const cacheKey = `${lang}:${fallback}`;
     const cached = geocodingCache.get(cacheKey);
     if (cached) return cached;
 
-    const fallback = `${lat.toFixed(GEOCODING_CONSTANTS.COORDINATE_PRECISION)}, ${lng.toFixed(GEOCODING_CONSTANTS.COORDINATE_PRECISION)}`;
     const url = `${GEOCODING_CONSTANTS.REVERSE_URL}?lat=${String(lat)}&lon=${String(lng)}&format=jsonv2&accept-language=${lang}`;
 
     try {

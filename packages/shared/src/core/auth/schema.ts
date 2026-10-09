@@ -16,19 +16,21 @@ export const emailSchema = z
   .email()
   .max(AUTH_CONSTRAINTS.EMAIL_MAX_LENGTH);
 
-const passwordSchema = z
+export const passwordSchema = z
   .string()
   .min(AUTH_CONSTRAINTS.PASSWORD_MIN_LENGTH)
   .max(AUTH_CONSTRAINTS.PASSWORD_MAX_LENGTH);
 
+export const usernameSchema = z
+  .string()
+  .trim()
+  .min(USER_CONSTRAINTS.USERNAME_MIN_LENGTH)
+  .max(USER_CONSTRAINTS.USERNAME_MAX_LENGTH);
+
 export const registerSchema: z.ZodType<RegisterDto> = z.object({
   email: emailSchema,
   password: passwordSchema,
-  username: z
-    .string()
-    .trim()
-    .min(USER_CONSTRAINTS.USERNAME_MIN_LENGTH)
-    .max(USER_CONSTRAINTS.USERNAME_MAX_LENGTH),
+  username: usernameSchema,
   sex: z.enum([UserSex.MALE, UserSex.FEMALE, UserSex.OTHER]),
 });
 
