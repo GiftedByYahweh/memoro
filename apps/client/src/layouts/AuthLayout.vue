@@ -14,13 +14,7 @@
   min-height: 100dvh;
   padding: calc(var(--safe-top) + var(--space-xl)) var(--space-md)
     calc(var(--safe-bottom) + var(--space-xl));
-  background-color: var(--color-bg);
+  background-color: var(--color-bg-subtle);
   overflow-x: hidden;
-}
-
-@media (width >= 600px) {
-  .auth-layout {
-    background-color: var(--color-bg-subtle);
-  }
 }
 </style>
