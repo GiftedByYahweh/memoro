@@ -2,10 +2,11 @@ import { pgTable, uuid, varchar, timestamp, pgEnum } from 'drizzle-orm/pg-core';
 import { profilesTable } from './profiles';
 import { mediaTable } from './media';
 import { COLLECTION_CONSTRAINTS, CollectionVisibilityStatus } from '@memoro/shared';
+import { pgEnumValues } from '../pg-enum-values';
 
 export const collectionVisibilityEnum = pgEnum(
   'collection_visibility',
-  Object.values(CollectionVisibilityStatus) as [string, ...string[]],
+  pgEnumValues(CollectionVisibilityStatus),
 );
 
 export const collectionsTable = pgTable('collections', {

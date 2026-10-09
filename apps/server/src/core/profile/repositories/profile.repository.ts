@@ -1,9 +1,10 @@
+import type { UserSex } from '@memoro/shared';
 import type { Profile } from '../entities/profile.entity';
 
 export interface CreateProfileData {
   userId: string;
   username?: string;
-  sex?: string;
+  sex?: UserSex;
   avatar?: string;
 }
 

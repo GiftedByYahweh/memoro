@@ -1,4 +1,9 @@
-import { DomainErrorCode, VerificationCodeType, type AuthUserDto } from '@memoro/shared';
+import {
+  DomainErrorCode,
+  VerificationCodeType,
+  type AuthUserDto,
+  type UserSex,
+} from '@memoro/shared';
 import { hashPassword } from '@/common/crypto/crypto';
 import { AppError } from '@/common/error/app.error';
 import type { UseCase } from '@/common/use-case';
@@ -12,7 +17,7 @@ interface RegisterInput {
   email: string;
   password: string;
   username: string;
-  gender: string;
+  gender: UserSex;
 }
 
 interface RegisterOutput {

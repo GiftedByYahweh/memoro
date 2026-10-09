@@ -1,4 +1,4 @@
-import type { ProfileDto, UserSex } from '@memoro/shared';
+import type { ProfileDto } from '@memoro/shared';
 import type { profilesTable } from '@/db/schema/profiles';
 import type { Profile } from '../entities/profile.entity';
 
@@ -10,7 +10,7 @@ const toProfileEntity = (row: ProfileRow): Profile => {
     userId: row.userId,
     username: row.username,
     avatar: row.avatar,
-    sex: row.sex as UserSex | null,
+    sex: row.sex,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   };

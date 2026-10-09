@@ -1,9 +1,10 @@
 import { pgTable, uuid, varchar, timestamp, pgEnum } from 'drizzle-orm/pg-core';
 import { AUTH_CONSTRAINTS, VerificationCodeType } from '@memoro/shared';
+import { pgEnumValues } from '../pg-enum-values';
 
 export const verificationCodeTypeEnum = pgEnum(
   'verification_code_type',
-  Object.values(VerificationCodeType) as [string, ...string[]],
+  pgEnumValues(VerificationCodeType),
 );
 
 export const verificationCodesTable = pgTable('verification_codes', {

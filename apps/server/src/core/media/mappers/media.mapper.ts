@@ -1,4 +1,4 @@
-import { MediaStatus, type CreateMediaDto, type MediaDto, type MediaType } from '@memoro/shared';
+import { MediaStatus, type CreateMediaDto, type MediaDto } from '@memoro/shared';
 import type { mediaTable } from '@/db/schema';
 import type { InsertMediaInput, Media } from '../entities/media.entity';
 
@@ -10,8 +10,8 @@ export function toMediaDomain(record: MediaRecord): Media {
     profileId: record.profileId,
     fileKey: record.fileKey,
     contentType: record.contentType,
-    status: record.status as MediaStatus,
-    type: record.type as MediaType,
+    status: record.status,
+    type: record.type,
     captureTime: record.captureTime,
     timezone: record.timezone,
     latitude: record.latitude,

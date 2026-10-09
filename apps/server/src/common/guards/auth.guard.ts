@@ -1,8 +1,7 @@
 import type { FastifyRequest, preHandlerAsyncHookHandler } from 'fastify';
 import { DomainErrorCode } from '@memoro/shared';
 import { AppError } from '@/common/error/app.error';
-import { AUTH_COOKIE_NAME } from '../../core/auth/auth.constants';
-import type { ValidateSessionUseCase } from '../../core/auth/use-cases/validate-session.use-case';
+import { AUTH_COOKIE_NAME, type ValidateSessionUseCase } from '@/core/auth';
 import type { ProfileRepository } from '@/core/profile';
 
 export interface AuthGuardDeps {

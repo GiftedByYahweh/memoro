@@ -1,5 +1,6 @@
 import { pgTable, uuid, varchar, text, timestamp } from 'drizzle-orm/pg-core';
-import { PROFILE_CONSTRAINTS } from '@memoro/shared';
+import { PROFILE_CONSTRAINTS, UserSex } from '@memoro/shared';
+import { pgEnumValues } from '../pg-enum-values';
 import { usersTable } from './users';
 
 export const profilesTable = pgTable('profiles', {
@@ -10,7 +11,10 @@ export const profilesTable = pgTable('profiles', {
     .references(() => usersTable.id, { onDelete: 'cascade' }),
   username: varchar('username', { length: PROFILE_CONSTRAINTS.USERNAME_MAX_LENGTH }).unique(),
   avatar: text('avatar'),
-  sex: varchar('sex', { length: PROFILE_CONSTRAINTS.SEX_MAX_LENGTH }),
+  sex: varchar('sex', {
+    length: PROFILE_CONSTRAINTS.SEX_MAX_LENGTH,
+    enum: pgEnumValues(UserSex),
+  }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });

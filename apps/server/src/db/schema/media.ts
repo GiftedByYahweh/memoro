@@ -11,15 +11,10 @@ import {
 } from 'drizzle-orm/pg-core';
 import { profilesTable } from './profiles';
 import { ENCRYPTION_CONSTRAINTS, MEDIA_CONSTRAINTS, MediaStatus, MediaType } from '@memoro/shared';
+import { pgEnumValues } from '../pg-enum-values';
 
-export const mediaStatusEnum = pgEnum(
-  'media_status',
-  Object.values(MediaStatus) as [string, ...string[]],
-);
-export const mediaTypeEnum = pgEnum(
-  'media_type',
-  Object.values(MediaType) as [string, ...string[]],
-);
+export const mediaStatusEnum = pgEnum('media_status', pgEnumValues(MediaStatus));
+export const mediaTypeEnum = pgEnum('media_type', pgEnumValues(MediaType));
 export const mediaTable = pgTable('media', {
   id: uuid('id').primaryKey().defaultRandom(),
   profileId: uuid('profile_id')

@@ -11,7 +11,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { MULTIPART_CONSTRAINTS, STORAGE_CONSTRAINTS, UploadType } from '@memoro/shared';
-import type { AppConfig } from '../../config';
+import type { AppConfig } from '@/config';
 import type {
   CompleteMultipartInput,
   FileStorage,

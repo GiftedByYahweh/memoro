@@ -1,12 +1,14 @@
 import { requireEnv } from '@memoro/shared';
 
+const DEFAULT_PORT = 3000;
+
 export const loadAppConfig = () => {
   const env = process.env;
   const rawPort = env['PORT'];
-  const port = rawPort ? Number(rawPort) : 3000;
+  const port = rawPort ? Number(rawPort) : DEFAULT_PORT;
 
   return {
-    port: Number.isNaN(port) ? 3000 : port,
+    port: Number.isNaN(port) ? DEFAULT_PORT : port,
     host: requireEnv(env, 'HOST'),
     isProduction: env['NODE_ENV'] === 'production',
     logger: {
