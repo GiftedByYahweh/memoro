@@ -18,16 +18,19 @@
     "docker:up": "docker compose up",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f",
+    "docker:rebuild": "docker compose up --build --renew-anon-volumes",
+    "docker:prod:build": "docker compose -f docker-compose.yml build",
+    "docker:prod:up": "docker compose -f docker-compose.yml up -d",
+    "docker:prod:down": "docker compose -f docker-compose.yml down",
+    "docker:prod:logs": "docker compose -f docker-compose.yml logs -f",
     "db:generate": "npm run db:generate --workspace=@memoro/server",
     "db:migrate": "npm run db:migrate --workspace=@memoro/server",
     "db:push": "npm run db:push --workspace=@memoro/server",
     "db:studio": "npm run db:studio --workspace=@memoro/server",
-    "lint": "npm run lint:js && npm run lint:style",
-    "lint:fix": "npm run lint:js:fix && npm run lint:style:fix",
+    "lint": "npm run lint:js",
+    "lint:fix": "npm run lint:js:fix",
     "lint:js": "eslint .",
-    "lint:js:fix": "eslint . --fix",
-    "lint:style": "stylelint \"**/*.{css,vue}\"",
-    "lint:style:fix": "stylelint \"**/*.{css,vue}\" --fix"
+    "lint:js:fix": "eslint . --fix"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -36,9 +39,6 @@
     "eslint-plugin-vue": "^10.11.0",
     "jiti": "^2.7.0",
     "prettier": "^3.5.2",
-    "stylelint": "^17.15.0",
-    "stylelint-config-recommended-vue": "^2.0.0",
-    "stylelint-config-standard": "^40.0.0",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.63.0"
   }

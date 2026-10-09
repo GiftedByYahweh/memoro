@@ -1,5 +1,5 @@
 import type { VerificationCodeType } from './constants';
-import type { UserSex } from '../profiles/constants';
+import type { UserSex } from '../users/constants';
 
 export interface AuthUserDto {
   readonly id: string;
@@ -15,7 +15,7 @@ export interface RegisterDto {
   readonly email: string;
   readonly password: string;
   readonly username: string;
-  readonly gender: UserSex;
+  readonly sex: UserSex;
 }
 
 export interface VerifyCodeDto {

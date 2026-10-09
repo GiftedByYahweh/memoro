@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { AUTH_CONSTRAINTS, VerificationCodeType } from './constants';
-import { PROFILE_CONSTRAINTS, UserSex } from '../profiles/constants';
+import { USER_CONSTRAINTS, UserSex } from '../users/constants';
 import type {
   RegisterDto,
   LoginDto,
@@ -16,20 +16,22 @@ export const emailSchema = z
   .email()
   .max(AUTH_CONSTRAINTS.EMAIL_MAX_LENGTH);
 
-const passwordSchema = z
+export const passwordSchema = z
   .string()
   .min(AUTH_CONSTRAINTS.PASSWORD_MIN_LENGTH)
   .max(AUTH_CONSTRAINTS.PASSWORD_MAX_LENGTH);
 
+export const usernameSchema = z
+  .string()
+  .trim()
+  .min(USER_CONSTRAINTS.USERNAME_MIN_LENGTH)
+  .max(USER_CONSTRAINTS.USERNAME_MAX_LENGTH);
+
 export const registerSchema: z.ZodType<RegisterDto> = z.object({
   email: emailSchema,
   password: passwordSchema,
-  username: z
-    .string()
-    .trim()
-    .min(PROFILE_CONSTRAINTS.USERNAME_MIN_LENGTH)
-    .max(PROFILE_CONSTRAINTS.USERNAME_MAX_LENGTH),
-  gender: z.enum([UserSex.MALE, UserSex.FEMALE, UserSex.OTHER]),
+  username: usernameSchema,
+  sex: z.enum([UserSex.MALE, UserSex.FEMALE, UserSex.OTHER]),
 });
 
 export const loginSchema: z.ZodType<LoginDto> = z.object({

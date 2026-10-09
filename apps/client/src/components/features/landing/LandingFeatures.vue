@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import AppIcon from '@/components/shared/AppIcon.vue';
 import type { IconName } from '@/assets/icons';
+import AppIcon from '@/components/shared/AppIcon.vue';
 
 interface FeatureItem {
   icon: IconName;
@@ -9,96 +9,79 @@ interface FeatureItem {
   descKey: string;
 }
 
-const { t } = useI18n();
-
-const features: FeatureItem[] = [
-  {
-    icon: 'compass',
-    titleKey: 'landing.features.geoTitle',
-    descKey: 'landing.features.geoDesc',
-  },
-  {
-    icon: 'download',
-    titleKey: 'landing.features.pwaTitle',
-    descKey: 'landing.features.pwaDesc',
-  },
+const FEATURES: readonly FeatureItem[] = [
+  { icon: 'compass', titleKey: 'landing.features.geoTitle', descKey: 'landing.features.geoDesc' },
+  { icon: 'download', titleKey: 'landing.features.pwaTitle', descKey: 'landing.features.pwaDesc' },
   {
     icon: 'shield',
     titleKey: 'landing.features.privacyTitle',
     descKey: 'landing.features.privacyDesc',
   },
 ];
+
+const { t } = useI18n();
 </script>
 
 <template>
-  <section class="landing-features">
-    <div v-for="item in features" :key="item.titleKey" class="feature-card">
-      <div class="feature-icon-wrapper">
-        <AppIcon :name="item.icon" :size="20" color="accent" />
-      </div>
-      <div class="feature-info">
-        <h3 class="feature-title">{{ t(item.titleKey) }}</h3>
+  <ul class="landing-features">
+    <li v-for="item in FEATURES" :key="item.titleKey" class="feature">
+      <span class="feature-icon">
+        <AppIcon :name="item.icon" :size="20" />
+      </span>
+      <div class="feature-text">
+        <h2 class="feature-title">{{ t(item.titleKey) }}</h2>
         <p class="feature-desc">{{ t(item.descKey) }}</p>
       </div>
-    </div>
-  </section>
+    </li>
+  </ul>
 </template>
 
 <style scoped>
 .landing-features {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-lg);
   width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
+  margin: 0;
+  padding: var(--space-xl) 0 0;
+  border-top: 1px solid var(--color-border);
+  list-style: none;
 }
 
-.feature-card {
+.feature {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--space-md);
-  padding: var(--space-md);
-  background-color: var(--color-surface-card);
-  border: 1px solid var(--border-card);
-  border-radius: var(--radius-xl);
-  transition: border-color var(--transition-fast);
 }
 
-.feature-card:hover {
-  border-color: var(--border-subtle-hover);
-}
-
-.feature-icon-wrapper {
+.feature-icon {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   width: 40px;
   height: 40px;
-  flex-shrink: 0;
-  border-radius: var(--radius-lg);
-  background-color: var(--glow-primary);
-  border: 1px solid var(--border-focus-primary);
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary-container);
+  color: var(--color-on-primary-container);
 }
 
-.feature-info {
+.feature-text {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2xs);
-  text-align: left;
+  gap: 2px;
 }
 
 .feature-title {
   margin: 0;
-  font-size: 0.9375rem;
-  font-weight: 700;
+  font-size: var(--text-md);
+  font-weight: 500;
   color: var(--color-text-primary);
 }
 
 .feature-desc {
   margin: 0;
-  font-size: 0.8125rem;
-  line-height: 1.5;
+  font-size: var(--text-sm);
   color: var(--color-text-secondary);
 }
 </style>

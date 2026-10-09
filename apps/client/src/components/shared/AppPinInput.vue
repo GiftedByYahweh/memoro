@@ -47,7 +47,7 @@ watch(
   { deep: true },
 );
 
-function handleComplete(values: number[]): void {
+function handleComplete(values: (number | undefined)[]): void {
   emit('complete', values.join(''));
 }
 </script>
@@ -99,52 +99,49 @@ function handleComplete(values: number[]): void {
   min-width: 0;
   max-width: 52px;
   height: 56px;
-  background-color: var(--color-surface-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
   color: var(--color-text-primary);
-  font-family: var(--font-mono, monospace);
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: var(--text-xl);
+  font-weight: 500;
   text-align: center;
   outline: none;
-  transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease,
-    background-color 0.15s ease;
   caret-color: var(--color-primary);
-  color-scheme: dark;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .pin-slot:hover {
-  border-color: var(--border-hover);
+  border-color: var(--color-text-primary);
 }
 
 .pin-slot:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px var(--border-focus-primary);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
 }
 
 .pin-slot:disabled {
-  opacity: 0.5;
+  opacity: 0.38;
   cursor: not-allowed;
-  border-color: var(--border-subtle);
+  border-color: var(--color-border);
 }
 
 .pin-slot.has-error {
-  border-color: var(--color-danger);
+  border-color: var(--color-error);
 }
 
 .pin-slot.has-error:focus {
-  border-color: var(--color-danger);
-  box-shadow: 0 0 0 3px var(--border-focus-danger);
+  box-shadow: inset 0 0 0 1px var(--color-error);
 }
 
 .pin-error {
   margin: 0;
-  font-size: 0.8125rem;
-  line-height: 1.35;
-  color: var(--color-danger);
+  font-size: var(--text-xs);
+  line-height: 1.4;
+  color: var(--color-error);
   text-align: center;
 }
 </style>

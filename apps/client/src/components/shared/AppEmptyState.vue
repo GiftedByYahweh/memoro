@@ -5,58 +5,66 @@ import AppIcon from './AppIcon.vue';
 interface Props {
   icon: IconName;
   title: string;
-  description: string;
+  description?: string;
 }
 
-defineProps<Props>();
+withDefaults(defineProps<Props>(), {
+  description: undefined,
+});
 </script>
 
 <template>
   <div class="empty-state">
-    <div class="empty-icon-wrap">
-      <AppIcon :name="icon" :size="32" color="tertiary" />
+    <span class="empty-icon">
+      <AppIcon :name="icon" :size="32" />
+    </span>
+    <h2 class="empty-title">{{ title }}</h2>
+    <p v-if="description" class="empty-description">{{ description }}</p>
+    <div v-if="$slots.default" class="empty-actions">
+      <slot />
     </div>
-    <p class="empty-title">{{ title }}</p>
-    <p class="empty-description">{{ description }}</p>
   </div>
 </template>
 
 <style scoped>
 .empty-state {
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex: 1;
-  text-align: center;
   gap: var(--space-xs);
+  text-align: center;
 }
 
-.empty-icon-wrap {
+.empty-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 64px;
-  height: 64px;
-  border-radius: var(--radius-full);
-  background-color: var(--color-surface-card);
-  border: 1px solid var(--border-subtle);
+  width: 72px;
+  height: 72px;
   margin-bottom: var(--space-xs);
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary-container);
+  color: var(--color-on-primary-container);
 }
 
 .empty-title {
-  font-family: var(--font-sans);
-  font-size: var(--space-md);
-  font-weight: 600;
-  color: var(--color-text-primary);
   margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 500;
+  color: var(--color-text-primary);
 }
 
 .empty-description {
-  font-family: var(--font-sans);
-  font-size: var(--space-sm);
-  color: var(--color-text-tertiary);
-  margin: 0;
   max-width: 280px;
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+.empty-actions {
+  margin-top: var(--space-md);
 }
 </style>

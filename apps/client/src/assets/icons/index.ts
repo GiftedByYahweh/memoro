@@ -1,7 +1,9 @@
+import alertCircle from './alert-circle.svg?raw';
 import arrowLeft from './arrow-left.svg?raw';
 import book from './book.svg?raw';
 import bookmark from './bookmark.svg?raw';
 import camera from './camera.svg?raw';
+import checkCircle from './check-circle.svg?raw';
 import check from './check.svg?raw';
 import close from './close.svg?raw';
 import compass from './compass.svg?raw';
@@ -13,8 +15,11 @@ import filter from './filter.svg?raw';
 import flight from './flight.svg?raw';
 import folderStar from './folder-star.svg?raw';
 import layers from './layers.svg?raw';
+import info from './info.svg?raw';
 import lock from './lock.svg?raw';
 import logo from './logo.svg?raw';
+import logout from './logout.svg?raw';
+import mapPin from './map-pin.svg?raw';
 import mail from './mail.svg?raw';
 import moreVertical from './more-vertical.svg?raw';
 import navigation from './navigation.svg?raw';
@@ -29,13 +34,16 @@ import sun from './sun.svg?raw';
 import target from './target.svg?raw';
 import trash from './trash.svg?raw';
 import user from './user.svg?raw';
+import view3d from './view-3d.svg?raw';
 
 export const icons = {
+  alertCircle,
   arrowLeft,
   book,
   bookmark,
   camera,
   check,
+  checkCircle,
   close,
   compass,
   download,
@@ -46,9 +54,12 @@ export const icons = {
   flight,
   folderStar,
   layers,
+  info,
   lock,
   logo,
+  logout,
   mail,
+  mapPin,
   moreVertical,
   navigation,
   north,
@@ -62,6 +73,7 @@ export const icons = {
   target,
   trash,
   user,
+  view3d,
 } as const;
 
 export type IconName = keyof typeof icons;

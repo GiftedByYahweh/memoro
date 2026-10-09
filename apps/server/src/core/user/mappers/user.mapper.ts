@@ -8,6 +8,8 @@ const toUserEntity = (row: UserRow): User => ({
   id: row.id,
   email: row.email,
   passwordHash: row.passwordHash,
+  username: row.username,
+  sex: row.sex,
   createdAt: row.createdAt,
   updatedAt: row.updatedAt,
 });

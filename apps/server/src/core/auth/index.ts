@@ -17,3 +17,4 @@ export * from './use-cases/verify-code.use-case';
 export * from './use-cases/reset-password.use-case';
 export * from './routes/auth.schema';
 export * from './routes/auth.routes';
+export * from './routes/session-cookie';

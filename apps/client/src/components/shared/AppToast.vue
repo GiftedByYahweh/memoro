@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import AppIcon from '@/components/shared/AppIcon.vue';
-import AppText from '@/components/shared/AppText.vue';
-import { useToast } from '@/composables/useToast';
+import AppIconButton from '@/components/shared/AppIconButton.vue';
+import type { IconName } from '@/assets/icons';
+import { TOAST_TYPE, useToast, type ToastType } from '@/composables/useToast';
 
 const SWIPE_THRESHOLD_Y = 35;
 const SWIPE_THRESHOLD_X = 75;
@@ -9,8 +11,14 @@ const RESISTANCE_FACTOR = 0.25;
 const MIN_DRAG_OPACITY = 0.2;
 const OPACITY_DIVISOR_Y = 100;
 const OPACITY_DIVISOR_X = 200;
-const CLOSE_ICON_SIZE = 16;
 
+const TOAST_ICONS = {
+  [TOAST_TYPE.ERROR]: 'alertCircle',
+  [TOAST_TYPE.SUCCESS]: 'checkCircle',
+  [TOAST_TYPE.INFO]: 'info',
+} as const satisfies Record<ToastType, IconName>;
+
+const { t } = useI18n();
 const { toasts, dismissToast } = useToast();
 
 interface DragState {
@@ -104,21 +112,19 @@ function handlePointerCancel(event: PointerEvent, id: string): void {
         @pointerup="handlePointerUp($event, toast.id)"
         @pointercancel="handlePointerCancel($event, toast.id)"
       >
-        <div class="toast-indicator" />
+        <span class="toast-icon" aria-hidden="true">
+          <AppIcon :name="TOAST_ICONS[toast.type]" :size="20" />
+        </span>
         <div class="toast-content">
-          <AppText variant="body-sm" color="primary" weight="medium" class="toast-message">
-            {{ toast.message }}
-          </AppText>
+          <p class="toast-message">{{ toast.message }}</p>
         </div>
-        <button
-          type="button"
-          class="toast-close"
-          aria-label="Close"
+        <AppIconButton
+          size="sm"
+          icon="close"
+          :label="t('common.close')"
           @pointerdown.stop
           @click.stop="dismissToast(toast.id)"
-        >
-          <AppIcon name="close" :size="CLOSE_ICON_SIZE" color="secondary" />
-        </button>
+        />
       </div>
     </TransitionGroup>
   </div>
@@ -127,55 +133,64 @@ function handlePointerCancel(event: PointerEvent, id: string): void {
 <style scoped>
 .toast-container {
   position: fixed;
-  top: max(var(--space-md), var(--safe-top));
+  top: calc(var(--safe-top) + var(--space-md));
   left: 50%;
-  transform: translateX(-50%);
   z-index: 1000;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--space-xs);
-  width: calc(100% - var(--space-xl));
+  width: calc(100% - var(--space-2xl));
   max-width: 440px;
+  transform: translateX(-50%);
   pointer-events: none;
 }
 
 .toast-item {
-  pointer-events: auto;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--space-sm);
   width: 100%;
-  padding: var(--space-sm) var(--space-md);
-  background-color: var(--color-surface-floating);
-  border: 1px solid var(--border-subtle);
+  padding: var(--space-sm) var(--space-xs) var(--space-sm) var(--space-md);
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-elevated);
-  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-2);
   touch-action: none;
   user-select: text;
   cursor: grab;
+  pointer-events: auto;
 }
 
 .toast-item:active {
   cursor: grabbing;
 }
 
-.type-error {
-  border-color: var(--border-danger);
-}
-
-.toast-indicator {
-  width: 3px;
-  height: 18px;
-  margin-top: 2px;
-  border-radius: var(--radius-full);
-  background-color: var(--color-primary);
+.toast-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
   flex-shrink: 0;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary-container);
+  color: var(--color-primary);
 }
 
-.type-error .toast-indicator {
-  background-color: var(--color-error);
+.type-success .toast-icon {
+  background-color: var(--color-success-container);
+  color: var(--color-success);
+}
+
+.type-error .toast-icon {
+  background-color: var(--color-error-container);
+  color: var(--color-error);
+}
+
+.type-error {
+  border-color: var(--color-error-container-hover);
 }
 
 .toast-content {
@@ -184,25 +199,11 @@ function handlePointerCancel(event: PointerEvent, id: string): void {
 }
 
 .toast-message {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: 1.45;
   white-space: pre-wrap;
   overflow-wrap: break-word;
-}
-
-.toast-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: -2px;
-  padding: var(--space-2xs);
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: opacity var(--transition-fast);
-}
-
-.toast-close:hover {
-  opacity: 0.8;
 }
 
 .toast-enter-active,

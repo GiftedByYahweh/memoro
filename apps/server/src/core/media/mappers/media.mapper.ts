@@ -1,4 +1,4 @@
-import { MediaStatus, type CreateMediaDto, type MediaDto, type MediaType } from '@memoro/shared';
+import { MediaStatus, type CreateMediaDto, type MediaDto } from '@memoro/shared';
 import type { mediaTable } from '@/db/schema';
 import type { InsertMediaInput, Media } from '../entities/media.entity';
 
@@ -7,11 +7,11 @@ type MediaRecord = typeof mediaTable.$inferSelect;
 export function toMediaDomain(record: MediaRecord): Media {
   return {
     id: record.id,
-    profileId: record.profileId,
+    userId: record.userId,
     fileKey: record.fileKey,
     contentType: record.contentType,
-    status: record.status as MediaStatus,
-    type: record.type as MediaType,
+    status: record.status,
+    type: record.type,
     captureTime: record.captureTime,
     timezone: record.timezone,
     latitude: record.latitude,
@@ -31,12 +31,12 @@ export function toMediaDomain(record: MediaRecord): Media {
 }
 
 export function toInsertMediaInput(
-  profileId: string,
+  userId: string,
   fileKey: string,
   data: CreateMediaDto,
 ): InsertMediaInput {
   return {
-    profileId,
+    userId,
     fileKey,
     contentType: data.contentType,
     status: MediaStatus.PENDING,
@@ -64,7 +64,7 @@ export function toMediaDto(
 ): MediaDto {
   return {
     id: media.id,
-    profileId: media.profileId,
+    userId: media.userId,
     fileKey: media.fileKey,
     fileUrl,
     thumbnailUrl,

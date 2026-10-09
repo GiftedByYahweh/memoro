@@ -1,5 +1,5 @@
 import { useI18n } from 'vue-i18n';
-import type { ValidationIssue } from '@memoro/shared';
+import { toValidationIssues, type ValidationIssue } from '@memoro/shared';
 
 type Translate = ReturnType<typeof useI18n>['t'];
 type IssueTranslator = (issue: ValidationIssue, t: Translate) => string;
@@ -20,5 +20,10 @@ export function useValidation() {
     return translator ? translator(issue, t) : t('validation.invalid');
   }
 
-  return { translateIssue };
+  function translateFirstIssue(issues: Parameters<typeof toValidationIssues>[0]): string {
+    const firstIssue = toValidationIssues(issues).at(0);
+    return firstIssue ? translateIssue(firstIssue) : t('validation.invalid');
+  }
+
+  return { translateIssue, translateFirstIssue };
 }

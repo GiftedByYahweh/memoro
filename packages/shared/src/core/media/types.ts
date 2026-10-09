@@ -19,7 +19,7 @@ export type {
 
 export interface MediaDto {
   readonly id: string;
-  readonly profileId: string;
+  readonly userId: string;
   readonly fileKey: string;
   readonly fileUrl: string;
   readonly thumbnailUrl: string | null;

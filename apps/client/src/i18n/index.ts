@@ -5,7 +5,7 @@ import uk from '../locales/uk.json';
 
 export type MessageSchema = typeof uk;
 
-export const i18n = createI18n<[MessageSchema], 'uk' | 'en'>({
+export const i18n = createI18n<[MessageSchema], 'uk' | 'en', false>({
   legacy: false,
   locale: 'uk',
   fallbackLocale: 'en',

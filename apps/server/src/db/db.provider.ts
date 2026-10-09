@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import type { AppConfig } from '../config';
+import type { AppConfig } from '@/config';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import type { TxContext } from './tx-context';
 
@@ -25,6 +25,7 @@ export class DBProvider {
   }
 
   public transaction<T>(fn: () => Promise<T>): Promise<T> {
+    if (this.txContext.get()) return fn();
     return this.db.transaction((tx) => this.txContext.run(tx, fn));
   }
 

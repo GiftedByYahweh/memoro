@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import AppPageHeader from '@/components/shared/AppPageHeader.vue';
 import AppEmptyState from '@/components/shared/AppEmptyState.vue';
+import AppPageHeader from '@/components/shared/AppPageHeader.vue';
 
 const { t } = useI18n();
 </script>

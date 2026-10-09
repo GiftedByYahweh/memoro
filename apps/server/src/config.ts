@@ -1,17 +1,23 @@
 import { requireEnv } from '@memoro/shared';
 
+const DEFAULT_PORT = 3000;
+
 export const loadAppConfig = () => {
   const env = process.env;
   const rawPort = env['PORT'];
-  const port = rawPort ? Number(rawPort) : 3000;
+  const port = rawPort ? Number(rawPort) : DEFAULT_PORT;
 
   return {
-    port: Number.isNaN(port) ? 3000 : port,
+    port: Number.isNaN(port) ? DEFAULT_PORT : port,
     host: requireEnv(env, 'HOST'),
     isProduction: env['NODE_ENV'] === 'production',
     logger: {
       level: env['LOG_LEVEL'] ?? 'info',
       pretty: env['NODE_ENV'] !== 'production',
+    },
+    rateLimit: {
+      maxRequests: Number(requireEnv(env, 'RATE_LIMIT_MAX_REQUESTS')),
+      timeWindowMs: Number(requireEnv(env, 'RATE_LIMIT_TIME_WINDOW_MS')),
     },
     session: {
       secret: requireEnv(env, 'SESSION_SECRET'),

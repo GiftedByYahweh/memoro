@@ -24,7 +24,8 @@ Most photo apps fall into one of two traps:
 
 - **Content-First (Photos are the Heroes):** The interface must be calm, unobtrusive, and timeless. No loud neon accents, no cluttered social feeds, no algorithmic distractions.
 - **Minimalist & Tactile:** Modern iOS/Android aesthetic with high-polish interactions: smooth spring physics, bottom sheets, drag-to-dismiss gestures, subtle haptics.
-- **Dual Theme Support:** Deep dark mode (true blacks for OLED displays to make photography pop) and clean, warm light mode.
+- **Simple & Clear (Google-style):** Light, airy interface in the spirit of Google products — white surfaces, one blue accent, semantic colors only where they carry meaning. Clarity beats decoration. See §4 for the binding style guide.
+- **Light Theme First:** Light theme is the only theme for now. Tokens are structured so a dark theme can be added later as a single override block, without touching components.
 - **PWA-Native Feel:** Feels indistinguishable from a native app when installed on a mobile homescreen (fullscreen standalone mode, respects iOS Dynamic Island & notch safe areas, no browser URL bar or bounce artifacts).
 
 ---
@@ -169,30 +170,113 @@ The upload process must be painless, fast, and intelligent.
 
 ---
 
-## 4. UI Components & Design System Guidance
+## 4. Visual Style Guide & Design System
 
-### 4.1 Color Palette
+> This section is binding for all UI work. Tokens live in `apps/client/src/css/variables.css`; shared CSS classes in `apps/client/src/css/main.css`. Components never hardcode colors, shadows, radii or font sizes — always use tokens.
 
-- **Backgrounds:**
-  - _Dark Mode:_ Pure background `#090A0C`, Card/Surface `#14161B`, Elevated Surfaces `#1E222A`.
-  - _Light Mode:_ Pure background `#F8F9FA`, Card/Surface `#FFFFFF`, Elevated Surfaces `#EDF0F3`.
-- **Primary Accent:** Warm terracotta or deep amber (e.g., `#E0684B` or `#D97706`) — evokes warmth, archival memory, physical photo albums, without being loud or distracting.
-- **Map Theme:** Muted grayscale base cartography (dark charcoal in dark mode, soft warm gray in light mode) with high-contrast color pop for photo pins.
+### 4.1 Style Principles
 
-### 4.2 Typography
+1. **Google-style simplicity.** Light surfaces, generous whitespace, thin `1px` borders instead of heavy shadows, one accent color.
+2. **Minimum text.** Every word on screen must earn its place:
+   - No subtitles that restate the title ("Sign in to open your archive" — removed).
+   - No labels above inputs when the placeholder + leading icon are self-explanatory. The placeholder is mirrored into `aria-label` for accessibility.
+   - Titles are one or two words: `Вхід`, `Реєстрація`, `Підтвердження`, `Пароль`.
+   - Secondary hints go into the placeholder (`Пароль, від 8 символів`), not into a separate paragraph.
+   - Exception: switch links at the bottom of auth screens keep the standard prompt + action form (`Немає акаунту? Зареєструватися`, `Вже маєте акаунт? Увійти`) — a lone link reads as out of context.
+   - Visual indicators replace text where possible (step progress bar instead of "Step 1 of 3"; the text survives only as `aria-label`).
+3. **One `h1` per screen, describing the task.** The title is kept even when the screen is minimal — it orients the user (especially in multi-step flows) and is what assistive tech announces.
+4. **Brand shown once, small.** The logo sits next to the title, with `Memoro` as a small secondary line. No separate hero brand block above the form.
+5. **Semantic color only.** Blue = primary action / selection / focus. Green = success. Amber = warning (e.g. media without geolocation). Red = error / destructive. Never use these colors decoratively.
+6. **Mobile-first.** On phones, content sits directly on the white page (no card chrome). From `600px` up, content is wrapped in a bordered card on a subtle gray background.
 
-- Modern geometric sans-serif (e.g., Inter, Plus Jakarta Sans, SF Pro Display).
-- Clear hierarchy: large expressive editorial titles for Collections, clean tabular numerals for dates and coordinates.
+### 4.2 Color Tokens
 
-### 4.3 Key UI Components to Design
+| Role                                                | Token                                                        | Value                             |
+| --------------------------------------------------- | ------------------------------------------------------------ | --------------------------------- |
+| Page background                                     | `--color-bg`                                                 | `#FFFFFF`                         |
+| Subtle background (desktop page behind cards)       | `--color-bg-subtle`                                          | `#F8F9FA`                         |
+| Surface (cards, inputs, toasts)                     | `--color-surface`                                            | `#FFFFFF`                         |
+| Surface variant (filled areas, icon circles)        | `--color-surface-variant`                                    | `#F1F3F4`                         |
+| Primary                                             | `--color-primary` / `-hover` / `-pressed`                    | `#1A73E8` / `#1765CC` / `#185ABC` |
+| Primary container (selected chips, soft highlights) | `--color-primary-container` / `--color-on-primary-container` | `#E8F0FE` / `#174EA6`             |
+| Success                                             | `--color-success` / `-container`                             | `#1E8E3E` / `#E6F4EA`             |
+| Warning                                             | `--color-warning` / `-container`                             | `#F9AB00` / `#FEF7E0`             |
+| Error                                               | `--color-error` / `-container`                               | `#D93025` / `#FCE8E6`             |
+| Text                                                | `--color-text-primary` / `-secondary` / `-tertiary`          | `#202124` / `#5F6368` / `#80868B` |
+| Borders                                             | `--color-border` / `--color-border-strong`                   | `#DADCE0` / `#BDC1C6`             |
+| Hover / pressed overlay                             | `--color-state-hover` / `--color-state-pressed`              | `rgb(60 64 67 / 8%)` / `12%`      |
+| Focus ring                                          | `--color-focus-ring`                                         | `rgb(26 115 232 / 24%)`           |
 
-1. **Interactive Photo Pin:** Rounded avatar preview with drop-shadow, unread/cluster badge, and active state pulse.
-2. **Bottom Sheet Modal:** Spring-animated bottom drawer for mobile (used for filters, location editing, photo inspector).
-3. **Year/Timeline Filter Bar:** Horizontal scrollable chips (`All`, `2025`, `2024`, `2023`, `2022`...) with active pill indicator.
-4. **Photo Card (Feed Grid):** Rounded corner media thumbnail with optional subtle location badge overlay.
-5. **Collection Card:** Visual cover card with gradient scrim overlay, title, date range, and photo count.
-6. **Location Picker Modal:** Interactive map widget with centered crosshair pin and address search bar.
-7. **Floating Action Button (Upload FAB):** Prominent elevated circular or rounded pill button.
+- **Elevation:** `--shadow-1..3` (Google-style soft gray shadows). Prefer borders; use shadows only for floating elements (toasts, map controls, FAB, primary button hover).
+- **Map:** light `positron` cartography by default so photo pins stand out.
+
+### 4.3 Typography
+
+- **Font:** Google Sans (loaded from Google Fonts, cached by the service worker for offline use), fallback `Roboto → Segoe UI → system-ui`. Monospace: `Roboto Mono` (verification code, coordinates).
+- **Scale tokens:** `--text-xs` 12 · `--text-sm` 14 · `--text-md` 16 · `--text-lg` 18 · `--text-xl` 22 · `--text-2xl` 28 px.
+- **Weights:** 400 regular, 500 for titles/buttons/labels. Avoid 700+.
+- **Inputs are always ≥ 16px** — prevents iOS auto-zoom on focus (page zoom is not disabled).
+- Never use spacing tokens as font sizes.
+
+### 4.4 Shape & Spacing
+
+- **Radii:** `--radius-sm` 4 · `md` 8 (inputs, chips) · `lg` 12 · `xl` 16 · `2xl` 28 (auth card) · `full` (buttons, FAB).
+- **Spacing:** 4-px grid via `--space-2xs..3xl` (4, 8, 12, 16, 20, 24, 32, 48).
+- **Touch targets:** ≥ 40px (buttons 40/48px, icon buttons 32–44px).
+
+### 4.5 Core Components
+
+- **Buttons (`AppButton`)** — pill-shaped. `primary`: filled blue (main action, one per screen). `secondary`: outlined, blue text. `ghost`: text button, blue text (Back, Cancel, Resend). `danger`: red text on red container. Disabled = 38% opacity; primary is disabled until required fields are filled.
+- **Inputs (`AppInput`)** — outlined, 48px, radius 8, leading icon, placeholder as the label. Hover darkens border, focus = 2px blue border. Error = red border + short message below (`.field-message.is-error`).
+- **Chips (`AppChipGroup`)** — single-choice options (gender, later year filter). Unselected: outlined gray. Selected: `primary-container` fill + check icon. Rendered as `radiogroup`.
+- **Toast (`AppToast`)** — light: white surface, border, `--shadow-2`, status icon inside a 32px tinted circle (error: red on `--color-error-container` + reddish border; success: green on `--color-success-container`; info: blue on `--color-primary-container`), close button. Appears at the top, swipe to dismiss. No dark snackbars.
+- **Icon buttons (`AppIconButton`)** — the only round icon button. `plain`: transparent, hover overlay (back, close, password toggle). `floating`: white surface + border + `--shadow-1` (map controls, controls over photos). `active` state = `primary-container` fill. Always has an `aria-label`.
+- **Spinner (`AppSpinner`)** — single spinner, inherits `currentColor`.
+- **Bottom navigation** — translucent white bar (`--color-surface-translucent` + blur) with a top border; the active item is fully highlighted as a pill (`primary-container` + `on-primary-container`); center FAB is a flat blue circle (no shadow). Hidden on task screens (`meta.hideNav`, e.g. create memory). Keep it translucent: an opaque fixed layer over the WebGL map triggers a compositor artifact (blank strip at the top of the map).
+- **Page header (`AppPageHeader`)** — 28px/400 title, optional back button; no separate cancel buttons on task screens.
+- **Empty states** — icon in a 72px `primary-container` circle, one-line title, one-line description, optional primary action.
+- **Icon semantics** — `mapPin` = a place/address, `target` = my current location, `view3d` = 3D map, `north` = compass. One meaning per icon.
+- **Focus:** every interactive element has a visible `:focus-visible` ring (`--color-focus-ring`).
+- **Links:** `.text-link` — blue, weight 500, underline on hover.
+- **Icons:** each icon is a separate `.svg` file in `src/assets/icons`, colored via `currentColor`.
+
+### 4.6 Form & Screen Pattern (reference: auth screens)
+
+```
+[logo 40]  Title (h1, 22px, 500)
+           Memoro (14px, secondary)
+──────────────────────────────  ← divider, or progress segments in multi-step flows
+Optional one-line description (only when it carries data, e.g. "Code sent to a@b.com")
+[icon  Placeholder           ]
+[icon  Placeholder        👁 ]
+Inline link (e.g. Forgot password?)
+(        Primary action        )   ← full width, disabled until filled
+           Back                    ← ghost, only in multi-step flows
+  Prompt? Switch link             ← e.g. "Немає акаунту? Зареєструватися"
+```
+
+- Every step is a `<form>` — Enter submits.
+- Multi-step flows: max 3 steps, progress shown as thin segments replacing the divider; going back preserves entered data.
+- Each auth screen has its own route (`/login`, `/registration`, `/restore`).
+- Validation runs on submit; errors appear inline under the field and clear as the user edits. Server errors go to a toast (except code verification, which is shown inline under the code input).
+
+### 4.7 Transactional Emails
+
+- Same visual language as the auth screens: white card (radius 28, `#DADCE0` border) on `#F8F9FA`, header row = logo badge + title + small `Memoro`, divider, one short sentence, content, small footnote.
+- Logo is a CSS badge (blue `#1A73E8` rounded square with a white `M`) — SVG is blocked by most mail clients and we have no public image URL yet.
+- Verification code: monospace, 32px, letter-spaced, on a `primary-container` (`#E8F0FE`) block.
+- Table-based layout with inline styles only; always ship a plain-text alternative.
+- Template: `apps/server/src/common/mailer/verification-email.template.ts`.
+
+### 4.8 Key UI Components to Design (feature backlog)
+
+1. **Interactive Photo Pin:** Rounded avatar preview with drop-shadow, cluster badge, and active state pulse.
+2. **Bottom Sheet Modal:** Spring-animated bottom drawer for mobile (filters, location editing, photo inspector).
+3. **Year/Timeline Filter Bar:** Horizontal scrollable chips (`All`, `2025`, `2024`…) built on `AppChipGroup`.
+4. **Photo Card (Feed Grid):** Rounded thumbnail with optional location badge (amber when geolocation is missing).
+5. **Collection Card:** Cover photo with gradient scrim, title, date range, photo count.
+6. **Location Picker Modal:** Map with centered crosshair pin and address search bar.
+7. **Floating Action Button (Upload FAB):** Blue circular button in the bottom navigation.
 
 ---
 

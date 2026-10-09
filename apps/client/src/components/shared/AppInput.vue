@@ -2,11 +2,14 @@
 import { computed, ref, useId } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+import type { IconName } from '@/assets/icons';
 import AppIcon from './AppIcon.vue';
+import AppIconButton from './AppIconButton.vue';
 
 interface Props {
   modelValue?: string | number;
   label?: string;
+  icon?: IconName;
   placeholder?: string;
   type?: 'text' | 'password' | 'email' | 'search' | 'number' | 'tel' | 'url';
   size?: 'sm' | 'md' | 'lg';
@@ -15,7 +18,6 @@ interface Props {
   disabled?: boolean;
   readonly?: boolean;
   required?: boolean;
-  clearable?: boolean;
   id?: string;
   name?: string;
   autocomplete?: string;
@@ -26,6 +28,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
   label: undefined,
+  icon: undefined,
   placeholder: '',
   type: 'text',
   size: 'md',
@@ -34,7 +37,6 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   readonly: false,
   required: false,
-  clearable: false,
   id: undefined,
   name: undefined,
   autocomplete: undefined,
@@ -46,7 +48,6 @@ const emit = defineEmits<{
   'update:modelValue': [value: string | number];
   focus: [event: FocusEvent];
   blur: [event: FocusEvent];
-  clear: [];
 }>();
 
 const { t } = useI18n();
@@ -63,20 +64,11 @@ const computedType = computed(() => {
   return props.type;
 });
 
-const hasValue = computed(() => {
-  return props.modelValue !== '';
-});
-
 function handleInput(event: Event): void {
   const target = event.target as HTMLInputElement;
   const value =
     props.type === 'number' && target.value !== '' ? Number(target.value) : target.value;
   emit('update:modelValue', value);
-}
-
-function handleClear(): void {
-  emit('update:modelValue', '');
-  emit('clear');
 }
 
 function togglePasswordVisibility(): void {
@@ -92,21 +84,20 @@ function togglePasswordVisibility(): void {
       'has-error': Boolean(error),
     }"
   >
-    <label v-if="label" :for="inputId" class="input-label">
+    <label v-if="label" :for="inputId" class="field-label">
       <span>{{ label }}</span>
       <span v-if="required" class="required-star" aria-hidden="true">*</span>
     </label>
 
     <div :class="['input-wrapper', `size-${size}`]">
-      <div v-if="$slots['icon-left']" class="input-icon-slot leading">
-        <slot name="icon-left" />
-      </div>
+      <AppIcon v-if="icon" :name="icon" :size="20" color="secondary" class="input-icon" />
 
       <input
         :id="inputId"
         :type="computedType"
         :value="modelValue"
         :placeholder="placeholder"
+        :aria-label="label ? undefined : placeholder"
         :disabled="disabled"
         :readonly="readonly"
         :required="required"
@@ -121,37 +112,19 @@ function togglePasswordVisibility(): void {
         @blur="emit('blur', $event)"
       />
 
-      <div class="trailing-actions">
-        <button
-          v-if="clearable && hasValue && !disabled && !readonly"
-          type="button"
-          class="action-btn"
-          :aria-label="t('common.clear')"
-          @click="handleClear"
-        >
-          <AppIcon name="close" :size="16" />
-        </button>
-
-        <button
-          v-if="type === 'password' && !disabled"
-          type="button"
-          class="action-btn"
-          :aria-label="isPasswordVisible ? t('auth.hidePassword') : t('auth.showPassword')"
-          @click="togglePasswordVisibility"
-        >
-          <AppIcon :name="isPasswordVisible ? 'eyeOff' : 'eye'" :size="18" />
-        </button>
-
-        <div v-if="$slots['icon-right']" class="input-icon-slot trailing">
-          <slot name="icon-right" />
-        </div>
-      </div>
+      <AppIconButton
+        v-if="type === 'password' && !disabled"
+        size="sm"
+        :icon="isPasswordVisible ? 'eyeOff' : 'eye'"
+        :label="isPasswordVisible ? t('auth.hidePassword') : t('auth.showPassword')"
+        @click="togglePasswordVisibility"
+      />
     </div>
 
-    <p v-if="error" class="validation-message error" role="alert">
+    <p v-if="error" class="field-message is-error" role="alert">
       {{ error }}
     </p>
-    <p v-else-if="hint" class="validation-message hint">
+    <p v-else-if="hint" class="field-message">
       {{ hint }}
     </p>
   </div>
@@ -165,62 +138,47 @@ function togglePasswordVisibility(): void {
   width: 100%;
 }
 
-.input-label {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-text-secondary);
-}
-
 .required-star {
-  color: var(--color-primary);
+  color: var(--color-error);
 }
 
 .input-wrapper {
+  position: relative;
   display: flex;
   align-items: center;
-  position: relative;
-  background-color: var(--color-surface-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
   transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease,
-    background-color 0.15s ease;
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .input-wrapper:hover {
-  border-color: var(--border-hover);
+  border-color: var(--color-text-primary);
 }
 
 .input-wrapper:focus-within {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px var(--border-focus-primary);
+  box-shadow: inset 0 0 0 1px var(--color-primary);
 }
 
 .size-sm {
-  height: 34px;
+  height: 36px;
   padding: 0 var(--space-sm);
-  border-radius: var(--radius-md);
-  font-size: 0.8125rem;
+  font-size: var(--text-sm);
 }
 
 .size-md {
-  height: 44px;
+  height: 48px;
   padding: 0 var(--space-md);
-  border-radius: var(--radius-lg);
-  font-size: 0.9375rem;
+  font-size: var(--text-md);
 }
 
 .size-lg {
-  height: 52px;
-  padding: 0 var(--space-lg);
-  border-radius: var(--radius-xl);
-  font-size: 1rem;
+  height: 56px;
+  padding: 0 var(--space-md);
+  font-size: var(--text-md);
 }
 
 .native-input {
@@ -228,7 +186,6 @@ function togglePasswordVisibility(): void {
   min-width: 0;
   height: 100%;
   padding: 0;
-  color-scheme: dark;
   background: transparent;
   border: none;
   border-radius: inherit;
@@ -245,91 +202,36 @@ function togglePasswordVisibility(): void {
 .native-input:autofill,
 .native-input:-webkit-autofill {
   -webkit-text-fill-color: var(--color-text-primary);
-  box-shadow: 0 0 0 1000px var(--color-surface-card) inset;
+  box-shadow: 0 0 0 1000px var(--color-surface) inset;
   transition: background-color 5000s ease-in-out 0s;
   caret-color: var(--color-text-primary);
 }
 
-.has-error .input-wrapper {
+.has-error .input-wrapper,
+.has-error .input-wrapper:hover {
   border-color: var(--color-error);
 }
 
 .has-error .input-wrapper:focus-within {
   border-color: var(--color-error);
-  box-shadow: 0 0 0 3px var(--border-focus-error);
+  box-shadow: inset 0 0 0 1px var(--color-error);
 }
 
 .is-disabled {
-  opacity: 0.5;
+  opacity: 0.38;
   cursor: not-allowed;
 }
 
 .is-disabled .input-wrapper:hover {
-  border-color: var(--border-subtle);
+  border-color: var(--color-border);
 }
 
 .is-disabled .native-input {
   cursor: not-allowed;
 }
 
-.input-icon-slot {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-text-tertiary);
+.input-icon {
   flex-shrink: 0;
-}
-
-.input-icon-slot.leading {
-  margin-right: var(--space-xs);
-}
-
-.input-icon-slot.trailing {
-  margin-left: var(--space-xs);
-}
-
-.trailing-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2xs);
-  flex-shrink: 0;
-}
-
-.action-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border: none;
-  border-radius: var(--radius-full);
-  background: transparent;
-  color: var(--color-text-tertiary);
-  cursor: pointer;
-  outline: none;
-  transition:
-    color 0.15s ease,
-    background-color 0.15s ease;
-}
-
-.action-btn:hover {
-  color: var(--color-text-primary);
-  background-color: var(--color-surface-hover);
-}
-
-.validation-message {
-  margin: 0;
-  padding-left: 2px;
-  font-size: 0.75rem;
-  line-height: 1.4;
-}
-
-.validation-message.error {
-  color: var(--color-error);
-}
-
-.validation-message.hint {
-  color: var(--color-text-tertiary);
+  margin-right: var(--space-sm);
 }
 </style>

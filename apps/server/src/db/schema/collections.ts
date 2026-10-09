@@ -1,18 +1,19 @@
 import { pgTable, uuid, varchar, timestamp, pgEnum } from 'drizzle-orm/pg-core';
-import { profilesTable } from './profiles';
+import { usersTable } from './users';
 import { mediaTable } from './media';
 import { COLLECTION_CONSTRAINTS, CollectionVisibilityStatus } from '@memoro/shared';
+import { pgEnumValues } from '../pg-enum-values';
 
 export const collectionVisibilityEnum = pgEnum(
   'collection_visibility',
-  Object.values(CollectionVisibilityStatus) as [string, ...string[]],
+  pgEnumValues(CollectionVisibilityStatus),
 );
 
 export const collectionsTable = pgTable('collections', {
   id: uuid('id').primaryKey().defaultRandom(),
-  profileId: uuid('profile_id')
+  userId: uuid('user_id')
     .notNull()
-    .references(() => profilesTable.id, { onDelete: 'cascade' }),
+    .references(() => usersTable.id, { onDelete: 'cascade' }),
   title: varchar('title', { length: COLLECTION_CONSTRAINTS.TITLE_MAX_LENGTH }).notNull(),
   description: varchar('description', { length: COLLECTION_CONSTRAINTS.DESCRIPTION_MAX_LENGTH }),
   visibility: collectionVisibilityEnum('visibility').notNull().default('private'),
