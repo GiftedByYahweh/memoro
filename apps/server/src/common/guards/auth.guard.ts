@@ -1,7 +1,7 @@
 import type { FastifyRequest, preHandlerAsyncHookHandler } from 'fastify';
 import { DomainErrorCode } from '@memoro/shared';
 import { AppError } from '@/common/error/app.error';
-import { AUTH_COOKIE_NAME, type ValidateSessionUseCase } from '@/core/auth';
+import { readSessionToken, type ValidateSessionUseCase } from '@/core/auth';
 import type { ProfileRepository } from '@/core/profile';
 
 export interface AuthGuardDeps {
@@ -13,9 +13,7 @@ export function authGuard(deps: AuthGuardDeps): preHandlerAsyncHookHandler {
   const { validateSessionUseCase, profileRepository } = deps;
 
   return async (request: FastifyRequest): Promise<void> => {
-    const rawCookie = request.cookies[AUTH_COOKIE_NAME];
-    const unsigned = rawCookie ? request.unsignCookie(rawCookie) : null;
-    const sessionToken = unsigned?.valid ? unsigned.value : undefined;
+    const sessionToken = readSessionToken(request);
 
     if (!sessionToken) {
       throw new AppError(DomainErrorCode.SESSION_EXPIRED);

@@ -1,5 +1,9 @@
 import type { AppConfig } from '@/config';
+import type { UnitOfWork } from '@/db/unit-of-work';
+import type { Mailer } from '@/common/mailer';
 import { authGuard } from '@/common/guards/auth.guard';
+import type { UserRepository } from '@/core/user';
+import type { ProfileRepository } from '@/core/profile';
 import {
   authRoutes,
   createSessionUseCase,
@@ -10,14 +14,28 @@ import {
   sendVerificationCodeUseCase,
   validateSessionUseCase,
   verifyCodeUseCase,
+  type SessionRepository,
+  type VerificationCodeRepository,
 } from '@/core/auth';
-import type { Infrastructure } from './infrastructure.container';
-import type { Repositories } from './repositories.container';
 
-function initAuthUseCases(infra: Infrastructure, repos: Repositories, sessionMaxAgeMs: number) {
-  const { uow: unitOfWork, mailer } = infra;
-  const { userRepository, profileRepository, sessionRepository, verificationCodeRepository } =
-    repos;
+export interface AuthModuleDeps {
+  unitOfWork: UnitOfWork;
+  mailer: Mailer;
+  userRepository: UserRepository;
+  profileRepository: ProfileRepository;
+  sessionRepository: SessionRepository;
+  verificationCodeRepository: VerificationCodeRepository;
+}
+
+function initAuthUseCases(deps: AuthModuleDeps, sessionMaxAgeMs: number) {
+  const {
+    unitOfWork,
+    mailer,
+    userRepository,
+    profileRepository,
+    sessionRepository,
+    verificationCodeRepository,
+  } = deps;
 
   return {
     registerUseCase: registerUseCase({
@@ -48,12 +66,12 @@ function initAuthUseCases(infra: Infrastructure, repos: Repositories, sessionMax
   };
 }
 
-export function initAuthModule(infra: Infrastructure, repos: Repositories, config: AppConfig) {
-  const useCases = initAuthUseCases(infra, repos, config.session.maxAge);
+export function initAuthModule(deps: AuthModuleDeps, config: AppConfig) {
+  const useCases = initAuthUseCases(deps, config.session.maxAge);
 
   const guard = authGuard({
     validateSessionUseCase: useCases.validateSessionUseCase,
-    profileRepository: repos.profileRepository,
+    profileRepository: deps.profileRepository,
   });
 
   const routes = authRoutes({

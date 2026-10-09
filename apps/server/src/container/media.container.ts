@@ -1,27 +1,29 @@
 import type { preHandlerAsyncHookHandler } from 'fastify';
+import type { FileStorage } from '@/common/file-storage';
 import {
   abortMediaUseCase,
   completeMediaUseCase,
   createMediaUseCase,
   mediaRoutes,
+  type MediaRepository,
 } from '@/core/media';
-import type { Infrastructure } from './infrastructure.container';
-import type { Repositories } from './repositories.container';
 
-export function initMediaModule(
-  infra: Infrastructure,
-  repos: Repositories,
-  guard: preHandlerAsyncHookHandler,
-) {
-  const deps = { fileStorage: infra.fileStorage, mediaRepository: repos.mediaRepository };
+export interface MediaModuleDeps {
+  fileStorage: FileStorage;
+  mediaRepository: MediaRepository;
+  authGuard: preHandlerAsyncHookHandler;
+}
+
+export function initMediaModule(deps: MediaModuleDeps) {
+  const { authGuard, ...useCaseDeps } = deps;
 
   const useCases = {
-    createMediaUseCase: createMediaUseCase(deps),
-    completeMediaUseCase: completeMediaUseCase(deps),
-    abortMediaUseCase: abortMediaUseCase(deps),
+    createMediaUseCase: createMediaUseCase(useCaseDeps),
+    completeMediaUseCase: completeMediaUseCase(useCaseDeps),
+    abortMediaUseCase: abortMediaUseCase(useCaseDeps),
   };
 
-  const routes = mediaRoutes({ ...useCases, authGuard: guard });
+  const routes = mediaRoutes({ ...useCases, authGuard });
 
   return { useCases, routes };
 }

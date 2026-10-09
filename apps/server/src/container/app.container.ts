@@ -8,8 +8,22 @@ import { initMediaModule } from './media.container';
 export const createAppContainer = (config: AppConfig, logger: Logger = new ConsoleLogger()) => {
   const infrastructure = initInfrastructure(config, logger);
   const repositories = initRepositories(infrastructure.dbProvider);
-  const auth = initAuthModule(infrastructure, repositories, config);
-  const media = initMediaModule(infrastructure, repositories, auth.authGuard);
+  const auth = initAuthModule(
+    {
+      unitOfWork: infrastructure.uow,
+      mailer: infrastructure.mailer,
+      userRepository: repositories.userRepository,
+      profileRepository: repositories.profileRepository,
+      sessionRepository: repositories.sessionRepository,
+      verificationCodeRepository: repositories.verificationCodeRepository,
+    },
+    config,
+  );
+  const media = initMediaModule({
+    fileStorage: infrastructure.fileStorage,
+    mediaRepository: repositories.mediaRepository,
+    authGuard: auth.authGuard,
+  });
 
   return {
     infrastructure,

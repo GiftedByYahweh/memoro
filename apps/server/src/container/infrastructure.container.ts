@@ -6,7 +6,7 @@ import { unitOfWork, type UnitOfWork } from '@/db/unit-of-work';
 import { ResendMailerProvider, type Mailer } from '@/common/mailer';
 import { R2FileStorageProvider, type FileStorage } from '@/common/file-storage';
 
-export interface Infrastructure {
+interface Infrastructure {
   dbProvider: DBProvider;
   txContext: TxContext;
   uow: UnitOfWork;

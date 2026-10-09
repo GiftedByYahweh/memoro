@@ -17,6 +17,7 @@ import {
   sendVerificationCodeRouteSchema,
   verifyCodeRouteSchema,
 } from './auth.schema';
+import { readSessionToken } from './session-cookie';
 
 export interface AuthRoutesDeps {
   authGuard: preHandlerAsyncHookHandler;
@@ -37,7 +38,7 @@ function registerRoute(server: FastifyInstanceZod, registerUseCase: RegisterUseC
       email: body.email,
       password: body.password,
       username: body.username,
-      gender: body.gender,
+      sex: body.sex,
     });
 
     return user;
@@ -125,9 +126,7 @@ function logoutRoute(
   authGuard: preHandlerAsyncHookHandler,
 ): void {
   server.post(ApiRoutes.auth.logout, { preHandler: authGuard }, async (request, reply) => {
-    const rawCookie = request.cookies[AUTH_COOKIE_NAME];
-    const unsigned = rawCookie ? request.unsignCookie(rawCookie) : null;
-    const sessionToken = unsigned?.valid ? unsigned.value : undefined;
+    const sessionToken = readSessionToken(request);
 
     await logoutUseCase({
       sessionToken,
@@ -146,9 +145,7 @@ function sessionRoute(
   validateSessionUseCase: ValidateSessionUseCase,
 ): void {
   server.get(ApiRoutes.auth.session, async (request) => {
-    const rawCookie = request.cookies[AUTH_COOKIE_NAME];
-    const unsigned = rawCookie ? request.unsignCookie(rawCookie) : null;
-    const sessionToken = unsigned?.valid ? unsigned.value : undefined;
+    const sessionToken = readSessionToken(request);
 
     return validateSessionUseCase({
       sessionToken,

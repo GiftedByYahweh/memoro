@@ -17,7 +17,7 @@ interface RegisterInput {
   email: string;
   password: string;
   username: string;
-  gender: UserSex;
+  sex: UserSex;
 }
 
 interface RegisterOutput {
@@ -65,7 +65,7 @@ export function registerUseCase(deps: RegisterUseCaseDeps): RegisterUseCase {
       await profileRepository.create({
         userId: user.id,
         username: input.username,
-        sex: input.gender,
+        sex: input.sex,
       });
 
       await verificationCodeRepository.deleteByEmailAndType(

@@ -30,9 +30,8 @@ function registerCreateMediaRoute(
       schema: createMediaRouteSchema,
     },
     async (request) => {
-      const profileId = request.profile?.id ?? '';
       return useCase({
-        profileId,
+        profileId: request.profile.id,
         data: request.body,
       });
     },
@@ -51,10 +50,9 @@ function registerCompleteMediaRoute(
       schema: completeMediaRouteSchema,
     },
     async (request) => {
-      const profileId = request.profile?.id ?? '';
       return useCase({
         mediaId: request.params.id,
-        profileId,
+        profileId: request.profile.id,
         data: request.body,
       });
     },
@@ -73,10 +71,9 @@ function registerAbortMediaRoute(
       schema: abortMediaRouteSchema,
     },
     async (request) => {
-      const profileId = request.profile?.id ?? '';
       return useCase({
         mediaId: request.params.id,
-        profileId,
+        profileId: request.profile.id,
         data: request.body,
       });
     },

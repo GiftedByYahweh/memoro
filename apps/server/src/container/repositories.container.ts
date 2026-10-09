@@ -9,7 +9,7 @@ import {
 } from '@/core/auth';
 import { drizzleMediaRepository, type MediaRepository } from '@/core/media';
 
-export interface Repositories {
+interface Repositories {
   userRepository: UserRepository;
   profileRepository: ProfileRepository;
   sessionRepository: SessionRepository;

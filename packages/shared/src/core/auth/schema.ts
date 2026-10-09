@@ -29,7 +29,7 @@ export const registerSchema: z.ZodType<RegisterDto> = z.object({
     .trim()
     .min(PROFILE_CONSTRAINTS.USERNAME_MIN_LENGTH)
     .max(PROFILE_CONSTRAINTS.USERNAME_MAX_LENGTH),
-  gender: z.enum([UserSex.MALE, UserSex.FEMALE, UserSex.OTHER]),
+  sex: z.enum([UserSex.MALE, UserSex.FEMALE, UserSex.OTHER]),
 });
 
 export const loginSchema: z.ZodType<LoginDto> = z.object({

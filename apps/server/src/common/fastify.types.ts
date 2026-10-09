@@ -4,8 +4,8 @@ import type { Profile } from '@/core/profile';
 
 declare module 'fastify' {
   interface FastifyRequest {
-    user?: AuthUserDto;
-    profile?: Profile;
+    user: AuthUserDto;
+    profile: Profile;
   }
 }
 

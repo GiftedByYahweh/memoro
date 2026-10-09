@@ -15,7 +15,7 @@ export interface RegisterDto {
   readonly email: string;
   readonly password: string;
   readonly username: string;
-  readonly gender: UserSex;
+  readonly sex: UserSex;
 }
 
 export interface VerifyCodeDto {
