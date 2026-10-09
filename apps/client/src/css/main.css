@@ -68,3 +68,18 @@
 .text-link:focus-visible {
   box-shadow: 0 0 0 3px var(--color-focus-ring);
 }
+
+.surface-card {
+  width: 100%;
+  max-width: 448px;
+  padding: var(--space-xl) var(--space-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  background-color: var(--color-surface);
+}
+
+@media (width >= 600px) {
+  .surface-card {
+    padding: var(--space-2xl);
+  }
+}
