@@ -15,6 +15,10 @@ export const loadAppConfig = () => {
       level: env['LOG_LEVEL'] ?? 'info',
       pretty: env['NODE_ENV'] !== 'production',
     },
+    rateLimit: {
+      maxRequests: Number(requireEnv(env, 'RATE_LIMIT_MAX_REQUESTS')),
+      timeWindowMs: Number(requireEnv(env, 'RATE_LIMIT_TIME_WINDOW_MS')),
+    },
     session: {
       secret: requireEnv(env, 'SESSION_SECRET'),
       maxAge: Number(requireEnv(env, 'SESSION_MAX_AGE_MS')),

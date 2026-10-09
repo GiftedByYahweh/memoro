@@ -6,7 +6,9 @@ export const usersTable = pgTable('users', {
   id: uuid('id').defaultRandom().primaryKey(),
   email: varchar('email', { length: AUTH_CONSTRAINTS.EMAIL_MAX_LENGTH }).notNull().unique(),
   passwordHash: text('password_hash').notNull(),
-  username: varchar('username', { length: USER_CONSTRAINTS.USERNAME_MAX_LENGTH }).unique(),
+  username: varchar('username', { length: USER_CONSTRAINTS.USERNAME_MAX_LENGTH })
+    .notNull()
+    .unique(),
   sex: varchar('sex', {
     length: USER_CONSTRAINTS.SEX_MAX_LENGTH,
     enum: pgEnumValues(UserSex),

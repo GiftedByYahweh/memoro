@@ -21,11 +21,6 @@ import { HTTP_STATUS_BY_APP_ERROR, HTTP_STATUS_MESSAGES } from './common/error/h
 
 const DOCS_ROUTE_PREFIX = '/docs';
 
-const RATE_LIMIT = {
-  MAX_REQUESTS_PER_WINDOW: 100,
-  TIME_WINDOW: '1 minute',
-} as const;
-
 interface CreateServerOptions {
   container: AppContainer;
   config: AppConfig;
@@ -40,8 +35,8 @@ async function registerPlugins(server: FastifyInstance, config: AppConfig) {
   });
   await server.register(fastifyCookie, { secret: config.session.secret });
   await server.register(fastifyRateLimit, {
-    max: RATE_LIMIT.MAX_REQUESTS_PER_WINDOW,
-    timeWindow: RATE_LIMIT.TIME_WINDOW,
+    max: config.rateLimit.maxRequests,
+    timeWindow: config.rateLimit.timeWindowMs,
     errorResponseBuilder: () => {
       throw new AppError(HttpStatusCode.TOO_MANY_REQUESTS);
     },

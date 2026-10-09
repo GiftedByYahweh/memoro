@@ -1,9 +1,22 @@
 import { eq } from 'drizzle-orm';
+import { DomainErrorCode } from '@memoro/shared';
+import { AppError } from '@/common/error/app.error';
 import type { DBProvider } from '@/db/db.provider';
+import { isUniqueViolation } from '@/db/pg-errors';
 import { usersTable } from '@/db/schema/users';
 import type { User } from '../entities/user.entity';
 import { toUserEntity } from '../mappers/user.mapper';
 import type { CreateUserData, UserRepository } from './user.repository';
+
+function toUniqueViolationError(error: unknown): unknown {
+  if (isUniqueViolation(error, usersTable.email.uniqueName)) {
+    return new AppError(DomainErrorCode.USER_ALREADY_EXISTS);
+  }
+  if (isUniqueViolation(error, usersTable.username.uniqueName)) {
+    return new AppError(DomainErrorCode.USERNAME_ALREADY_EXISTS);
+  }
+  return error;
+}
 
 async function createUser(dbProvider: DBProvider, data: CreateUserData): Promise<User> {
   const [row] = await dbProvider
@@ -15,7 +28,10 @@ async function createUser(dbProvider: DBProvider, data: CreateUserData): Promise
       username: data.username,
       sex: data.sex,
     })
-    .returning();
+    .returning()
+    .catch((error: unknown) => {
+      throw toUniqueViolationError(error);
+    });
 
   if (!row) throw new Error('Failed to create user');
   return toUserEntity(row);

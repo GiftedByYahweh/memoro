@@ -64,7 +64,6 @@ export function initAuthModule(deps: AuthModuleDeps, config: AppConfig) {
 
   const routes = authRoutes({
     ...useCases,
-    authGuard: guard,
     isProduction: config.isProduction,
   });
 

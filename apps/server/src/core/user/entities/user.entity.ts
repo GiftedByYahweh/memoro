@@ -4,7 +4,7 @@ export interface User {
   id: string;
   email: string;
   passwordHash: string;
-  username: string | null;
+  username: string;
   sex: UserSex | null;
   createdAt: Date;
   updatedAt: Date;
