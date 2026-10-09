@@ -46,7 +46,8 @@ const { t } = useI18n();
   z-index: 100;
   padding-bottom: var(--safe-bottom);
   border-top: 1px solid var(--color-border);
-  background-color: var(--color-surface);
+  background-color: var(--color-surface-translucent);
+  backdrop-filter: blur(16px);
 }
 
 .nav-container {

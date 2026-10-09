@@ -230,6 +230,12 @@ The upload process must be painless, fast, and intelligent.
 - **Inputs (`AppInput`)** — outlined, 48px, radius 8, leading icon, placeholder as the label. Hover darkens border, focus = 2px blue border. Error = red border + short message below (`.field-message.is-error`).
 - **Chips (`AppChipGroup`)** — single-choice options (gender, later year filter). Unselected: outlined gray. Selected: `primary-container` fill + check icon. Rendered as `radiogroup`.
 - **Toast (`AppToast`)** — light: white surface, border, `--shadow-2`, status icon inside a 32px tinted circle (error: red on `--color-error-container` + reddish border; success: green on `--color-success-container`; info: blue on `--color-primary-container`), close button. Appears at the top, swipe to dismiss. No dark snackbars.
+- **Icon buttons (`AppIconButton`)** — the only round icon button. `plain`: transparent, hover overlay (back, close, password toggle). `floating`: white surface + border + `--shadow-1` (map controls, controls over photos). `active` state = `primary-container` fill. Always has an `aria-label`.
+- **Spinner (`AppSpinner`)** — single spinner, inherits `currentColor`.
+- **Bottom navigation** — translucent white bar (`--color-surface-translucent` + blur) with a top border; the active item is fully highlighted as a pill (`primary-container` + `on-primary-container`); center FAB is a flat blue circle (no shadow). Hidden on task screens (`meta.hideNav`, e.g. create memory). Keep it translucent: an opaque fixed layer over the WebGL map triggers a compositor artifact (blank strip at the top of the map).
+- **Page header (`AppPageHeader`)** — 28px/400 title, optional back button; no separate cancel buttons on task screens.
+- **Empty states** — icon in a 72px `primary-container` circle, one-line title, one-line description, optional primary action.
+- **Icon semantics** — `mapPin` = a place/address, `target` = my current location, `view3d` = 3D map, `north` = compass. One meaning per icon.
 - **Focus:** every interactive element has a visible `:focus-visible` ring (`--color-focus-ring`).
 - **Links:** `.text-link` — blue, weight 500, underline on hover.
 - **Icons:** each icon is a separate `.svg` file in `src/assets/icons`, colored via `currentColor`.
