@@ -187,14 +187,14 @@ The upload process must be painless, fast, and intelligent.
 3. **One `h1` per screen, describing the task.** The title is kept even when the screen is minimal — it orients the user (especially in multi-step flows) and is what assistive tech announces.
 4. **Brand shown once, small.** The logo sits next to the title, with `Memoro` as a small secondary line. No separate hero brand block above the form.
 5. **Semantic color only.** Blue = primary action / selection / focus. Green = success. Amber = warning (e.g. media without geolocation). Red = error / destructive. Never use these colors decoratively.
-6. **Mobile-first.** On phones, content sits directly on the white page (no card chrome). From `600px` up, content is wrapped in a bordered card on a subtle gray background.
+6. **Mobile-first, card on every width.** Auth and other standalone screens show a white bordered card on the subtle blue-gray page (`--color-bg-subtle`) on phones too — a single flat color looks empty. Card padding is smaller on phones (24/20px) and grows from `600px` up.
 
 ### 4.2 Color Tokens
 
 | Role                                                | Token                                                        | Value                             |
 | --------------------------------------------------- | ------------------------------------------------------------ | --------------------------------- |
 | Page background                                     | `--color-bg`                                                 | `#FFFFFF`                         |
-| Subtle background (desktop page behind cards)       | `--color-bg-subtle`                                          | `#F8F9FA`                         |
+| Subtle background (page behind cards)               | `--color-bg-subtle`                                          | `#F0F4F9`                         |
 | Surface (cards, inputs, toasts)                     | `--color-surface`                                            | `#FFFFFF`                         |
 | Surface variant (filled areas, icon circles)        | `--color-surface-variant`                                    | `#F1F3F4`                         |
 | Primary                                             | `--color-primary` / `-hover` / `-pressed`                    | `#1A73E8` / `#1765CC` / `#185ABC` |
@@ -262,7 +262,7 @@ Inline link (e.g. Forgot password?)
 
 ### 4.7 Transactional Emails
 
-- Same visual language as the auth screens: white card (radius 28, `#DADCE0` border) on `#F8F9FA`, header row = logo badge + title + small `Memoro`, divider, one short sentence, content, small footnote.
+- Same visual language as the auth screens: white card (radius 28, `#DADCE0` border) on `#F8F9FA` (email clients; app pages use `#F0F4F9`), header row = logo badge + title + small `Memoro`, divider, one short sentence, content, small footnote.
 - Logo is a CSS badge (blue `#1A73E8` rounded square with a white `M`) — SVG is blocked by most mail clients and we have no public image URL yet.
 - Verification code: monospace, 32px, letter-spaced, on a `primary-container` (`#E8F0FE`) block.
 - Table-based layout with inline styles only; always ship a plain-text alternative.

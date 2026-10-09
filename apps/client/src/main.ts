@@ -12,4 +12,7 @@ const app = createApp(App);
 app.use(VueQueryPlugin);
 app.use(i18n);
 app.use(router);
-app.mount('#app');
+
+void router.isReady().then(() => {
+  app.mount('#app');
+});

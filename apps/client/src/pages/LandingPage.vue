@@ -19,7 +19,7 @@ function handleNavigateApp(): void {
 </script>
 
 <template>
-  <main class="landing-page">
+  <main class="landing-page surface-card">
     <LandingHero
       :is-standalone="isStandalone"
       @install="handleInstall"
@@ -36,8 +36,5 @@ function handleNavigateApp(): void {
   flex-direction: column;
   align-items: center;
   gap: var(--space-2xl);
-  width: 100%;
-  max-width: 448px;
-  margin: 0 auto;
 }
 </style>

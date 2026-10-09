@@ -29,7 +29,7 @@ const ICON_SIZES = { sm: 18, md: 20, lg: 22 } as const;
 <template>
   <button
     type="button"
-    :class="['icon-btn', `variant-${variant}`, `size-${size}`, { 'is-active': active }]"
+    :class="['icon-btn', `icon-btn-${variant}`, `icon-btn-${size}`, { 'is-active': active }]"
     :aria-label="label"
     :title="label"
     :disabled="disabled"
@@ -73,29 +73,29 @@ const ICON_SIZES = { sm: 18, md: 20, lg: 22 } as const;
   cursor: not-allowed;
 }
 
-.size-sm {
+.icon-btn-sm {
   width: 32px;
   height: 32px;
 }
 
-.size-md {
+.icon-btn-md {
   width: 40px;
   height: 40px;
 }
 
-.size-lg {
+.icon-btn-lg {
   width: 44px;
   height: 44px;
 }
 
-.variant-floating {
+.icon-btn-floating {
   border-color: var(--color-border);
   background-color: var(--color-surface);
   color: var(--color-text-primary);
   box-shadow: var(--shadow-1);
 }
 
-.variant-floating:hover:not(:disabled) {
+.icon-btn-floating:hover:not(:disabled) {
   background-color: var(--color-bg-subtle);
 }
 
