@@ -2,7 +2,8 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import AppIcon from '@/components/shared/AppIcon.vue';
-import { MAP_CONTROL_ICON_SIZE, MAP_STYLES, type MapStyleKey } from '@/constants/map.constants';
+import AppIconButton from '@/components/shared/AppIconButton.vue';
+import { MAP_STYLES, type MapStyleKey } from '@/constants/map.constants';
 
 interface Props {
   activeStyle: MapStyleKey;
@@ -24,22 +25,14 @@ const emit = defineEmits<{
   resetNorth: [];
 }>();
 
+const STYLE_OPTIONS = Object.keys(MAP_STYLES) as MapStyleKey[];
+
 const { t } = useI18n();
 const isLayersOpen = ref(false);
 const controlsRef = ref<HTMLElement | null>(null);
-const styleOptions = Object.keys(MAP_STYLES) as MapStyleKey[];
 
-const compassTransform = computed(() => {
-  return `rotate(${String(-props.bearing)}deg)`;
-});
-
-const is3DActive = computed(() => {
-  return props.pitch > 0;
-});
-
-function toggleLayers(): void {
-  isLayersOpen.value = !isLayersOpen.value;
-}
+const compassTransform = computed(() => `rotate(${String(-props.bearing)}deg)`);
+const is3DActive = computed(() => props.pitch > 0);
 
 function handleSelectStyle(styleKey: MapStyleKey): void {
   emit('update:activeStyle', styleKey);
@@ -47,11 +40,8 @@ function handleSelectStyle(styleKey: MapStyleKey): void {
 }
 
 function handleOutsideClick(event: MouseEvent): void {
-  if (!controlsRef.value || !isLayersOpen.value) return;
-  const target = event.target as Node;
-  if (!controlsRef.value.contains(target)) {
-    isLayersOpen.value = false;
-  }
+  if (!isLayersOpen.value || !controlsRef.value) return;
+  if (!controlsRef.value.contains(event.target as Node)) isLayersOpen.value = false;
 }
 
 onMounted(() => {
@@ -65,201 +55,130 @@ onUnmounted(() => {
 
 <template>
   <div ref="controlsRef" class="map-controls">
-    <button
-      type="button"
-      class="control-btn"
-      :class="{ 'is-locating': isLocating }"
-      :disabled="isLocating"
-      :aria-label="t('map.locate')"
-      @click="emit('locate')"
-    >
-      <AppIcon name="target" :size="MAP_CONTROL_ICON_SIZE.TARGET" color="inherit" />
-    </button>
-
     <div class="layers-wrapper">
-      <button
-        type="button"
-        class="control-btn"
-        :class="{ 'is-active': isLayersOpen }"
-        :aria-label="t('map.layers')"
+      <AppIconButton
+        variant="floating"
+        size="lg"
+        icon="layers"
+        :label="t('map.layers')"
+        :active="isLayersOpen"
         aria-haspopup="true"
         :aria-expanded="isLayersOpen"
-        @click.stop="toggleLayers"
-      >
-        <AppIcon name="layers" :size="MAP_CONTROL_ICON_SIZE.LAYERS" color="inherit" />
-      </button>
-
+        @click.stop="isLayersOpen = !isLayersOpen"
+      />
       <Transition name="dropdown">
-        <div v-if="isLayersOpen" class="layers-dropdown" role="menu">
+        <div v-if="isLayersOpen" class="layers-menu" role="menu">
           <button
-            v-for="styleKey in styleOptions"
+            v-for="styleKey in STYLE_OPTIONS"
             :key="styleKey"
             type="button"
-            class="style-option-btn"
-            :class="{ 'is-selected': activeStyle === styleKey }"
-            role="menuitem"
+            role="menuitemradio"
+            :aria-checked="activeStyle === styleKey"
+            :class="['layers-option', { 'is-selected': activeStyle === styleKey }]"
             @click="handleSelectStyle(styleKey)"
           >
-            <span class="style-dot" />
-            <span class="style-name">{{ styleKey }}</span>
+            <span>{{ t(`map.styles.${styleKey}`) }}</span>
+            <AppIcon v-if="activeStyle === styleKey" name="check" :size="18" />
           </button>
         </div>
       </Transition>
     </div>
 
-    <button
-      type="button"
-      class="control-btn"
-      :class="{ 'is-active': is3DActive }"
-      :aria-label="t('map.view3D')"
+    <AppIconButton
+      variant="floating"
+      size="lg"
+      icon="view3d"
+      :label="t('map.view3D')"
+      :active="is3DActive"
       @click="emit('togglePitch')"
-    >
-      <AppIcon name="navigation" :size="MAP_CONTROL_ICON_SIZE.NAVIGATION" color="inherit" />
-    </button>
+    />
 
-    <button
-      type="button"
-      class="control-btn"
-      :aria-label="t('map.resetNorth')"
+    <AppIconButton
+      variant="floating"
+      size="lg"
+      :label="t('map.resetNorth')"
       @click="emit('resetNorth')"
     >
-      <span class="compass-wrap" :style="{ transform: compassTransform }">
-        <AppIcon name="north" :size="MAP_CONTROL_ICON_SIZE.NORTH" color="inherit" />
+      <span class="compass" :style="{ transform: compassTransform }">
+        <AppIcon name="north" :size="24" />
       </span>
-    </button>
+    </AppIconButton>
+
+    <AppIconButton
+      variant="floating"
+      size="lg"
+      icon="target"
+      :label="t('map.locate')"
+      :active="isLocating"
+      :class="{ 'is-locating': isLocating }"
+      :disabled="isLocating"
+      @click="emit('locate')"
+    />
   </div>
 </template>
 
 <style scoped>
 .map-controls {
   position: absolute;
-  top: 50%;
   right: var(--space-md);
+  bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + var(--space-md));
   z-index: 10;
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
-  transform: translateY(-50%);
-}
-
-.control-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-full);
-  background-color: var(--color-surface-translucent);
-  color: var(--color-text-secondary);
-  box-shadow: var(--shadow-1);
-  cursor: pointer;
-  backdrop-filter: blur(12px);
-  transition:
-    background-color var(--transition-fast),
-    color var(--transition-fast),
-    border-color var(--transition-fast),
-    transform var(--transition-fast);
-}
-
-.control-btn:hover {
-  border-color: var(--color-border-strong);
-  background-color: var(--color-state-hover);
-  color: var(--color-text-primary);
-}
-
-.control-btn:active {
-  transform: scale(0.95);
-}
-
-.control-btn.is-active {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-}
-
-.control-btn.is-locating {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-  cursor: default;
-}
-
-.control-btn.is-locating :deep(.app-icon) {
-  animation: locate-pulse 1s ease-in-out infinite alternate;
+  gap: var(--space-sm);
 }
 
 .layers-wrapper {
   position: relative;
 }
 
-.layers-dropdown {
+.layers-menu {
   position: absolute;
-  top: 50%;
+  top: 0;
   right: calc(100% + var(--space-xs));
   display: flex;
   flex-direction: column;
-  gap: var(--space-2xs);
-  min-width: 140px;
-  padding: var(--space-2xs);
+  min-width: 168px;
+  padding: var(--space-2xs) 0;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background-color: var(--color-surface-translucent);
-  box-shadow: var(--shadow-3);
-  transform: translateY(-50%);
-  backdrop-filter: blur(16px);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-2);
 }
 
-.style-option-btn {
+.layers-option {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
-  width: 100%;
-  padding: var(--space-xs) var(--space-sm);
+  justify-content: space-between;
+  gap: var(--space-sm);
+  height: 40px;
+  padding: 0 var(--space-md);
   border: none;
-  border-radius: var(--radius-sm);
   background: transparent;
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary);
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   text-align: left;
-  text-transform: capitalize;
-  cursor: pointer;
-  transition:
-    background-color var(--transition-fast),
-    color var(--transition-fast);
+  outline: none;
 }
 
-.style-option-btn:hover {
+.layers-option:hover,
+.layers-option:focus-visible {
   background-color: var(--color-state-hover);
-  color: var(--color-text-primary);
 }
 
-.style-option-btn.is-selected {
-  background-color: var(--color-primary-container);
+.layers-option.is-selected {
   color: var(--color-primary);
-  font-weight: 600;
+  font-weight: 500;
 }
 
-.style-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: var(--radius-full);
-  background-color: transparent;
-  transition: background-color var(--transition-fast);
-}
-
-.style-option-btn.is-selected .style-dot {
-  background-color: var(--color-primary);
-}
-
-.style-name {
-  flex: 1;
-}
-
-.compass-wrap {
+.compass {
   display: flex;
-  align-items: center;
-  justify-content: center;
   transition: transform var(--transition-fast);
+}
+
+.is-locating :deep(.app-icon) {
+  animation: locate-pulse 1s ease-in-out infinite alternate;
 }
 
 .dropdown-enter-active,
@@ -272,17 +191,15 @@ onUnmounted(() => {
 .dropdown-enter-from,
 .dropdown-leave-to {
   opacity: 0;
-  transform: translateY(-50%) translateX(8px);
+  transform: translateX(8px);
 }
 
 @keyframes locate-pulse {
   from {
-    transform: scale(0.85);
-    opacity: 0.6;
+    opacity: 0.5;
   }
 
   to {
-    transform: scale(1.15);
     opacity: 1;
   }
 }

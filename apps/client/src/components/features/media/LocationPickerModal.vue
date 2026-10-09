@@ -5,13 +5,14 @@ import { Map, Marker, type MapMouseEvent, type MapOptions } from 'maplibre-gl';
 import { icons } from '@/assets/icons';
 import AppButton from '@/components/shared/AppButton.vue';
 import AppIcon from '@/components/shared/AppIcon.vue';
+import AppIconButton from '@/components/shared/AppIconButton.vue';
+import AppPageHeader from '@/components/shared/AppPageHeader.vue';
 import { useGeolocation } from '@/composables/useGeolocation';
 import {
   DEFAULT_MAP_CENTER,
   DEFAULT_MAP_STYLE,
   DEFAULT_MAP_ZOOM,
   FLY_TO_DURATION_MS,
-  MAP_CONTROL_ICON_SIZE,
   MAX_MAP_ZOOM,
   MIN_MAP_ZOOM,
   USER_LOCATION_ZOOM,
@@ -62,7 +63,7 @@ function createMarkerPin(): HTMLElement {
   pin.className = 'map-picker-pin';
   const badge = document.createElement('div');
   badge.className = 'pin-badge';
-  badge.innerHTML = icons.target;
+  badge.innerHTML = icons.mapPin;
   const tip = document.createElement('div');
   tip.className = 'pin-tip';
   pin.appendChild(badge);
@@ -158,61 +159,48 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="location-picker-modal" role="dialog" aria-modal="true">
-    <div class="modal-header">
-      <button
-        type="button"
-        class="header-back-btn"
-        :aria-label="t('common.cancel')"
-        @click="emit('close')"
-      >
-        <AppIcon name="arrowLeft" :size="MAP_CONTROL_ICON_SIZE.NAVIGATION" color="inherit" />
-      </button>
-      <h2 class="header-title">{{ t('media.selectLocationTitle') }}</h2>
-      <div class="header-spacer" />
+  <div class="location-picker" role="dialog" aria-modal="true">
+    <div class="picker-header">
+      <AppPageHeader :title="t('media.selectLocationTitle')" show-back @back="emit('close')" />
     </div>
 
     <div class="map-viewport">
       <div ref="containerRef" class="map-surface" />
-      <button
-        type="button"
-        class="locate-fab"
+      <AppIconButton
+        variant="floating"
+        size="lg"
+        icon="target"
+        class="locate-btn"
+        :label="t('media.detectGps')"
+        :active="isLocating"
         :disabled="isLocating"
-        :aria-label="t('media.detectGps')"
         @click="handleFlyToCurrentLocation"
-      >
-        <AppIcon name="navigation" :size="MAP_CONTROL_ICON_SIZE.NAVIGATION" color="inherit" />
-      </button>
+      />
     </div>
 
-    <div class="modal-footer">
-      <div class="address-preview">
-        <AppIcon name="navigation" :size="16" color="primary" />
+    <div class="picker-footer">
+      <div class="address-row">
+        <AppIcon name="mapPin" :size="20" :color="currentLat === null ? 'secondary' : 'accent'" />
         <span class="address-text">{{
           isResolving
             ? t('media.resolvingAddress')
             : resolvedAddress || t('media.clickToSelectLocation')
         }}</span>
       </div>
-      <div class="footer-actions">
-        <AppButton variant="ghost" size="md" @click="emit('close')">
-          {{ t('common.cancel') }}
-        </AppButton>
-        <AppButton
-          variant="primary"
-          size="md"
-          :disabled="currentLat === null || currentLng === null"
-          @click="handleConfirm"
-        >
-          {{ t('media.confirmLocation') }}
-        </AppButton>
-      </div>
+      <AppButton
+        size="lg"
+        block
+        :disabled="currentLat === null || currentLng === null"
+        @click="handleConfirm"
+      >
+        {{ t('media.confirmLocation') }}
+      </AppButton>
     </div>
   </div>
 </template>
 
 <style scoped>
-.location-picker-modal {
+.location-picker {
   position: fixed;
   inset: 0;
   z-index: 1000;
@@ -221,55 +209,55 @@ onUnmounted(() => {
   background-color: var(--color-bg);
 }
 
-.modal-header {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-sm) var(--space-md);
-  background-color: var(--color-surface);
+.picker-header {
+  padding: calc(var(--safe-top) + var(--space-xs)) var(--space-md) 0;
   border-bottom: 1px solid var(--color-border);
 }
 
-.header-back-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  border: none;
-  border-radius: var(--radius-full);
-  background: transparent;
-  color: var(--color-text-primary);
-  cursor: pointer;
-}
-
-.header-title {
-  font-family: var(--font-sans);
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin: 0;
-}
-
-.header-spacer {
-  width: 36px;
+.picker-header :deep(.page-header) {
+  margin-bottom: var(--space-xs);
 }
 
 .map-viewport {
   position: relative;
   flex: 1;
-  width: 100%;
   overflow: hidden;
 }
 
 .map-surface {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
+}
+
+.locate-btn {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  z-index: 10;
+}
+
+.picker-footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-md) calc(var(--safe-bottom) + var(--space-md));
+  border-top: 1px solid var(--color-border);
+}
+
+.address-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-height: 24px;
+}
+
+.address-text {
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 :deep(.map-picker-pin) {
@@ -277,7 +265,6 @@ onUnmounted(() => {
   flex-direction: column;
   align-items: center;
   cursor: grab;
-  filter: drop-shadow(0 4px 10px rgb(0 0 0 / 60%));
 }
 
 :deep(.map-picker-pin:active) {
@@ -290,11 +277,11 @@ onUnmounted(() => {
   justify-content: center;
   width: 36px;
   height: 36px;
+  border: 2px solid var(--color-white);
   border-radius: var(--radius-full);
   background-color: var(--color-primary);
   color: var(--color-white);
-  border: 2px solid var(--color-surface);
-  transition: transform var(--transition-fast);
+  box-shadow: var(--shadow-2);
 }
 
 :deep(.pin-badge svg) {
@@ -302,69 +289,12 @@ onUnmounted(() => {
   height: 20px;
 }
 
-:deep(.map-picker-pin:hover .pin-badge) {
-  transform: scale(1.1);
-}
-
 :deep(.pin-tip) {
   width: 0;
   height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 8px solid var(--color-primary);
   margin-top: -1px;
-}
-
-.locate-fab {
-  position: absolute;
-  right: var(--space-md);
-  bottom: var(--space-md);
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-full);
-  background-color: var(--color-surface);
-  color: var(--color-text-primary);
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgb(0 0 0 / 40%);
-}
-
-.modal-footer {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  padding: var(--space-md);
-  background-color: var(--color-surface);
-  border-top: 1px solid var(--color-border);
-}
-
-.address-preview {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  min-height: 24px;
-}
-
-.address-text {
-  font-family: var(--font-sans);
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--color-text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.footer-actions {
-  display: flex;
-  gap: var(--space-sm);
-  justify-content: flex-end;
+  border-top: 8px solid var(--color-primary);
+  border-right: 6px solid transparent;
+  border-left: 6px solid transparent;
 }
 </style>

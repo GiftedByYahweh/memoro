@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MapControls from '@/components/features/map/MapControls.vue';
+import AppSpinner from '@/components/shared/AppSpinner.vue';
 import { type GeoError, useGeolocation } from '@/composables/useGeolocation';
 import { useMap } from '@/composables/useMap';
 import { useToast } from '@/composables/useToast';
@@ -78,7 +79,7 @@ onMounted(() => {
     <div ref="container" class="map-container" />
     <Transition name="fade">
       <div v-if="!isLoaded && !mapError" class="map-loading-overlay">
-        <div class="map-spinner" />
+        <AppSpinner :size="36" />
       </div>
     </Transition>
     <div v-if="mapError" class="map-error-overlay">
@@ -123,35 +124,26 @@ onMounted(() => {
   justify-content: center;
   z-index: 5;
   background-color: var(--color-bg);
+  color: var(--color-primary);
   pointer-events: none;
-}
-
-.map-spinner {
-  width: 36px;
-  height: 36px;
-  border: 3px solid var(--color-border);
-  border-top-color: var(--color-primary);
-  border-radius: var(--radius-full);
-  animation: map-spin 0.8s linear infinite;
 }
 
 .map-error-overlay {
   position: absolute;
-  top: var(--space-xl);
-  left: var(--space-md);
+  top: calc(var(--safe-top) + var(--space-md));
   right: var(--space-md);
+  left: var(--space-md);
   z-index: 20;
   padding: var(--space-sm) var(--space-md);
-  border: 1px solid var(--color-error);
-  border-radius: var(--radius-md);
-  background-color: var(--color-surface-translucent);
-  backdrop-filter: blur(12px);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-error-container);
+  box-shadow: var(--shadow-1);
 }
 
 .map-error-text {
+  margin: 0;
+  font-size: var(--text-sm);
   color: var(--color-error);
-  font-family: var(--font-sans);
-  font-size: 13px;
   text-align: center;
 }
 
@@ -161,12 +153,6 @@ onMounted(() => {
 
 .fade-leave-to {
   opacity: 0;
-}
-
-@keyframes map-spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 :deep(.user-location-puck) {

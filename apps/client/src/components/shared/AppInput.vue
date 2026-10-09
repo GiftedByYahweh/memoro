@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 
 import type { IconName } from '@/assets/icons';
 import AppIcon from './AppIcon.vue';
+import AppIconButton from './AppIconButton.vue';
 
 interface Props {
   modelValue?: string | number;
@@ -17,7 +18,6 @@ interface Props {
   disabled?: boolean;
   readonly?: boolean;
   required?: boolean;
-  clearable?: boolean;
   id?: string;
   name?: string;
   autocomplete?: string;
@@ -37,7 +37,6 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   readonly: false,
   required: false,
-  clearable: false,
   id: undefined,
   name: undefined,
   autocomplete: undefined,
@@ -49,7 +48,6 @@ const emit = defineEmits<{
   'update:modelValue': [value: string | number];
   focus: [event: FocusEvent];
   blur: [event: FocusEvent];
-  clear: [];
 }>();
 
 const { t } = useI18n();
@@ -66,20 +64,11 @@ const computedType = computed(() => {
   return props.type;
 });
 
-const hasValue = computed(() => {
-  return props.modelValue !== '';
-});
-
 function handleInput(event: Event): void {
   const target = event.target as HTMLInputElement;
   const value =
     props.type === 'number' && target.value !== '' ? Number(target.value) : target.value;
   emit('update:modelValue', value);
-}
-
-function handleClear(): void {
-  emit('update:modelValue', '');
-  emit('clear');
 }
 
 function togglePasswordVisibility(): void {
@@ -123,27 +112,13 @@ function togglePasswordVisibility(): void {
         @blur="emit('blur', $event)"
       />
 
-      <div class="trailing-actions">
-        <button
-          v-if="clearable && hasValue && !disabled && !readonly"
-          type="button"
-          class="action-btn"
-          :aria-label="t('common.clear')"
-          @click="handleClear"
-        >
-          <AppIcon name="close" :size="16" />
-        </button>
-
-        <button
-          v-if="type === 'password' && !disabled"
-          type="button"
-          class="action-btn"
-          :aria-label="isPasswordVisible ? t('auth.hidePassword') : t('auth.showPassword')"
-          @click="togglePasswordVisibility"
-        >
-          <AppIcon :name="isPasswordVisible ? 'eyeOff' : 'eye'" :size="18" />
-        </button>
-      </div>
+      <AppIconButton
+        v-if="type === 'password' && !disabled"
+        size="sm"
+        :icon="isPasswordVisible ? 'eyeOff' : 'eye'"
+        :label="isPasswordVisible ? t('auth.hidePassword') : t('auth.showPassword')"
+        @click="togglePasswordVisibility"
+      />
     </div>
 
     <p v-if="error" class="field-message is-error" role="alert">
@@ -258,36 +233,5 @@ function togglePasswordVisibility(): void {
 .input-icon {
   flex-shrink: 0;
   margin-right: var(--space-sm);
-}
-
-.trailing-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2xs);
-  flex-shrink: 0;
-}
-
-.action-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  border: none;
-  border-radius: var(--radius-full);
-  background: transparent;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  outline: none;
-  transition:
-    color var(--transition-fast),
-    background-color var(--transition-fast);
-}
-
-.action-btn:hover,
-.action-btn:focus-visible {
-  color: var(--color-text-primary);
-  background-color: var(--color-state-hover);
 }
 </style>

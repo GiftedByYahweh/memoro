@@ -107,7 +107,7 @@ export const routes: RouteRecordRaw[] = [
     path: RoutePaths.createMedia.path,
     name: RoutePaths.createMedia.name,
     component: () => import('../pages/CreateMediaPage.vue'),
-    meta: { layout: appLayouts.main, requiresAuth: RoutePaths.createMedia.auth },
+    meta: { layout: appLayouts.main, requiresAuth: RoutePaths.createMedia.auth, hideNav: true },
   },
   {
     path: RoutePaths.albums.path,

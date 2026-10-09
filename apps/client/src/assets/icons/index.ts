@@ -18,6 +18,8 @@ import layers from './layers.svg?raw';
 import info from './info.svg?raw';
 import lock from './lock.svg?raw';
 import logo from './logo.svg?raw';
+import logout from './logout.svg?raw';
+import mapPin from './map-pin.svg?raw';
 import mail from './mail.svg?raw';
 import moreVertical from './more-vertical.svg?raw';
 import navigation from './navigation.svg?raw';
@@ -32,6 +34,7 @@ import sun from './sun.svg?raw';
 import target from './target.svg?raw';
 import trash from './trash.svg?raw';
 import user from './user.svg?raw';
+import view3d from './view-3d.svg?raw';
 
 export const icons = {
   alertCircle,
@@ -54,7 +57,9 @@ export const icons = {
   info,
   lock,
   logo,
+  logout,
   mail,
+  mapPin,
   moreVertical,
   navigation,
   north,
@@ -68,6 +73,7 @@ export const icons = {
   target,
   trash,
   user,
+  view3d,
 } as const;
 
 export type IconName = keyof typeof icons;

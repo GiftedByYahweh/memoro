@@ -1,8 +1,6 @@
 {
   "common": {
-    "clear": "Clear field",
     "close": "Close",
-    "cancel": "Cancel",
     "back": "Back"
   },
   "auth": {
@@ -54,19 +52,17 @@
   },
   "feed": {
     "title": "Feed",
-    "emptyTitle": "No memories yet",
-    "emptyDescription": "Capture moments on the map to see your timeline here."
+    "emptyTitle": "Your memories will appear here",
+    "emptyDescription": "Add your first photo or video"
   },
   "albums": {
     "title": "Albums",
-    "emptyTitle": "No collections created",
-    "emptyDescription": "Organize your trips and moments into dedicated photo albums."
+    "emptyTitle": "No albums yet",
+    "emptyDescription": "Group memories by trips and periods"
   },
   "profile": {
     "title": "Profile",
-    "freePlan": "Free Plan",
-    "signOut": "Sign Out",
-    "defaultUser": "User"
+    "signOut": "Sign out"
   },
   "validation": {
     "required": "This field is required",
@@ -99,53 +95,56 @@
     "locationError": "Failed to determine your location",
     "locationPermissionDenied": "Location access is blocked. Please enable location permissions in browser or device settings.",
     "locationUnavailable": "Device location services are turned off. Please turn on location services in device settings.",
-    "locationTimeout": "Location request timed out. Please try again."
+    "locationTimeout": "Location request timed out. Please try again.",
+    "styles": {
+      "dark": "Dark",
+      "fiord": "Fiord",
+      "liberty": "Classic",
+      "positron": "Light",
+      "bright": "Bright"
+    }
   },
   "landing": {
-    "badge": "Next-Gen PWA Experience",
-    "title": "Your Private Memory Archive",
-    "subtitle": "Preserve your life moments anchored to precise time and location on the map. Fast, private, on any device.",
-    "installApp": "Install App",
+    "title": "Your memories on the map",
+    "subtitle": "Photos and videos tied to place and time.",
+    "installApp": "Install",
     "openApp": "Open Memoro",
-    "openInBrowser": "Continue in browser",
+    "openInBrowser": "Open in browser",
     "features": {
-      "geoTitle": "Geo-Anchored Memories",
-      "geoDesc": "Every photo and memory finds its precise spot on an interactive 3D map.",
-      "pwaTitle": "Instant Offline Access",
-      "pwaDesc": "Install as a native application directly from your browser. Works seamlessly offline.",
-      "privacyTitle": "Total Privacy",
-      "privacyDesc": "Your lifetime archive is securely encrypted. Only you hold access to your memories."
+      "geoTitle": "Memory map",
+      "geoDesc": "Every photo in its place",
+      "pwaTitle": "Feels like an app",
+      "pwaDesc": "Installs right from the browser",
+      "privacyTitle": "Yours only",
+      "privacyDesc": "Private archive, no ads"
     },
     "iosGuide": {
-      "title": "How to install on iPhone",
-      "step1": "Tap the 'Share' button in Safari's bottom toolbar",
-      "step2": "Scroll down and select 'Add to Home Screen'",
-      "step3": "Tap 'Add' in the top right corner",
+      "title": "Install on iPhone",
+      "step1": "Tap “Share” in Safari",
+      "step2": "Choose “Add to Home Screen”",
+      "step3": "Tap “Add”",
       "gotIt": "Got it"
     }
   },
   "media": {
-    "createTitle": "New Memory",
-    "uploadPrompt": "Click or drop photo or video",
-    "supportedFormats": "JPEG, PNG, WebP, MP4, MOV",
-    "chooseFile": "Choose File",
+    "createTitle": "New memory",
+    "uploadPrompt": "Add a photo or video",
+    "supportedFormats": "JPEG, PNG, WebP, HEIC, MP4, MOV",
     "removeFile": "Remove File",
-    "location": "Location",
     "locationRequired": "Please specify a location",
-    "locationPlaceholder": "Select or detect location",
-    "resolvingAddress": "Resolving address...",
-    "detectGps": "Detect via GPS",
-    "pickOnMap": "Pick on map",
-    "clearLocation": "Clear",
-    "selectLocationTitle": "Select location on map",
-    "clickToSelectLocation": "Click on map to select location",
-    "confirmLocation": "Confirm",
+    "locationPlaceholder": "Where was it?",
+    "resolvingAddress": "Finding address…",
+    "detectGps": "My location",
+    "pickOnMap": "On map",
+    "clearLocation": "Remove location",
+    "selectLocationTitle": "Choose a place",
+    "clickToSelectLocation": "Tap the map to drop a pin",
+    "confirmLocation": "Done",
     "sourceExif": "From photo",
-    "sourceGps": "From GPS",
-    "sourceMap": "From map",
-    "locating": "Detecting location...",
-    "submit": "Save to archive",
-    "uploadSuccess": "Memory added successfully",
+    "sourceGps": "GPS",
+    "sourceMap": "Map",
+    "submit": "Save",
+    "uploadSuccess": "Memory added",
     "uploadFailed": "Failed to upload file",
     "fileRequired": "Please choose a file to upload",
     "unsupportedFormat": "Unsupported file format"

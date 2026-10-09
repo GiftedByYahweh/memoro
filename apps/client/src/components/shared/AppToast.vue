@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import AppIcon from '@/components/shared/AppIcon.vue';
+import AppIconButton from '@/components/shared/AppIconButton.vue';
 import type { IconName } from '@/assets/icons';
 import { TOAST_TYPE, useToast, type ToastType } from '@/composables/useToast';
 
@@ -10,7 +11,6 @@ const RESISTANCE_FACTOR = 0.25;
 const MIN_DRAG_OPACITY = 0.2;
 const OPACITY_DIVISOR_Y = 100;
 const OPACITY_DIVISOR_X = 200;
-const CLOSE_ICON_SIZE = 16;
 
 const TOAST_ICONS = {
   [TOAST_TYPE.ERROR]: 'alertCircle',
@@ -118,15 +118,13 @@ function handlePointerCancel(event: PointerEvent, id: string): void {
         <div class="toast-content">
           <p class="toast-message">{{ toast.message }}</p>
         </div>
-        <button
-          type="button"
-          class="toast-close"
-          :aria-label="t('common.close')"
+        <AppIconButton
+          size="sm"
+          icon="close"
+          :label="t('common.close')"
           @pointerdown.stop
           @click.stop="dismissToast(toast.id)"
-        >
-          <AppIcon name="close" :size="CLOSE_ICON_SIZE" color="inherit" />
-        </button>
+        />
       </div>
     </TransitionGroup>
   </div>
@@ -206,27 +204,6 @@ function handlePointerCancel(event: PointerEvent, id: string): void {
   line-height: 1.45;
   white-space: pre-wrap;
   overflow-wrap: break-word;
-}
-
-.toast-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  flex-shrink: 0;
-  padding: 0;
-  border: none;
-  border-radius: var(--radius-full);
-  background: transparent;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition: background-color var(--transition-fast);
-}
-
-.toast-close:hover,
-.toast-close:focus-visible {
-  background-color: var(--color-state-hover);
 }
 
 .toast-enter-active,

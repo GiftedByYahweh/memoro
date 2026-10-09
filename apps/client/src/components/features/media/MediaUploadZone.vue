@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { MediaType } from '@memoro/shared';
 import AppIcon from '@/components/shared/AppIcon.vue';
+import AppIconButton from '@/components/shared/AppIconButton.vue';
 import { MEDIA_ACCEPT_ATTRIBUTE } from '@/constants/media.constants';
 
 interface Props {
@@ -46,7 +47,7 @@ function handleDrop(event: DragEvent): void {
 </script>
 
 <template>
-  <div class="upload-zone-wrapper">
+  <div class="upload-zone">
     <input
       ref="fileInput"
       type="file"
@@ -58,8 +59,7 @@ function handleDrop(event: DragEvent): void {
 
     <div
       v-if="!previewUrl"
-      class="dropzone-box"
-      :class="{ 'is-dragging': isDragging, 'is-disabled': disabled }"
+      :class="['dropzone', { 'is-dragging': isDragging, 'is-disabled': disabled }]"
       role="button"
       tabindex="0"
       @click="triggerFileInput"
@@ -69,46 +69,37 @@ function handleDrop(event: DragEvent): void {
       @dragleave.prevent="isDragging = false"
       @drop.prevent="handleDrop"
     >
-      <div class="icon-circle">
-        <AppIcon name="camera" :size="48" color="primary" />
-      </div>
+      <span class="dropzone-icon">
+        <AppIcon name="camera" :size="32" />
+      </span>
       <p class="dropzone-title">{{ t('media.uploadPrompt') }}</p>
-      <p class="dropzone-subtitle">{{ t('media.supportedFormats') }}</p>
-      <button type="button" class="choose-btn" :disabled="disabled" @click.stop="triggerFileInput">
-        <AppIcon name="plus" :size="20" color="inherit" />
-        <span>{{ t('media.chooseFile') }}</span>
-      </button>
+      <p class="dropzone-formats">{{ t('media.supportedFormats') }}</p>
     </div>
 
-    <div v-else class="preview-box">
+    <div v-else class="preview">
       <video
         v-if="mediaType === MediaType.VIDEO"
         :src="previewUrl"
         controls
         playsinline
-        class="preview-element"
+        class="preview-media"
       />
-      <img v-else :src="previewUrl" :alt="fileName ?? ''" class="preview-element" />
-
-      <button
-        type="button"
+      <img v-else :src="previewUrl" :alt="fileName ?? ''" class="preview-media" />
+      <AppIconButton
+        variant="floating"
+        size="sm"
+        icon="close"
         class="remove-btn"
-        :aria-label="t('media.removeFile')"
+        :label="t('media.removeFile')"
         :disabled="disabled"
         @click="emit('remove')"
-      >
-        <AppIcon name="close" :size="16" color="inherit" />
-      </button>
-
-      <div v-if="fileName" class="preview-meta">
-        <span class="preview-filename">{{ fileName }}</span>
-      </div>
+      />
     </div>
   </div>
 </template>
 
 <style scoped>
-.upload-zone-wrapper {
+.upload-zone {
   width: 100%;
 }
 
@@ -116,143 +107,78 @@ function handleDrop(event: DragEvent): void {
   display: none;
 }
 
-.dropzone-box {
+.dropzone {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: var(--space-xs);
-  min-height: 240px;
+  min-height: 220px;
   padding: var(--space-xl) var(--space-md);
   border: 2px dashed var(--color-border);
   border-radius: var(--radius-xl);
-  background-color: var(--color-surface);
+  background-color: var(--color-bg-subtle);
   cursor: pointer;
+  outline: none;
   transition:
     border-color var(--transition-fast),
     background-color var(--transition-fast);
 }
 
-.dropzone-box:hover,
-.dropzone-box.is-dragging {
+.dropzone:hover,
+.dropzone:focus-visible,
+.dropzone.is-dragging {
   border-color: var(--color-primary);
-  background-color: var(--color-surface-variant);
+  background-color: var(--color-primary-container);
 }
 
-.dropzone-box.is-disabled {
-  opacity: 0.5;
+.dropzone.is-disabled {
+  opacity: 0.38;
   cursor: not-allowed;
 }
 
-.icon-circle {
+.dropzone-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 80px;
-  height: 80px;
-  border-radius: var(--radius-full);
-  background-color: var(--color-surface-variant);
-  border: 1px solid var(--color-border);
+  width: 64px;
+  height: 64px;
   margin-bottom: var(--space-2xs);
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary-container);
+  color: var(--color-on-primary-container);
 }
 
 .dropzone-title {
-  font-family: var(--font-sans);
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  text-align: center;
   margin: 0;
-}
-
-.dropzone-subtitle {
-  font-family: var(--font-sans);
-  font-size: 0.8125rem;
-  color: var(--color-text-tertiary);
-  text-align: center;
-  margin: 0;
-}
-
-.choose-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2xs);
-  margin-top: var(--space-sm);
-  padding: var(--space-xs) var(--space-md);
-  font-family: var(--font-sans);
-  font-size: 0.875rem;
-  font-weight: 600;
-  border-radius: var(--radius-full);
-  border: 1px solid var(--color-border);
-  background-color: var(--color-surface-variant);
+  font-size: var(--text-md);
+  font-weight: 500;
   color: var(--color-text-primary);
-  cursor: pointer;
-  transition:
-    background-color var(--transition-fast),
-    border-color var(--transition-fast);
 }
 
-.choose-btn:hover {
-  background-color: var(--color-state-hover);
-  border-color: var(--color-border-strong);
+.dropzone-formats {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
 }
 
-.preview-box {
+.preview {
   position: relative;
-  width: 100%;
-  max-height: 380px;
-  border-radius: var(--radius-xl);
   overflow: hidden;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background-color: var(--color-surface-variant);
 }
 
-.preview-element {
+.preview-media {
+  display: block;
   width: 100%;
   max-height: 380px;
   object-fit: contain;
-  display: block;
-  background-color: var(--color-bg);
 }
 
 .remove-btn {
   position: absolute;
   top: var(--space-sm);
   right: var(--space-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-full);
-  background-color: var(--color-surface-translucent);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--color-border);
-  color: var(--color-white);
-  cursor: pointer;
-  transition:
-    background-color var(--transition-fast),
-    transform var(--transition-fast);
-}
-
-.remove-btn:hover {
-  background-color: var(--color-error);
-  transform: scale(1.05);
-}
-
-.preview-meta {
-  padding: var(--space-xs) var(--space-md);
-  background-color: var(--color-surface);
-  border-top: 1px solid var(--color-border);
-}
-
-.preview-filename {
-  font-family: var(--font-sans);
-  font-size: 0.8125rem;
-  color: var(--color-text-secondary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: block;
 }
 </style>

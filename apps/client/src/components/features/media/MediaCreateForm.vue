@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import type { MediaDto } from '@memoro/shared';
 import AppButton from '@/components/shared/AppButton.vue';
 import AppIcon from '@/components/shared/AppIcon.vue';
+import AppIconButton from '@/components/shared/AppIconButton.vue';
 import { useGeolocation } from '@/composables/useGeolocation';
 import { useMediaUpload } from '@/composables/useMediaUpload';
 import { useToast } from '@/composables/useToast';
@@ -13,7 +14,6 @@ import LocationPickerModal from './LocationPickerModal.vue';
 
 const emit = defineEmits<{
   success: [response: MediaDto];
-  cancel: [];
 }>();
 
 const { t } = useI18n();
@@ -115,46 +115,34 @@ async function handleSubmit(): Promise<void> {
       @remove="clearFile"
     />
 
-    <div class="meta-section">
-      <div class="section-header">
-        <span class="section-title">
-          {{ t('media.location') }} <span class="required-star">*</span>
-        </span>
-        <span v-if="sourceLabel" class="source-badge">{{ sourceLabel }}</span>
-      </div>
-
-      <div class="location-field" :class="{ 'has-value': hasLocation }">
-        <div class="field-icon-wrapper">
-          <AppIcon name="navigation" :size="18" :color="hasLocation ? 'primary' : 'inherit'" />
-        </div>
-        <span class="field-value-text" :class="{ placeholder: !hasLocation }">
-          {{ displayAddress }}
-        </span>
-        <button
+    <section class="location-section">
+      <div :class="['location-row', { 'has-value': hasLocation }]">
+        <AppIcon name="mapPin" :size="20" :color="hasLocation ? 'accent' : 'secondary'" />
+        <span class="location-text">{{ displayAddress }}</span>
+        <span v-if="sourceLabel" class="source-chip">{{ sourceLabel }}</span>
+        <AppIconButton
           v-if="hasLocation"
-          type="button"
-          class="field-clear-btn"
+          size="sm"
+          icon="close"
+          :label="t('media.clearLocation')"
           :disabled="isUploading"
-          :aria-label="t('media.clearLocation')"
           @click="handleRemoveLocation"
-        >
-          <AppIcon name="close" :size="16" color="inherit" />
-        </button>
+        />
       </div>
 
-      <div class="location-controls">
+      <div class="location-actions">
         <AppButton
           variant="secondary"
           size="sm"
-          :disabled="isLocating || isUploading"
+          :loading="isLocating"
+          :disabled="isUploading"
           @click="handleDetectLocation"
         >
           <template #icon-left>
-            <AppIcon name="navigation" :size="16" color="inherit" />
+            <AppIcon name="target" :size="18" />
           </template>
-          {{ isLocating ? t('media.locating') : t('media.detectGps') }}
+          {{ t('media.detectGps') }}
         </AppButton>
-
         <AppButton
           variant="secondary"
           size="sm"
@@ -162,35 +150,23 @@ async function handleSubmit(): Promise<void> {
           @click="isMapPickerOpen = true"
         >
           <template #icon-left>
-            <AppIcon name="target" :size="16" color="inherit" />
+            <AppIcon name="mapPin" :size="18" />
           </template>
           {{ t('media.pickOnMap') }}
         </AppButton>
       </div>
-    </div>
+    </section>
 
-    <div class="form-actions">
-      <AppButton
-        type="submit"
-        variant="primary"
-        size="lg"
-        block
-        :disabled="!file || !hasLocation || isUploading || isResolvingAddress"
-        :loading="isUploading"
-      >
-        {{ t('media.submit') }}
-      </AppButton>
-      <AppButton
-        type="button"
-        variant="ghost"
-        size="md"
-        block
-        :disabled="isUploading"
-        @click="emit('cancel')"
-      >
-        {{ t('common.cancel') }}
-      </AppButton>
-    </div>
+    <AppButton
+      type="submit"
+      size="lg"
+      block
+      class="submit-btn"
+      :disabled="!file || !hasLocation || isResolvingAddress"
+      :loading="isUploading"
+    >
+      {{ t('media.submit') }}
+    </AppButton>
 
     <LocationPickerModal
       v-if="isMapPickerOpen"
@@ -205,127 +181,63 @@ async function handleSubmit(): Promise<void> {
 <style scoped>
 .media-create-form {
   display: flex;
+  flex: 1;
   flex-direction: column;
-  gap: var(--space-xl);
+  gap: var(--space-lg);
   width: 100%;
 }
 
-.meta-section {
+.location-section {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-  padding: var(--space-md);
-  border-radius: var(--radius-lg);
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
 }
 
-.section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.section-title {
-  font-family: var(--font-sans);
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-text-secondary);
-}
-
-.required-star {
-  color: var(--color-primary);
-}
-
-.source-badge {
-  font-family: var(--font-sans);
-  font-size: 0.6875rem;
-  font-weight: 600;
-  padding: 2px var(--space-xs);
-  border-radius: var(--radius-sm);
-  background-color: var(--color-surface-variant);
-  color: var(--color-primary);
-  border: 1px solid var(--color-border);
-}
-
-.location-field {
+.location-row {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-md);
-  background-color: var(--color-surface-variant);
+  min-height: 48px;
+  padding: 0 var(--space-xs) 0 var(--space-md);
   border: 1px solid var(--color-border);
-  min-height: 44px;
+  border-radius: var(--radius-md);
 }
 
-.location-field.has-value {
+.location-row.has-value {
   border-color: var(--color-primary);
 }
 
-.field-icon-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-text-tertiary);
-}
-
-.field-value-text {
+.location-text {
   flex: 1;
-  font-family: var(--font-sans);
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--color-text-primary);
-  white-space: nowrap;
+  min-width: 0;
   overflow: hidden;
+  font-size: var(--text-md);
+  color: var(--color-text-tertiary);
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.field-value-text.placeholder {
-  color: var(--color-text-tertiary);
-  font-weight: 400;
+.has-value .location-text {
+  color: var(--color-text-primary);
 }
 
-.field-clear-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border: none;
-  border-radius: var(--radius-full);
-  background: transparent;
-  color: var(--color-text-tertiary);
-  cursor: pointer;
+.source-chip {
   flex-shrink: 0;
-  transition:
-    color var(--transition-fast),
-    background-color var(--transition-fast);
+  padding: 2px var(--space-xs);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+  font-size: var(--text-xs);
+  font-weight: 500;
 }
 
-.field-clear-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.field-clear-btn:hover:not(:disabled) {
-  color: var(--color-error);
-  background-color: var(--color-surface);
-}
-
-.location-controls {
+.location-actions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-xs);
 }
 
-.form-actions {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
+.submit-btn {
   margin-top: auto;
 }
 </style>

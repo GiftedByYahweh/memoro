@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import AppSpinner from './AppSpinner.vue';
+
 interface Props {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
   size?: 'sm' | 'md' | 'lg';
@@ -44,7 +46,7 @@ function handleClick(event: MouseEvent): void {
     ]"
     @click="handleClick"
   >
-    <span v-if="loading" class="spinner" aria-hidden="true" />
+    <AppSpinner v-if="loading" :size="16" />
     <span v-if="$slots['icon-left'] && !loading" class="btn-adornment">
       <slot name="icon-left" />
     </span>
@@ -165,20 +167,5 @@ function handleClick(event: MouseEvent): void {
 
 .btn-danger:hover:not(:disabled) {
   background-color: var(--color-error-container-hover);
-}
-
-.spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid var(--spinner-track);
-  border-top-color: currentcolor;
-  border-radius: var(--radius-full);
-  animation: spin 0.75s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 </style>

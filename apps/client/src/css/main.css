@@ -4,12 +4,15 @@
 .page-container {
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
   width: 100%;
+  min-height: 100dvh;
+  padding: calc(var(--safe-top) + var(--space-md)) var(--space-md)
+    calc(var(--safe-bottom) + var(--space-xl));
   background-color: var(--color-bg);
-  padding: var(--space-xl) var(--space-md)
-    calc(var(--bottom-nav-height) + var(--safe-bottom) + var(--space-xl));
-  box-sizing: border-box;
+}
+
+.has-nav .page-container {
+  padding-bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + var(--space-xl));
 }
 
 .step-fade-enter-active,

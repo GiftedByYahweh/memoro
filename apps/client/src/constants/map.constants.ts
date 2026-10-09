@@ -50,10 +50,3 @@ export const GEO_ERROR_ENTRIES = [
 export const PITCH_3D_DEGREES = 55;
 export const PITCH_2D_DEGREES = 0;
 export const BEARING_NORTH_DEGREES = 0;
-
-export const MAP_CONTROL_ICON_SIZE = {
-  TARGET: 22,
-  LAYERS: 22,
-  NAVIGATION: 20,
-  NORTH: 24,
-} as const;
