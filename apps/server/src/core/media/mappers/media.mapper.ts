@@ -7,7 +7,7 @@ type MediaRecord = typeof mediaTable.$inferSelect;
 export function toMediaDomain(record: MediaRecord): Media {
   return {
     id: record.id,
-    profileId: record.profileId,
+    userId: record.userId,
     fileKey: record.fileKey,
     contentType: record.contentType,
     status: record.status,
@@ -31,12 +31,12 @@ export function toMediaDomain(record: MediaRecord): Media {
 }
 
 export function toInsertMediaInput(
-  profileId: string,
+  userId: string,
   fileKey: string,
   data: CreateMediaDto,
 ): InsertMediaInput {
   return {
-    profileId,
+    userId,
     fileKey,
     contentType: data.contentType,
     status: MediaStatus.PENDING,
@@ -64,7 +64,7 @@ export function toMediaDto(
 ): MediaDto {
   return {
     id: media.id,
-    profileId: media.profileId,
+    userId: media.userId,
     fileKey: media.fileKey,
     fileUrl,
     thumbnailUrl,

@@ -6,7 +6,7 @@ export const UserSex = {
 
 export type UserSex = (typeof UserSex)[keyof typeof UserSex];
 
-export const PROFILE_CONSTRAINTS = {
+export const USER_CONSTRAINTS = {
   USERNAME_MIN_LENGTH: 3,
   USERNAME_MAX_LENGTH: 50,
   SEX_MAX_LENGTH: 20,

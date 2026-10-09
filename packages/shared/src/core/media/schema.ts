@@ -116,7 +116,7 @@ export type MediaFilterDto = z.infer<typeof mediaFilterSchema>;
 
 export const mediaResponseSchema = z.object({
   id: z.string().uuid(),
-  profileId: z.string().uuid(),
+  userId: z.string().uuid(),
   fileKey: z.string(),
   fileUrl: z.string().url(),
   thumbnailUrl: z.string().url().nullable(),

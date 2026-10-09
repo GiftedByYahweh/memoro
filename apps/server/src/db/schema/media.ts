@@ -9,7 +9,7 @@ import {
   pgEnum,
   boolean,
 } from 'drizzle-orm/pg-core';
-import { profilesTable } from './profiles';
+import { usersTable } from './users';
 import { ENCRYPTION_CONSTRAINTS, MEDIA_CONSTRAINTS, MediaStatus, MediaType } from '@memoro/shared';
 import { pgEnumValues } from '../pg-enum-values';
 
@@ -17,9 +17,9 @@ export const mediaStatusEnum = pgEnum('media_status', pgEnumValues(MediaStatus))
 export const mediaTypeEnum = pgEnum('media_type', pgEnumValues(MediaType));
 export const mediaTable = pgTable('media', {
   id: uuid('id').primaryKey().defaultRandom(),
-  profileId: uuid('profile_id')
+  userId: uuid('user_id')
     .notNull()
-    .references(() => profilesTable.id, { onDelete: 'cascade' }),
+    .references(() => usersTable.id, { onDelete: 'cascade' }),
   fileKey: varchar('file_key', { length: MEDIA_CONSTRAINTS.FILE_KEY_MAX_LENGTH })
     .notNull()
     .unique(),

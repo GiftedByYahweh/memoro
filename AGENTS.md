@@ -96,13 +96,13 @@ src/core/<feature>/
 ### 3.2 Single Use Case per Route & Atomic Transactions
 
 - **A route handler MUST call ONLY ONE use case**. Never orchestrate multiple use cases inside a route handler.
-- **Atomic Operations in Use Cases**: Multi-step workflows (e.g. creating User + Profile + Session during registration) MUST be orchestrated inside a single use case and executed atomically inside `unitOfWork.run(async () => { ... })`.
+- **Atomic Operations in Use Cases**: Multi-step workflows (e.g. creating User + deleting used verification codes during registration) MUST be orchestrated inside a single use case and executed atomically inside `unitOfWork.run(async () => { ... })`.
 - Route handlers do zero arithmetic and zero business logic (e.g. TTL calculations belong in use cases or entities, not routes).
 
 ### 3.3 Prohibition of `create` Prefix on Factories and Functions
 
 - **STRICTLY FORBIDDEN: using `create` prefix on factories, repositories, and utilities** (avoids `createCreate...` stuttering and boilerplate):
-  - Repositories: `drizzleUserRepository`, `drizzleSessionRepository`, `drizzleProfileRepository` (NOT `createDrizzleUserRepository`).
+  - Repositories: `drizzleUserRepository`, `drizzleSessionRepository`, `drizzleMediaRepository` (NOT `createDrizzleUserRepository`).
   - Use case factories: `registerUseCase`, `createSessionUseCase` (acceptable only when domain action is creation of entity), `loginUseCase`, `logoutUseCase`.
   - Route plugins: `authRoutes` (NOT `createAuthRoutes`).
   - Response helpers: `successResponse`, `errorResponse` (NOT `createSuccessResponse`).

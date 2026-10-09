@@ -38,9 +38,9 @@ export class R2FileStorageProvider implements FileStorage {
     this.bucketName = config.bucketName;
   }
 
-  private buildFileKey(folder: string, profileId: string, fileName: string): string {
+  private buildFileKey(folder: string, userId: string, fileName: string): string {
     const ext = fileName.split('.').pop()?.toLowerCase() ?? STORAGE_CONSTRAINTS.DEFAULT_EXTENSION;
-    return `${folder}/${profileId}/${String(Date.now())}-${randomUUID()}.${ext}`;
+    return `${folder}/${userId}/${String(Date.now())}-${randomUUID()}.${ext}`;
   }
 
   private async generateSingleUploadUrl(
@@ -100,8 +100,8 @@ export class R2FileStorageProvider implements FileStorage {
   }
 
   async getUploadUrls(input: GenerateUploadUrlInput): Promise<UploadUrlOutput> {
-    const { fileName, profileId, contentType, folder, sizeBytes } = input;
-    const fileKey = this.buildFileKey(folder, profileId, fileName);
+    const { fileName, userId, contentType, folder, sizeBytes } = input;
+    const fileKey = this.buildFileKey(folder, userId, fileName);
 
     if (sizeBytes < MULTIPART_CONSTRAINTS.THRESHOLD_BYTES) {
       return this.generateSingleUploadUrl(fileKey, contentType);

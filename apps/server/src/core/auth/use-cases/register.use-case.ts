@@ -7,7 +7,6 @@ import {
 import { hashPassword } from '@/common/crypto/crypto';
 import { AppError } from '@/common/error/app.error';
 import type { UseCase } from '@/common/use-case';
-import type { ProfileRepository } from '@/core/profile';
 import type { UserRepository } from '@/core/user';
 import { toAuthUserDto } from '@/core/user';
 import type { UnitOfWork } from '@/db/unit-of-work';
@@ -26,7 +25,6 @@ interface RegisterOutput {
 
 interface RegisterUseCaseDeps {
   userRepository: UserRepository;
-  profileRepository: ProfileRepository;
   verificationCodeRepository: VerificationCodeRepository;
   unitOfWork: UnitOfWork;
 }
@@ -34,7 +32,7 @@ interface RegisterUseCaseDeps {
 export type RegisterUseCase = UseCase<RegisterInput, RegisterOutput>;
 
 export function registerUseCase(deps: RegisterUseCaseDeps): RegisterUseCase {
-  const { userRepository, profileRepository, verificationCodeRepository, unitOfWork } = deps;
+  const { userRepository, verificationCodeRepository, unitOfWork } = deps;
 
   return async (input: RegisterInput): Promise<RegisterOutput> => {
     const verifiedCode = await verificationCodeRepository.findVerified(
@@ -50,8 +48,8 @@ export function registerUseCase(deps: RegisterUseCaseDeps): RegisterUseCase {
       throw new AppError(DomainErrorCode.USER_ALREADY_EXISTS);
     }
 
-    const existingProfile = await profileRepository.findByUsername(input.username);
-    if (existingProfile) {
+    const existingUsername = await userRepository.findByUsername(input.username);
+    if (existingUsername) {
       throw new AppError(DomainErrorCode.USERNAME_ALREADY_EXISTS);
     }
 
@@ -60,10 +58,6 @@ export function registerUseCase(deps: RegisterUseCaseDeps): RegisterUseCase {
       const user = await userRepository.create({
         email: input.email,
         passwordHash,
-      });
-
-      await profileRepository.create({
-        userId: user.id,
         username: input.username,
         sex: input.sex,
       });

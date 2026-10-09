@@ -12,6 +12,8 @@ async function createUser(dbProvider: DBProvider, data: CreateUserData): Promise
     .values({
       email: data.email,
       passwordHash: data.passwordHash,
+      username: data.username,
+      sex: data.sex,
     })
     .returning();
 
@@ -39,6 +41,16 @@ async function findUserById(dbProvider: DBProvider, id: string): Promise<User | 
   return row ? toUserEntity(row) : null;
 }
 
+async function findUserByUsername(dbProvider: DBProvider, username: string): Promise<User | null> {
+  const [row] = await dbProvider
+    .current()
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.username, username))
+    .limit(1);
+  return row ? toUserEntity(row) : null;
+}
+
 async function updateUserPassword(
   dbProvider: DBProvider,
   id: string,
@@ -56,6 +68,7 @@ export function drizzleUserRepository(dbProvider: DBProvider): UserRepository {
     create: (data: CreateUserData) => createUser(dbProvider, data),
     findByEmail: (email: string) => findUserByEmail(dbProvider, email),
     findById: (id: string) => findUserById(dbProvider, id),
+    findByUsername: (username: string) => findUserByUsername(dbProvider, username),
     updatePassword: (id: string, passwordHash: string) =>
       updateUserPassword(dbProvider, id, passwordHash),
   };

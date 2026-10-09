@@ -3,7 +3,6 @@ import type { UnitOfWork } from '@/db/unit-of-work';
 import type { Mailer } from '@/common/mailer';
 import { authGuard } from '@/common/guards/auth.guard';
 import type { UserRepository } from '@/core/user';
-import type { ProfileRepository } from '@/core/profile';
 import {
   authRoutes,
   createSessionUseCase,
@@ -22,25 +21,17 @@ export interface AuthModuleDeps {
   unitOfWork: UnitOfWork;
   mailer: Mailer;
   userRepository: UserRepository;
-  profileRepository: ProfileRepository;
   sessionRepository: SessionRepository;
   verificationCodeRepository: VerificationCodeRepository;
 }
 
 function initAuthUseCases(deps: AuthModuleDeps, sessionMaxAgeMs: number) {
-  const {
-    unitOfWork,
-    mailer,
-    userRepository,
-    profileRepository,
-    sessionRepository,
-    verificationCodeRepository,
-  } = deps;
+  const { unitOfWork, mailer, userRepository, sessionRepository, verificationCodeRepository } =
+    deps;
 
   return {
     registerUseCase: registerUseCase({
       userRepository,
-      profileRepository,
       verificationCodeRepository,
       unitOfWork,
     }),
@@ -69,10 +60,7 @@ function initAuthUseCases(deps: AuthModuleDeps, sessionMaxAgeMs: number) {
 export function initAuthModule(deps: AuthModuleDeps, config: AppConfig) {
   const useCases = initAuthUseCases(deps, config.session.maxAge);
 
-  const guard = authGuard({
-    validateSessionUseCase: useCases.validateSessionUseCase,
-    profileRepository: deps.profileRepository,
-  });
+  const guard = authGuard({ validateSessionUseCase: useCases.validateSessionUseCase });
 
   const routes = authRoutes({
     ...useCases,

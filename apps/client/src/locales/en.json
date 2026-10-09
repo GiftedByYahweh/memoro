@@ -107,7 +107,6 @@
     "userNotFound": "User not found",
     "usernameAlreadyExists": "This username is already taken",
     "mediaNotFound": "Media not found",
-    "profileNotFound": "Profile not found",
     "invalidFileType": "Unsupported file format",
     "mediaForbidden": "Access to this media is forbidden",
     "unknown": "An unexpected error occurred"

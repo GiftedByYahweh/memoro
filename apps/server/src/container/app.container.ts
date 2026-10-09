@@ -13,7 +13,6 @@ export const createAppContainer = (config: AppConfig, logger: Logger = new Conso
       unitOfWork: infrastructure.uow,
       mailer: infrastructure.mailer,
       userRepository: repositories.userRepository,
-      profileRepository: repositories.profileRepository,
       sessionRepository: repositories.sessionRepository,
       verificationCodeRepository: repositories.verificationCodeRepository,
     },

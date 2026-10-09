@@ -2,7 +2,7 @@ import type { MediaStatus, MediaType } from '@memoro/shared';
 
 export interface Media {
   id: string;
-  profileId: string;
+  userId: string;
   fileKey: string;
   contentType: string;
   status: MediaStatus;
@@ -25,7 +25,7 @@ export interface Media {
 }
 
 export interface InsertMediaInput {
-  profileId: string;
+  userId: string;
   fileKey: string;
   contentType: string;
   status: MediaStatus;

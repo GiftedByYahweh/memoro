@@ -31,7 +31,7 @@ function registerCreateMediaRoute(
     },
     async (request) => {
       return useCase({
-        profileId: request.profile.id,
+        userId: request.user.id,
         data: request.body,
       });
     },
@@ -52,7 +52,7 @@ function registerCompleteMediaRoute(
     async (request) => {
       return useCase({
         mediaId: request.params.id,
-        profileId: request.profile.id,
+        userId: request.user.id,
         data: request.body,
       });
     },
@@ -73,7 +73,7 @@ function registerAbortMediaRoute(
     async (request) => {
       return useCase({
         mediaId: request.params.id,
-        profileId: request.profile.id,
+        userId: request.user.id,
         data: request.body,
       });
     },

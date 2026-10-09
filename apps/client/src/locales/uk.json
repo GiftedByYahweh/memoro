@@ -107,7 +107,6 @@
     "userNotFound": "Користувача не знайдено",
     "usernameAlreadyExists": "Цей юзернейм вже зайнято",
     "mediaNotFound": "Медіа не знайдено",
-    "profileNotFound": "Профіль не знайдено",
     "invalidFileType": "Непідтримуваний формат файлу",
     "mediaForbidden": "Доступ до цього медіа заборонено",
     "unknown": "Сталася неочікувана помилка"
